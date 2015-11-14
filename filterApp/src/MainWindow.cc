@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include "DataStructModel.hh"
 #include "StructorBuilder.hh"
+#include "TreeProcessor.hh"
 #include "MainWindow.hh"
 
 using namespace std;
@@ -146,4 +147,5 @@ void MainWindow::onSetFilterClicked(bool)
 {
   std::string tMatchString = _DataStructModel->getMatchString();
   _Writer->setMatchRegex(tMatchString);
+TreeProcessor::traverse(_DataStructModel->getTopNode());
 }

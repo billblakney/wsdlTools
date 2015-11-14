@@ -59,6 +59,7 @@ HEADERS += \
            StreamReader.hh \
            StructTreeView.hh \
            TreeItem.hh \
+           TreeProcessor.hh \
 
 SOURCES += \
            main.cc \
@@ -75,6 +76,7 @@ SOURCES += \
            StreamReader.cc \
            StructTreeView.cc \
            TreeItem.cc \
+           TreeProcessor.cc \
 
 # not really the right test, but...
 greaterThan(QT_MAJOR_VERSION, 4) {
