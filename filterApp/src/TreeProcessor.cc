@@ -10,75 +10,75 @@ TreeProcessor::~TreeProcessor()
 {
 }
 
-bool TreeProcessor::traverse(FieldItem *aNode)
+bool TreeProcessor::process(FieldItem *aNode)
 {
   if ( aNode->getData().getNodeType() == FieldItemData::eRoot )
   {
-    traverseRootNode(aNode);
+    processRootNode(aNode);
   }
   else if ( aNode->getData().getNodeType() == FieldItemData::eStruct)
   {
-    traverseStructNode(aNode);
+    processStructNode(aNode);
   }
   else if (aNode->getData().getNodeType() == FieldItemData::eStructArray)
   {
-    traverseStructArrayNode(aNode);
+    processStructArrayNode(aNode);
   }
   else if (aNode->getData().getNodeType() == FieldItemData::ePrimitive)
   {
-    traversePrimitiveNode(aNode);
+    processPrimitiveNode(aNode);
   }
   else if (aNode->getData().getNodeType() == FieldItemData::ePrimitiveArray)
   {
-    traversePrimitiveArrayNode(aNode);
+    processPrimitiveArrayNode(aNode);
   }
   else
   {
-    ERROR(sLogger,"<traverse> unknown node type");
+    ERROR(sLogger,"<process> unknown node type");
     return false;
   }
 
   return true;
 }
 
-bool TreeProcessor::traverseRootNode(FieldItem *aNode)
+bool TreeProcessor::processRootNode(FieldItem *aNode)
 {
-  INFO(sLogger,"<traverse> eRoot: " << aNode->getData().getName());
-  return traverseChildren(aNode);
+  INFO(sLogger,"<process> eRoot: " << aNode->getData().getName());
+  return processChildren(aNode);
 }
 
-bool TreeProcessor::traverseStructNode(FieldItem *aNode)
+bool TreeProcessor::processStructNode(FieldItem *aNode)
 {
-  INFO(sLogger,"<traverse> eStruct: " << aNode->getData().getName());
-  return traverseChildren(aNode);
+  INFO(sLogger,"<process> eStruct: " << aNode->getData().getName());
+  return processChildren(aNode);
 }
 
-bool TreeProcessor::traverseStructArrayNode(FieldItem *aNode)
+bool TreeProcessor::processStructArrayNode(FieldItem *aNode)
 {
-  INFO(sLogger,"<traverse> eStructArray: " << aNode->getData().getName());
-  return traverseChildren(aNode);
+  INFO(sLogger,"<process> eStructArray: " << aNode->getData().getName());
+  return processChildren(aNode);
 }
 
-bool TreeProcessor::traversePrimitiveNode(FieldItem *aNode)
+bool TreeProcessor::processPrimitiveNode(FieldItem *aNode)
 {
-  INFO(sLogger,"<traverse> ePrimitive: " << aNode->getData().getName());
+  INFO(sLogger,"<process> ePrimitive: " << aNode->getData().getName());
   return true;
 }
 
-bool TreeProcessor::traversePrimitiveArrayNode(FieldItem *aNode)
+bool TreeProcessor::processPrimitiveArrayNode(FieldItem *aNode)
 {
-  INFO(sLogger,"<traverse> ePrimitiveArray: " << aNode->getData().getName());
+  INFO(sLogger,"<process> ePrimitiveArray: " << aNode->getData().getName());
   return true;
 }
 
-bool TreeProcessor::traverseChildren(FieldItem *aNode)
+bool TreeProcessor::processChildren(FieldItem *aNode)
 {
   for (int tIdx = 0; tIdx < aNode->childCount(); tIdx++)
   {
-    bool tResult = traverse(aNode->child(tIdx));
+    bool tResult = process(aNode->child(tIdx));
     if (tResult == false)
     {
-      ERROR(sLogger,"<traverse> traversing child failed");
+      ERROR(sLogger,"<process> traversing child failed");
       return false;
     }
   }
