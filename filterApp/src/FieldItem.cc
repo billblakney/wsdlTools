@@ -143,12 +143,18 @@ bool FieldItem::processRootLines(
 }
 
 //-------------------------------------------------------------------------------
+// Process a primitive field.
 //-------------------------------------------------------------------------------
 bool FieldItem::processPrimitiveLines(
     std::vector<std::string> &aLinesIn,
     std::vector<std::string>::iterator &aLineIter,
     std::vector<std::string> &aLinesOut)
 {
+  /*
+   * Going to test the single line that represents a primitive field.
+   * So get a reference to it, and increment the iterator.
+   * And then test it for a match.
+   */
   std::string &tLine = *aLineIter;
   aLineIter++;
 
@@ -178,10 +184,108 @@ bool FieldItem::processPrimitiveArrayLines(
     std::vector<std::string>::iterator &aLineIter,
     std::vector<std::string> &aLinesOut)
 {
+  DEBUG(sLogger,"Looking for primitive array with match: "
+      << getData().getMatch());
+
+  /*
+   * Going to test the line that indicates the start of the primitive array.
+   * So get a reference to it, and increment the iterator.
+   * And then test it for a match.
+   */
+  std::string &tLine = *aLineIter;
+  aLineIter++;
+
+  tMatcher.setMatchRegex(getData().getMatch());
+  if (tMatcher.match(tLine))
+  {
+    DEBUG(sLogger,"primitive array node matched: " << getData().getMatch());
+  }
+  else
+  {
+    ERROR(sLogger,"primitive array node <" << tLine << "> didn't match: <"
+        << getData().getMatch() << ">");
+    return false;
+  }
+
+  /*
+   * Going to test the line that specifies the number of elements in the
+   * primitive array. So get a reference to it, and increment the iterator.
+   * And then test for a match with the array length specification, and
+   * get the array length.
+   */
+  tLine = *aLineIter;
+  aLineIter++;
+
+  // TODO better to use exact match of leading tabs in match regex?
+  tMatcher.setMatchRegex(".*array of len: (\\d+)");
+  if (tMatcher.match(tLine))
+  {
+    DEBUG(sLogger,"array of len matched: " << tLine);
+  }
+  else
+  {
+    ERROR(sLogger,"array of len didn't match: <" << tLine);
+    return false;
+  }
+
+  int tArrayLen = atoi(tMatcher.getWhat().c_str());
+
+  /*
+   * Process the array elements that follow per the array length.
+   */
+  for (int tIdx = 0; tIdx < tArrayLen; tIdx++)
+  {
+    bool tResult = processPrimitiveArrayLine(aLinesIn,aLineIter,aLinesOut);
+    if (tResult == false)
+    {
+      return false;
+    }
+  }
+
   return true;
 }
 
 //-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+bool FieldItem::processPrimitiveArrayLine(
+    std::vector<std::string> &aLinesIn,
+    std::vector<std::string>::iterator &aLineIter,
+    std::vector<std::string> &aLinesOut)
+{
+  /*
+   * Going to test the single line that represents a primitive array item.
+   * So get a reference to it, and increment the iterator.
+   * And then test it for a match.
+   */
+  std::string &tLine = *aLineIter;
+  aLineIter++;
+
+  // TODO better to use exact match of leading tabs in match regex?
+  std::string tPrimitiveArrayItemRegex(".*\\[\\d+\\]\\s+=\\s+(.*)");
+//  std::string tPrimitiveArrayItemRegex(".*=\\s+(.*)");
+
+  tMatcher.setMatchRegex(tPrimitiveArrayItemRegex);
+
+  if (tMatcher.match(tLine))
+  {
+    if (getData().getCheckState() == Qt::Checked)
+    {
+      aLinesOut.push_back(tLine);
+    }
+    DEBUG(sLogger,"primitive array element matched: " << getData().getMatch());
+  }
+  else
+  {
+    ERROR(sLogger,"Primitive array element <" << tLine << "> didn't match: <"
+        << tPrimitiveArrayItemRegex << ">");
+    return false;
+  }
+
+  return true;
+}
+
+//-------------------------------------------------------------------------------
+// Process a structure.
 //-------------------------------------------------------------------------------
 bool FieldItem::processStructLines(
     std::vector<std::string> &aLinesIn,
@@ -190,6 +294,12 @@ bool FieldItem::processStructLines(
       bool aSkipStructName)
 {
   DEBUG(sLogger,"Looking for struct with match: " << getData().getMatch());
+
+  /*
+   * The aSkipStructName tells us if this block of lines is started with a line
+   * that specifies the struct name. If it is, get a reference to the line,
+   * and increment the iterator. Then test for a match on the struct name line.
+   */
   if (!aSkipStructName)
   {
     std::string &tLine = *aLineIter;
@@ -208,6 +318,12 @@ bool FieldItem::processStructLines(
     }
   }
 
+  /*
+   * We don't know the node types of the fields that comprise the struct,
+   * so we'll be calling the higher-level processLines() method on each of the
+   * child fields of the struct. That method will look at the node type of the
+   * field and process it accordingly.
+   */
   for (int tIdx = 0; tIdx < childCount(); tIdx++)
   {
     bool tResult = child(tIdx)->processLines(aLinesIn,aLineIter,aLinesOut);
@@ -221,6 +337,7 @@ bool FieldItem::processStructLines(
 }
 
 //-------------------------------------------------------------------------------
+// Process an array of structures.
 //-------------------------------------------------------------------------------
 bool FieldItem::processStructArrayLines(
     std::vector<std::string> &aLinesIn,
@@ -228,6 +345,12 @@ bool FieldItem::processStructArrayLines(
     std::vector<std::string> &aLinesOut)
 {
   DEBUG(sLogger,"Looking for struct array with match: " << getData().getMatch());
+
+  /*
+   * Going to test the line that indicates the start of the struct array.
+   * So get a reference to it, and increment the iterator.
+   * And then test it for a match.
+   */
   std::string &tLine = *aLineIter;
   aLineIter++;
 
@@ -243,7 +366,12 @@ bool FieldItem::processStructArrayLines(
     return false;
   }
 
-  // Now get "array of len: N".
+  /*
+   * Going to test the line that specifies the number of elements in the
+   * struct array. So get a reference to it, and increment the iterator.
+   * And then test for a match with the array length specification, and
+   * get the array length.
+   */
   tLine = *aLineIter;
   aLineIter++;
 
@@ -259,11 +387,20 @@ bool FieldItem::processStructArrayLines(
   }
 
   int tArrayLen = atoi(tMatcher.getWhat().c_str());
+
+  /*
+   * Process the structures that follow per the array length.
+   */
   for (int tIdx = 0; tIdx < tArrayLen; tIdx++)
   {
-    processStructLines(aLinesIn,aLineIter,aLinesOut,true);
+    bool tResult = processStructLines(aLinesIn,aLineIter,aLinesOut,true);
+    if (tResult == false)
+    {
+      return false;
+    }
   }
-return false;
+
+  return true;
 }
 
 //-------------------------------------------------------------------------------
@@ -282,24 +419,33 @@ bool FieldItem::processLines(
 
   if ( getData().getNodeType() == FieldItemData::eRoot )
   {
+    DEBUG(sLogger,"<processLines> processing eRoot");
     processRootLines(aLinesIn,aLineIter,aLinesOut);
   }
   else if (getData().getNodeType() == FieldItemData::ePrimitive)
   {
+    DEBUG(sLogger,"<processLines> processing ePrimitive");
     processPrimitiveLines(aLinesIn,aLineIter,aLinesOut);
   }
   else if (getData().getNodeType() == FieldItemData::ePrimitiveArray)
   {
+    DEBUG(sLogger,"<processLines> processing ePrimitiveArray");
     processPrimitiveArrayLines(aLinesIn,aLineIter,aLinesOut);
   }
   else if ( getData().getNodeType() == FieldItemData::eStruct)
   {
+    DEBUG(sLogger,"<processLines> processing eStruct");
     processStructLines(aLinesIn,aLineIter,aLinesOut);
   }
   else if (getData().getNodeType() == FieldItemData::eStructArray)
   {
+    DEBUG(sLogger,"<processLines> processing eStructArray");
     processStructArrayLines(aLinesIn,aLineIter,aLinesOut);
   }
+  else
+  {
+    ERROR(sLogger,"<processLines> unknown node type");
+  }
 
-  return true;;
+  return true;
 }

@@ -8,6 +8,11 @@ field3:
 	field1:	f1
 	field2:	f2
 	field3:	f3
+counts:
+	array of len: 3
+	[0] =	000
+	[1] =	001
+	[2] =	002
 bunches:
 	array of len: 2
 	b1:	ba1

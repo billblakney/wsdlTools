@@ -48,11 +48,11 @@ public:
 
   void setCheckState(Qt::CheckState aCheckState);
 
-  void setFieldMatch(const QVariant & value);
+  void setFieldMatch(const QVariant &value);
 
-  void setFieldTest(const QVariant & value);
+  void setFieldTest(const QVariant &value);
 
-  void setFieldPostfix(const QVariant & value);
+  void setFieldPostfix(const QVariant &value);
 
   bool processRootLines(
       std::vector<std::string> &aLinesIn,
@@ -65,6 +65,11 @@ public:
       std::vector<std::string> &aLinesOut);
 
   bool processPrimitiveArrayLines(
+      std::vector<std::string> &aLinesIn,
+      std::vector<std::string>::iterator &aLineIter,
+      std::vector<std::string> &aLinesOut);
+
+  bool processPrimitiveArrayLine(
       std::vector<std::string> &aLinesIn,
       std::vector<std::string>::iterator &aLineIter,
       std::vector<std::string> &aLinesOut);
