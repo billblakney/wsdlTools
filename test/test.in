@@ -1,0 +1,17 @@
+==============RECEIVED MESSAGE=========
+some junk here
+some junk there
+struct
+field1:	v1
+field2:	v2
+field3:
+	field1:	f1
+	field2:	f2
+	field3:	f3
+bunches:
+	array of len: 2
+	b1:	ba1
+	b2:	bb1
+	b1:	ba2
+	b2:	bb2
+==============END MESSAGE=========

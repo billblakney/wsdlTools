@@ -1,0 +1,12 @@
+.cproject
+.project
+.settings
+bin/
+*.tab.*
+*.yy.*
+Makefile
+Makefile.*
+release/
+debug/
+app
+CLIR*

@@ -1,0 +1,98 @@
+example CONTACT_ATTRIBUTES_REPORT_T (CAR sonar)
+============RECEIVED MESSAGE========= [12= then 9=]
+mVersionNumber:
+mHeaderLength:
+mModifyDataHeaders:
+   mHeaderArray:
+      array of len: 1
+      ...
+timeStamp:
+sequenceNumber:
+isDroppedInSonar:
+isDroppedInTC:
+fusedNumber:
+contactDesignator:
+   contactNumber:
+   contactPrefix:
+   contactLabel:
+   contactColor:
+      rValue:
+      gValue:
+      bValue:
+   contactMasterNumber:
+   contactIsCOI:
+   uniqueContactID:
+   quickObservationID:
+   contactIsCOC:
+   originatingSubsystem:
+   emitterID:
+fusedContactComponents:
+   array of len: 0
+platformIdentification:
+previousThreatClassification:
+threatClassification:
+threatClassificationChanged: false
+identificationConfidence:
+threatConfidence:
+classificationConfidence:
+shipAttributes:
+   shipName;
+   ...
+   numShafts:
+   activeAttributes:
+      bandwidth:
+      ...
+      instantaneousFrequency:
+   imagingAttributes:
+      mastHeadHeightInfo:
+         array of len: 0
+   shipAbbreviation:
+   esmAttributes:
+      nickname:
+...
+isRangeableSonarUsed:
+assignedSensors:
+   array of len: 1
+   sensorID:
+   ...
+   sensorState:
+assignedTraces:
+   array of len: 0
+telcomComponents
+   array of len: 0
+previous...
+...
+sensorQuality: 
+============END MESSAGE========= [14= then 12=]
+
+example CAR_UPDATES_T (CAR non-sonar)
+============RECEIVED MESSAGE========= [12= then 9=]
+CARS:
+   array of len: 21
+   timeStamp:
+   ...
+dataIsReply: false
+============END MESSAGE========= [14= then 12=]
+
+
+example: `CSR_UPDATES_T
+==== RECEIVED
+CSRS:
+   array of len: 53
+   sequenceNumber: ...
+   solutionType: ...
+   ...
+      aouPolygon:
+         array of len: 0
+replyType: ...
+==== END
+
+primitive array example
+
+cartesianCovarianceMatrix:
+   array of len: 6
+   [0] = 0.0
+   [1] = 0.0
+   ...
+   [5] = 0.0
+isTraining
