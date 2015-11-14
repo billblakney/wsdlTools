@@ -14,9 +14,10 @@ typedef struct {
    int field1;
    int field2;
    INNER_T field3;
-   int counts_size;
-   int *counts;
    int bunches_size;
    BUNCH_T *bunches;
+   int counts_size;
+   int *counts;
+   int field4;
 } OUTER_T;
 

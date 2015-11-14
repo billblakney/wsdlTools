@@ -122,7 +122,7 @@ void FieldItem::setFieldPostfix(const QVariant &aValue)
 static SimpleLineMatcher tMatcher; //TODO
 
 //-------------------------------------------------------------------------------
-// note: root doesn't consume any lines for wsdlfilter
+// Processes lines for a root node.
 //-------------------------------------------------------------------------------
 bool FieldItem::processRootLines(
     std::vector<std::string> &aLinesIn,
@@ -143,7 +143,7 @@ bool FieldItem::processRootLines(
 }
 
 //-------------------------------------------------------------------------------
-// Process a primitive field.
+// Processes lines for a primitive field node.
 //-------------------------------------------------------------------------------
 bool FieldItem::processPrimitiveLines(
     std::vector<std::string> &aLinesIn,
@@ -178,6 +178,7 @@ bool FieldItem::processPrimitiveLines(
 }
 
 //-------------------------------------------------------------------------------
+// Processes lines for a primitive array node.
 //-------------------------------------------------------------------------------
 bool FieldItem::processPrimitiveArrayLines(
     std::vector<std::string> &aLinesIn,
@@ -246,6 +247,7 @@ bool FieldItem::processPrimitiveArrayLines(
 }
 
 //-------------------------------------------------------------------------------
+// Processes a line for a primitive array element.
 //-------------------------------------------------------------------------------
 bool FieldItem::processPrimitiveArrayLine(
     std::vector<std::string> &aLinesIn,
@@ -262,7 +264,6 @@ bool FieldItem::processPrimitiveArrayLine(
 
   // TODO better to use exact match of leading tabs in match regex?
   std::string tPrimitiveArrayItemRegex(".*\\[\\d+\\]\\s+=\\s+(.*)");
-//  std::string tPrimitiveArrayItemRegex(".*=\\s+(.*)");
 
   tMatcher.setMatchRegex(tPrimitiveArrayItemRegex);
 
@@ -285,7 +286,7 @@ bool FieldItem::processPrimitiveArrayLine(
 }
 
 //-------------------------------------------------------------------------------
-// Process a structure.
+// Processes lines for a struct node.
 //-------------------------------------------------------------------------------
 bool FieldItem::processStructLines(
     std::vector<std::string> &aLinesIn,
@@ -337,7 +338,7 @@ bool FieldItem::processStructLines(
 }
 
 //-------------------------------------------------------------------------------
-// Process an array of structures.
+// Processes lines for an struct array node.
 //-------------------------------------------------------------------------------
 bool FieldItem::processStructArrayLines(
     std::vector<std::string> &aLinesIn,
@@ -404,6 +405,7 @@ bool FieldItem::processStructArrayLines(
 }
 
 //-------------------------------------------------------------------------------
+// Processes lines for a field item and all of its children.
 //-------------------------------------------------------------------------------
 bool FieldItem::processLines(
     std::vector<std::string> &aLinesIn,
