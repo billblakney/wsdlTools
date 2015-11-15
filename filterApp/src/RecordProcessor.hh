@@ -43,14 +43,12 @@ protected:
 
   void reset();
 
-//  virtual bool process(FieldItem *aNode);
   virtual bool processRootNode(FieldItem *aNode);
   virtual bool processStructNode(FieldItem *aNode);
   virtual bool processStructArrayNode(FieldItem *aNode);
   virtual bool processPrimitiveNode(FieldItem *aNode);
   virtual bool processPrimitiveArrayNode(FieldItem *aNode);
   bool processPrimitiveArrayLine(FieldItem *aNode);
-//  virtual bool processChildren(FieldItem *aNode);
 };
 
 #endif /* _RECORDPROCESSOR_HH_ */

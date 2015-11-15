@@ -2,6 +2,8 @@
 
 ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 RecordProcessor::RecordProcessor(
     FieldItem *aTopNode,std::vector<std::string> &aLinesIn)
   : TreeProcessor(aTopNode),
@@ -9,43 +11,67 @@ RecordProcessor::RecordProcessor(
 {
 }
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 RecordProcessor::~RecordProcessor()
 {
 }
 
-std::vector<std::string> &RecordProcessor::getOutLines()
-{
-  return _LinesOut;
-}
-
-void RecordProcessor::reset()
-{
-  _LineIter = _LinesIn.begin();
-  _LinesOut.clear();
-}
-
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 bool RecordProcessor::process()
 {
   reset();
   return TreeProcessor::process();
 }
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+std::vector<std::string> &RecordProcessor::getOutLines()
+{
+  return _LinesOut;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::reset()
+{
+  _LineIter = _LinesIn.begin();
+  _LinesOut.clear();
+}
+
+//-----------------------------------------------------------------------------
+// Processes the set of lines for a root node.
+// Directly consumes the set of lines for a root node, which happens to be an
+// empty set in this case, and indirectly consumes the set of lines for the
+// entire tree represented by the root node.
+//-----------------------------------------------------------------------------
 bool RecordProcessor::processRootNode(FieldItem *aNode)
 {
-  INFO(sLogger,"<process> eRoot: " << aNode->getData().getName());
+  INFO(sLogger,"processing eRoot: " << aNode->getData().getName());
   return processChildren(aNode);
 }
 
+//-----------------------------------------------------------------------------
+// Processes the set of lines for a struct.
+// If the node being processed is a struct node, then a single header line is
+// directly consumed, and the set of lines for the entire struct is indirectly
+// consumed. If the node being processed is a struct array node, then no lines
+// are directly consumed, since no header line is present, and the set of lines
+// for the entire struct are indirectly consumed.
+// When a struct array node is calling this routine, it will call this method
+// repeatedly for the number of struct elements in the array.
+//-----------------------------------------------------------------------------
 bool RecordProcessor::processStructNode(FieldItem *aNode)
 {
-  DEBUG(sLogger,"processing struct node: " << aNode->getData().getMatch());
+  DEBUG(sLogger,"processing eStruct: " << aNode->getData().getMatch());
   /*
-   * The aSkipStructName tells us if this block of lines is started with a line
-   * that specifies the struct name. If it is, get a reference to the line,
-   * and increment the iterator. Then test for a match on the struct name line.
+   * If the node being processed is a regular struct node, then the set of
+   * lines to be processed will include a header line with the struct name.
+   * If the node being processed is a struct array node, then the set of lines
+   * for a struct does not include a header line.
    */
   if (aNode->getData().getNodeType() != FieldItemData::eStructArray)
-//TODO rm   if (!aSkipStructName)
   {
     std::string &tLine = *_LineIter;
     _LineIter++;
@@ -65,6 +91,12 @@ bool RecordProcessor::processStructNode(FieldItem *aNode)
   return processChildren(aNode);
 }
 
+//-----------------------------------------------------------------------------
+// Processes the set of lines for a struct array node.
+// Directly consumes two lines: one specifying the type of the array elements,
+// and one specifying the array length. Indirectly consumes all of the lines
+// for all of the struct array elements.
+//-----------------------------------------------------------------------------
 bool RecordProcessor::processStructArrayNode(FieldItem *aNode)
 {
   DEBUG(sLogger,"Looking for struct array with match: " << aNode->getData().getMatch());
@@ -116,7 +148,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode)
    */
   for (int tIdx = 0; tIdx < tArrayLen; tIdx++)
   {
-    bool tResult = processStructNode(aNode/*TODO true*/);
+    bool tResult = processStructNode(aNode);
     if (tResult == false)
     {
       return false;
@@ -126,6 +158,10 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode)
   return true;
 }
 
+//-----------------------------------------------------------------------------
+// Processes the line for a primitive node. The line consists of the field
+// name and its value.
+//-----------------------------------------------------------------------------
 bool RecordProcessor::processPrimitiveNode(FieldItem *aNode)
 {
   /*
@@ -155,6 +191,12 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode)
   return true;
 }
 
+//-----------------------------------------------------------------------------
+// Processes the set of lines for a primitive array node.
+// Directly consumes two lines: one specifying the name of the array and one
+// specifying the array length. Indirectly consumes all of the lines for the
+// entire primitive array.
+//-----------------------------------------------------------------------------
 bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode)
 {
   DEBUG(sLogger,"Looking for primitive array with match: "
@@ -218,6 +260,10 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode)
   return true;
 }
 
+//-----------------------------------------------------------------------------
+// Processes a line that specifies an element of a primitive array.
+// Directly consumes that single line. No other lines are indirectly consumed.
+//-----------------------------------------------------------------------------
 bool RecordProcessor::processPrimitiveArrayLine(FieldItem *aNode)
 {
   /*
@@ -250,19 +296,3 @@ bool RecordProcessor::processPrimitiveArrayLine(FieldItem *aNode)
 
   return true;
 }
-
-#if 0
-bool RecordProcessor::processChildren(FieldItem *aNode)
-{
-  for (int tIdx = 0; tIdx < aNode->childCount(); tIdx++)
-  {
-    bool tResult = process(aNode->child(tIdx));
-    if (tResult == false)
-    {
-      ERROR(sLogger,"<process> traversing child failed");
-      return false;
-    }
-  }
-  return true;
-}
-#endif
