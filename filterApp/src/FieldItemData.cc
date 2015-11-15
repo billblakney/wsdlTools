@@ -8,6 +8,7 @@
 FieldItemData::FieldItemData()
   : _NodeType(eNone),
     _CheckState(Qt::Unchecked),
+    _Key(""),
     _Name(""),
     _Type(""),
     _FieldMatch(""),
@@ -20,6 +21,7 @@ FieldItemData::FieldItemData()
 //-------------------------------------------------------------------------------
 FieldItemData::FieldItemData(
       NodeType aNodeType,
+      std::string aKey,
       std::string aName,
       std::string aType,
       std::string aMatch,
@@ -27,6 +29,7 @@ FieldItemData::FieldItemData(
       std::string aPostfix,
       Qt::CheckState aCheckState)
   : _NodeType(aNodeType),
+    _Key(aKey),
     _Name(aName),
     _Type(aType),
     _FieldMatch(aMatch),
@@ -37,6 +40,16 @@ FieldItemData::FieldItemData(
 
   }
 
+#if 0
+  void setNodeType(NodeType nodeType);
+  void setKey(const std::string& key);
+  void setName(const std::string& name);
+  void setType(const std::string& type);
+  void setMatch(const std::string& match);
+  void setTest(const std::string& test);
+  void setPostfix(const std::string& postfix);
+  void setCheckState(Qt::CheckState checkState);
+#endif
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 FieldItemData::~FieldItemData()
@@ -46,9 +59,24 @@ FieldItemData::~FieldItemData()
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 
-Qt::CheckState FieldItemData::getCheckState() const
+FieldItemData::NodeType FieldItemData::getNodeType() const
 {
-  return _CheckState;
+  return _NodeType;
+}
+
+const std::string& FieldItemData::getKey() const
+{
+  return _Key;
+}
+
+const std::string& FieldItemData::getName() const
+{
+  return _Name;
+}
+
+const std::string& FieldItemData::getType() const
+{
+  return _Type;
 }
 
 const std::string& FieldItemData::getMatch() const
@@ -61,29 +89,37 @@ const std::string& FieldItemData::getTest() const
   return _FieldTest;
 }
 
-const std::string& FieldItemData::getName() const
-{
-  return _Name;
-}
-
-FieldItemData::NodeType FieldItemData::getNodeType() const
-{
-  return _NodeType;
-}
-
 const std::string& FieldItemData::getPostfix() const
 {
   return _Postfix;
 }
 
-const std::string& FieldItemData::getType() const
+Qt::CheckState FieldItemData::getCheckState() const
 {
-  return _Type;
+  return _CheckState;
 }
 
-void FieldItemData::setCheckState(Qt::CheckState checkState)
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+
+void FieldItemData::setNodeType(NodeType nodeType)
 {
-  _CheckState = checkState;
+  _NodeType = nodeType;
+}
+
+void FieldItemData::setKey(const std::string& key)
+{
+  _Key = key;
+}
+
+void FieldItemData::setName(const std::string& name)
+{
+  _Name = name;
+}
+
+void FieldItemData::setType(const std::string& type)
+{
+  _Type = type;
 }
 
 void FieldItemData::setMatch(const std::string& match)
@@ -96,22 +132,12 @@ void FieldItemData::setTest(const std::string& test)
   _FieldTest = test;
 }
 
-void FieldItemData::setName(const std::string& name)
-{
-  _Name = name;
-}
-
-void FieldItemData::setNodeType(NodeType nodeType)
-{
-  _NodeType = nodeType;
-}
-
 void FieldItemData::setPostfix(const std::string& postfix)
 {
   _Postfix = postfix;
 }
 
-void FieldItemData::setType(const std::string& type)
+void FieldItemData::setCheckState(Qt::CheckState checkState)
 {
-  _Type = type;
+  _CheckState = checkState;
 }

@@ -16,6 +16,7 @@ public:
 
   enum ColumnId {
     eColFieldName = 0,
+    eColFieldKey,
     eColFieldType,
     eColMatchRegex,
     eColTestRegex,
@@ -54,6 +55,8 @@ public:
       Field &aField,FieldItem *aParentItem,int &aLevel);
   void buildPrimitiveNode(
       Field &aField,FieldItem *aParentItem,int &aLevel);
+
+  std::string buildKey(Field &aField,FieldItem *aParentItem,bool aIsArrayType);
 
   std::string buildMatchForField(
       const Field &aField,int aIndentLevel);

@@ -21,11 +21,11 @@ DataStructModel::DataStructModel(
   kArrayFont.setItalic(true);
 
   // root item
-  FieldItemData tRootData(FieldItemData::eRoot,aStruct->_Name,aStruct->_Name);
+  FieldItemData tRootData(FieldItemData::eRoot,"root",aStruct->_Name,aStruct->_Name);
   _RootItem = new FieldItem(tRootData);
 
   // top node item
-  FieldItemData tTopData(FieldItemData::eRoot,"struct",aStruct->_Name);
+  FieldItemData tTopData(FieldItemData::eRoot,"","struct",aStruct->_Name);
   _TopNodeItem = new FieldItem(tTopData,_RootItem);
 
   _RootItem->appendChild(_TopNodeItem);
@@ -153,9 +153,10 @@ void DataStructModel::buildPrimitiveArrayNode(
   DEBUG(sLogger,blanks[aLevel] << "primitive array node: "
       << aField._Type << ":" << aField._Name);
 
+  std::string tKey = buildKey(aField,aParentItem,true);
   std::string tMatch = buildMatchForPrimitiveArrayField(aField,aLevel);
 
-  FieldItemData tData(FieldItemData::ePrimitiveArray,
+  FieldItemData tData(FieldItemData::ePrimitiveArray,tKey,
       aField._Name,aField._Type,tMatch);
 
   FieldItem *dataItem = new FieldItem(tData,aParentItem);
@@ -175,9 +176,10 @@ void DataStructModel::buildStructArrayNode(
   Structure *tStruct = _StructBuilder->getStructure(aField._Type);
   if (tStruct != NULL)
   {
+    std::string tKey = buildKey(aField,aParentItem,true);
     std::string tMatch = buildMatchForStructArrayField(aField,aLevel);
 
-    FieldItemData tData(FieldItemData::eStructArray,
+    FieldItemData tData(FieldItemData::eStructArray,tKey,
         aField._Name,aField._Type,tMatch);
 
     FieldItem *dataItem = new FieldItem(tData,aParentItem);
@@ -200,8 +202,9 @@ void DataStructModel::buildStructNode(
   Structure *tStruct = _StructBuilder->getStructure(aField._Type);
   if (tStruct != NULL)
   {
+    std::string tKey = buildKey(aField,aParentItem,false);
     std::string tMatch = buildMatchForStructField(aField,aLevel);
-    FieldItemData tData(FieldItemData::eStruct,
+    FieldItemData tData(FieldItemData::eStruct,tKey,
         aField._Name,aField._Type,tMatch);
     FieldItem *dataItem = new FieldItem(tData,aParentItem);
     aParentItem->appendChild(dataItem);
@@ -224,14 +227,42 @@ void DataStructModel::buildPrimitiveNode(
   DEBUG(sLogger,blanks[aLevel] << "primitive node: "
       << aField._Type << ":" << aField._Name);
 
+  std::string tKey = buildKey(aField,aParentItem,false);
   std::string tMatch = buildMatchForPrimitiveField(aField,aLevel);
 
-  FieldItemData tData(FieldItemData::ePrimitive,
+  FieldItemData tData(FieldItemData::ePrimitive,tKey,
       aField._Name,aField._Type,tMatch);
 
   FieldItem *dataItem = new FieldItem(tData,aParentItem);
 
   aParentItem->appendChild(dataItem);
+}
+
+//-------------------------------------------------------------------------------
+// Build a primitive array node for a struct field.
+//-------------------------------------------------------------------------------
+std::string DataStructModel::buildKey(
+    Field &aField,FieldItem *aParentItem,bool aIsArrayType)
+{
+  std::string tKey;
+
+  FieldItemData &tParentData = aParentItem->getData();
+
+  if (tParentData.getKey().length() > 0)
+  {
+    tKey = tParentData.getKey() + "." + aField._Name;
+  }
+  else
+  {
+    tKey = aField._Name;
+  }
+
+  if (aIsArrayType)
+  {
+    tKey += "[]";
+  }
+
+  return tKey;
 }
 
 //-------------------------------------------------------------------------------
@@ -521,6 +552,10 @@ QVariant DataStructModel::headerData(int section,Qt::Orientation orientation,
     if (section == eColFieldName)
     {
       return QVariant("Field Name");
+    }
+    else if (section == eColFieldKey)
+    {
+      return QVariant("Field Key");
     }
     else if (section == eColFieldType)
     {

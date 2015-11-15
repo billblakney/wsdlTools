@@ -44,7 +44,7 @@ public:
   // data related methods
   //===========================================================================
 
-  FieldItemData getData();
+  FieldItemData &getData();
 
   void setCheckState(Qt::CheckState aCheckState);
 

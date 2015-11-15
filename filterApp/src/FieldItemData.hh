@@ -19,6 +19,7 @@ public:
 
   FieldItemData(
       NodeType aNodeType,
+      std::string aKey,
       std::string aName,
       std::string aType,
       std::string aMatch = "",
@@ -28,33 +29,36 @@ public:
 
   virtual ~FieldItemData();
 
-  Qt::CheckState getCheckState() const;
+  FieldItemData::NodeType getNodeType() const;
+  const std::string& getKey() const;
+  const std::string& getName() const;
+  const std::string& getType() const;
   const std::string& getMatch() const;
   const std::string& getTest() const;
-  const std::string& getName() const;
-  FieldItemData::NodeType getNodeType() const;
   const std::string& getPostfix() const;
-  const std::string& getType() const;
+  Qt::CheckState getCheckState() const;
 
-  void setCheckState(Qt::CheckState checkState);
+  void setNodeType(NodeType nodeType);
+  void setKey(const std::string& key);
+  void setName(const std::string& name);
+  void setType(const std::string& type);
   void setMatch(const std::string& match);
   void setTest(const std::string& test);
-  void setName(const std::string& name);
-  void setNodeType(NodeType nodeType);
   void setPostfix(const std::string& postfix);
-  void setType(const std::string& type);
+  void setCheckState(Qt::CheckState checkState);
 
 protected:
 
 //  static ccl::Logger sLogger;
 
   NodeType           _NodeType;
-  Qt::CheckState     _CheckState;
+  std::string        _Key;
   std::string        _Name;
   std::string        _Type;
   std::string        _FieldMatch;
   std::string        _FieldTest;
   std::string        _Postfix;
+  Qt::CheckState     _CheckState;
 };
 
 #endif /* FIELDITEMDATA_HH_ */
