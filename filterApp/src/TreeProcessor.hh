@@ -7,11 +7,13 @@
 class TreeProcessor
 {
 public:
-  TreeProcessor();
+  TreeProcessor(FieldItem *aTopNode);
   virtual ~TreeProcessor();
-  virtual bool process(FieldItem *aRootItem);
+  virtual bool process();
 protected:
-  ccl::Logger sLogger;
+  static ccl::Logger sLogger;
+  FieldItem *_TopNode;
+  virtual bool process(FieldItem *aNode);
   virtual bool processRootNode(FieldItem *aNode);
   virtual bool processStructNode(FieldItem *aNode);
   virtual bool processStructArrayNode(FieldItem *aNode);

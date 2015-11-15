@@ -2,12 +2,18 @@
 
 ccl::Logger TreeProcessor::sLogger("TreeProcessor");
 
-TreeProcessor::TreeProcessor()
+TreeProcessor::TreeProcessor(FieldItem *aTopNode)
+  : _TopNode(aTopNode)
 {
 }
 
 TreeProcessor::~TreeProcessor()
 {
+}
+
+bool TreeProcessor::process()
+{
+  return process(_TopNode);
 }
 
 bool TreeProcessor::process(FieldItem *aNode)

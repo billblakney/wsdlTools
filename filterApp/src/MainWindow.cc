@@ -147,5 +147,6 @@ void MainWindow::onSetFilterClicked(bool)
 {
   std::string tMatchString = _DataStructModel->getMatchString();
   _Writer->setMatchRegex(tMatchString);
-TreeProcessor::traverse(_DataStructModel->getTopNode());
+TreeProcessor *tProcessor = new TreeProcessor(_DataStructModel->getTopNode());
+tProcessor->process();
 }

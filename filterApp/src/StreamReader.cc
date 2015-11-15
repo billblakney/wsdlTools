@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "SimpleLineMatcher.hh"
 
@@ -50,6 +51,9 @@ void StreamReader::run()
 
   vector<std::string> tStructLines;
 
+RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
+    _DataStructModel->getTopNode(),tStructLines);
+
   bool tFoundStart = false;
   bool tFoundFirstField = false;
 
@@ -97,6 +101,20 @@ void StreamReader::run()
 
 #define USE_OLD
 #ifdef USE_OLD
+        if (tRecordProcessor->process())
+        {
+          std::vector<std::string> &tOutLines = tRecordProcessor->getOutLines();
+          std::vector<std::string>::iterator tIter;
+          for (tIter = tOutLines.begin(); tIter != tOutLines.end(); tIter++)
+          {
+            std::cout << ">>" << *tIter << std::endl; //TODO
+          }
+        }
+        else
+        {
+          std::cout << "ERROR: tRecordProcessor->process() returned false" << std::endl;
+        }
+#if 0
         if (_DataStructModel->processStructLines(tStructLines,tOutLines))
         {
           std::vector<std::string>::iterator tIter;
@@ -109,6 +127,7 @@ void StreamReader::run()
         {
           std::cout << "ERROR: processLinesIn returned false" << std::endl;
         }
+#endif
 #else
         std::vector<RecordWriter *>::iterator tIt;
         for (tIt = _Writers.begin(); tIt != _Writers.end(); tIt++)
