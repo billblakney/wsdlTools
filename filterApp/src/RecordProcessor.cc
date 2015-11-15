@@ -41,30 +41,30 @@ void RecordProcessor::reset()
 }
 
 //-----------------------------------------------------------------------------
-// Processes the set of lines for a root node.
-// Directly consumes the set of lines for a root node, which happens to be an
-// empty set in this case, and indirectly consumes the set of lines for the
-// entire tree represented by the root node.
+// Processes the set of lines for record.
+// Doesn't directly consume any lines. Indirectly consumes the set of lines
+// for the entire record represented by the root node.
 //-----------------------------------------------------------------------------
 bool RecordProcessor::processRootNode(FieldItem *aNode)
 {
-  INFO(sLogger,"processing eRoot: " << aNode->getData().getName());
+  DEBUG(sLogger,"processing eRoot: " << aNode->getData().getName());
+
   return processChildren(aNode);
 }
 
 //-----------------------------------------------------------------------------
 // Processes the set of lines for a struct.
 // If the node being processed is a struct node, then a single header line is
-// directly consumed, and the set of lines for the entire struct is indirectly
-// consumed. If the node being processed is a struct array node, then no lines
-// are directly consumed, since no header line is present, and the set of lines
-// for the entire struct are indirectly consumed.
+// directly consumed. If the node being processed is a struct array node, then
+// no lines are directly consumed, since no header line is present. In both
+// cases the set of lines for the entire struct are indirectly consumed.
 // When a struct array node is calling this routine, it will call this method
 // repeatedly for the number of struct elements in the array.
 //-----------------------------------------------------------------------------
 bool RecordProcessor::processStructNode(FieldItem *aNode)
 {
   DEBUG(sLogger,"processing eStruct: " << aNode->getData().getMatch());
+
   /*
    * If the node being processed is a regular struct node, then the set of
    * lines to be processed will include a header line with the struct name.
@@ -213,7 +213,8 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode)
   _Matcher.setMatchRegex(aNode->getData().getMatch());
   if (_Matcher.match(tLine))
   {
-    DEBUG(sLogger,"primitive array node matched: " << aNode->getData().getMatch());
+    DEBUG(sLogger,"primitive array node matched: "
+        << aNode->getData().getMatch());
   }
   else
   {

@@ -280,24 +280,6 @@ std::string DataStructModel::buildMatchForStructField(
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool DataStructModel::processStructLines(
-    std::vector<std::string> &aLinesIn,std::vector<std::string> &aLinesOut)
-{
-  vector<std::string>::iterator aLineIter = aLinesIn.begin();
-  bool tSuccess = _TopNodeItem->processLines(aLinesIn,aLineIter,aLinesOut);
-  if (tSuccess)
-  {
-    DEBUG(sLogger,"successfully processed " << _TopNodeItem->getData().getName());
-  }
-  else
-  {
-    ERROR(sLogger,"Processing: " << _TopNodeItem->getData().getName());
-  }
-  return tSuccess;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
 std::string DataStructModel::getDotString(StructorBuilder *aStructBuilder,
     std::string aName,std::string aPrefix)
 {
