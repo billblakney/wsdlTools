@@ -103,11 +103,19 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
 #ifdef USE_NEW
         if (tRecordProcessor->process())
         {
-          std::vector<std::string> &tOutLines = tRecordProcessor->getOutLines();
-          std::vector<std::string>::iterator tIter;
-          for (tIter = tOutLines.begin(); tIter != tOutLines.end(); tIter++)
+          if (tRecordProcessor->passedFilterTests())
           {
-            std::cout << ">>" << *tIter << std::endl; //TODO
+            DEBUG(sLogger,"record passed filter tests");
+            std::vector<std::string> &tOutLines = tRecordProcessor->getOutLines();
+            std::vector<std::string>::iterator tIter;
+            for (tIter = tOutLines.begin(); tIter != tOutLines.end(); tIter++)
+            {
+              std::cout << ">>" << *tIter << std::endl; //TODO
+            }
+          }
+          else
+          {
+            DEBUG(sLogger,"record failed filter tests");
           }
         }
         else

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "FieldItem.hh"
 #include "SimpleLineMatcher.hh"
+#include "DataStructModel.hh"
 
 ccl::Logger FieldItem::sLogger("FieldItem");
 
@@ -100,7 +101,7 @@ void FieldItem::setCheckState(Qt::CheckState aCheckState)
 //-------------------------------------------------------------------------------
 void FieldItem::setFieldMatch(const QVariant &aValue)
 {
-  _ItemData[eMatchCol] = QVariant(QString(aValue.toString()));
+  _ItemData[DataStructModel::eColMatchRegex] = QVariant(QString(aValue.toString()));
   _FieldItemData.setMatch(aValue.toString().toStdString());
 }
 
@@ -108,7 +109,7 @@ void FieldItem::setFieldMatch(const QVariant &aValue)
 //-------------------------------------------------------------------------------
 void FieldItem::setFieldTest(const QVariant &aValue)
 {
-  _ItemData[eTestCol] = QVariant(QString(aValue.toString()));
+  _ItemData[DataStructModel::eColTestRegex] = QVariant(QString(aValue.toString()));
   _FieldItemData.setTest(aValue.toString().toStdString());
 }
 
@@ -116,6 +117,6 @@ void FieldItem::setFieldTest(const QVariant &aValue)
 //-------------------------------------------------------------------------------
 void FieldItem::setFieldPostfix(const QVariant &aValue)
 {
-  _ItemData[ePostfixCol] = aValue;
+  _ItemData[DataStructModel::eColPostfix] = aValue;
   _FieldItemData.setPostfix(aValue.toString().toStdString());
 }

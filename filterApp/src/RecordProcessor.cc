@@ -1,3 +1,4 @@
+#include <boost/regex.hpp>
 #include "RecordProcessor.hh"
 
 ccl::Logger RecordProcessor::sLogger("RecordProcessor");
@@ -7,7 +8,8 @@ ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 RecordProcessor::RecordProcessor(
     FieldItem *aTopNode,std::vector<std::string> &aLinesIn)
   : TreeProcessor(aTopNode),
-    _LinesIn(aLinesIn)
+    _LinesIn(aLinesIn),
+    _TestResult(true)
 {
 }
 
@@ -27,6 +29,13 @@ bool RecordProcessor::process()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+bool RecordProcessor::passedFilterTests()
+{
+  return _TestResult;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 std::vector<std::string> &RecordProcessor::getOutLines()
 {
   return _LinesOut;
@@ -38,6 +47,7 @@ void RecordProcessor::reset()
 {
   _LineIter = _LinesIn.begin();
   _LinesOut.clear();
+  _TestResult = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -188,6 +198,14 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode)
         << aNode->getData().getMatch() << ">");
     return false;
   }
+
+  std::string tFieldValue = _Matcher.getWhat();
+  if (!testForMatch(tFieldValue,aNode->getData().getTest()))
+  {
+    DEBUG(sLogger,"test FAILED for " << aNode->getData().getName());
+    _TestResult = false;
+  }
+
   return true;
 }
 
@@ -295,5 +313,33 @@ bool RecordProcessor::processPrimitiveArrayLine(FieldItem *aNode)
     return false;
   }
 
+  std::string tFieldValue = _Matcher.getWhat();
+  if (!testForMatch(tFieldValue,aNode->getData().getTest()))
+  {
+    DEBUG(sLogger,"test FAILED");
+    _TestResult = false;
+  }
+
   return true;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool RecordProcessor::testForMatch(std::string &aValue,std::string &aTest)
+{
+  bool tMatches = true;
+
+std::cout << "value,test: " << aValue << "," << aTest << std::endl;
+  if (aTest.length() > 0)
+  {
+    boost::regex tMatchRegex(aTest);
+    boost::match_results<std::string::const_iterator> what;
+
+    if (!boost::regex_match(aValue,what,tMatchRegex))
+    {
+      tMatches = false;
+    }
+  }
+
+  return tMatches;
 }

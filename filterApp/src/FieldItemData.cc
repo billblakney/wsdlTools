@@ -40,16 +40,6 @@ FieldItemData::FieldItemData(
 
   }
 
-#if 0
-  void setNodeType(NodeType nodeType);
-  void setKey(const std::string& key);
-  void setName(const std::string& name);
-  void setType(const std::string& type);
-  void setMatch(const std::string& match);
-  void setTest(const std::string& test);
-  void setPostfix(const std::string& postfix);
-  void setCheckState(Qt::CheckState checkState);
-#endif
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 FieldItemData::~FieldItemData()
@@ -59,42 +49,42 @@ FieldItemData::~FieldItemData()
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 
-FieldItemData::NodeType FieldItemData::getNodeType() const
+FieldItemData::NodeType FieldItemData::getNodeType()
 {
   return _NodeType;
 }
 
-const std::string& FieldItemData::getKey() const
+std::string& FieldItemData::getKey()
 {
   return _Key;
 }
 
-const std::string& FieldItemData::getName() const
+std::string& FieldItemData::getName()
 {
   return _Name;
 }
 
-const std::string& FieldItemData::getType() const
+std::string& FieldItemData::getType()
 {
   return _Type;
 }
 
-const std::string& FieldItemData::getMatch() const
+std::string& FieldItemData::getMatch()
 {
   return _FieldMatch;
 }
 
-const std::string& FieldItemData::getTest() const
+std::string& FieldItemData::getTest()
 {
   return _FieldTest;
 }
 
-const std::string& FieldItemData::getPostfix() const
+std::string& FieldItemData::getPostfix()
 {
   return _Postfix;
 }
 
-Qt::CheckState FieldItemData::getCheckState() const
+Qt::CheckState FieldItemData::getCheckState()
 {
   return _CheckState;
 }

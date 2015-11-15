@@ -289,7 +289,7 @@ std::string DataStructModel::buildMatchForPrimitiveField(
     const Field &aField,int aIndentLevel)
 {
   static char tBuffer[200];
-  sprintf(tBuffer,"^[\\t]{%d}(%s):[\\s]+(.*)",aIndentLevel,aField._Name.c_str());
+  sprintf(tBuffer,"^[\\t]{%d}%s:[\\s]+(.*)",aIndentLevel,aField._Name.c_str());
   return tBuffer;
 }
 

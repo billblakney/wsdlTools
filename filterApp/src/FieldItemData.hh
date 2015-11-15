@@ -29,14 +29,14 @@ public:
 
   virtual ~FieldItemData();
 
-  FieldItemData::NodeType getNodeType() const;
-  const std::string& getKey() const;
-  const std::string& getName() const;
-  const std::string& getType() const;
-  const std::string& getMatch() const;
-  const std::string& getTest() const;
-  const std::string& getPostfix() const;
-  Qt::CheckState getCheckState() const;
+  FieldItemData::NodeType getNodeType();
+  std::string& getKey();
+  std::string& getName();
+  std::string& getType();
+  std::string& getMatch();
+  std::string& getTest();
+  std::string& getPostfix();
+  Qt::CheckState getCheckState();
 
   void setNodeType(NodeType nodeType);
   void setKey(const std::string& key);

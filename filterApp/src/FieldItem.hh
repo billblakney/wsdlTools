@@ -16,8 +16,6 @@ class FieldItem
 {
 public:
 
-  enum Column {eNameCol, eTypeCol, eMatchCol, eTestCol, ePostfixCol};
-
   FieldItem(FieldItemData aData,FieldItem *aParentItem = 0);
 
   virtual ~FieldItem();

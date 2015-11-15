@@ -30,14 +30,18 @@ public:
 
   virtual bool process();
 
+  bool passedFilterTests();
+
   std::vector<std::string> &getOutLines();
 
 protected:
+
   static ccl::Logger sLogger;
 
   std::vector<std::string>           &_LinesIn;
   std::vector<std::string>            _LinesOut;
   std::vector<std::string>::iterator  _LineIter;
+  bool                                _TestResult;
 
   SimpleLineMatcher _Matcher;
 
@@ -49,6 +53,8 @@ protected:
   virtual bool processPrimitiveNode(FieldItem *aNode);
   virtual bool processPrimitiveArrayNode(FieldItem *aNode);
   bool processPrimitiveArrayLine(FieldItem *aNode);
+
+  bool testForMatch(std::string &aValue,std::string &aTest);
 };
 
 #endif /* _RECORDPROCESSOR_HH_ */
