@@ -50,6 +50,8 @@ public:
 
   void setFieldTest(const QVariant &value);
 
+  void setTestKey(const QVariant &value);
+
   void setFieldPostfix(const QVariant &value);
 
 protected:

@@ -15,10 +15,11 @@ FieldItem::FieldItem(FieldItemData aData,FieldItem *aParentItem)
   QList<QVariant> tList;
 
   _ItemData.append(QVariant(aData.getName().c_str()));
+  _ItemData.append(QVariant(aData.getTest().c_str()));
+  _ItemData.append(QVariant(aData.getTestKey().c_str()));
   _ItemData.append(QVariant(aData.getKey().c_str()));
   _ItemData.append(QVariant(aData.getType().c_str()));
   _ItemData.append(QVariant(aData.getMatch().c_str()));
-  _ItemData.append(QVariant(aData.getTest().c_str()));
   _ItemData.append(QVariant(QString("newline (\"\\n\")")));
 }
 
@@ -111,6 +112,14 @@ void FieldItem::setFieldTest(const QVariant &aValue)
 {
   _ItemData[DataStructModel::eColTestRegex] = QVariant(QString(aValue.toString()));
   _FieldItemData.setTest(aValue.toString().toStdString());
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void FieldItem::setTestKey(const QVariant &aValue)
+{
+  _ItemData[DataStructModel::eColTestKey] = QVariant(QString(aValue.toString()));
+  _FieldItemData.setTestKey(aValue.toString().toStdString());
 }
 
 //-------------------------------------------------------------------------------

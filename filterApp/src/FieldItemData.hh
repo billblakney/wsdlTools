@@ -24,6 +24,7 @@ public:
       std::string aType,
       std::string aMatch = "",
       std::string aTest = "",
+      std::string aTestKey = "",
       std::string aPostfix = "newline (\"\\n\")",
       Qt::CheckState aCheckState = Qt::Unchecked);
 
@@ -35,6 +36,7 @@ public:
   std::string& getType();
   std::string& getMatch();
   std::string& getTest();
+  std::string& getTestKey();
   std::string& getPostfix();
   Qt::CheckState getCheckState();
 
@@ -44,6 +46,7 @@ public:
   void setType(const std::string& type);
   void setMatch(const std::string& match);
   void setTest(const std::string& test);
+  void setTestKey(const std::string& test);
   void setPostfix(const std::string& postfix);
   void setCheckState(Qt::CheckState checkState);
 
@@ -57,6 +60,7 @@ protected:
   std::string        _Type;
   std::string        _FieldMatch;
   std::string        _FieldTest;
+  std::string        _TestKey;
   std::string        _Postfix;
   Qt::CheckState     _CheckState;
 };

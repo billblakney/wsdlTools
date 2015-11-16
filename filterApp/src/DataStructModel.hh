@@ -16,10 +16,11 @@ public:
 
   enum ColumnId {
     eColFieldName = 0,
+    eColTestRegex,
+    eColTestKey,
     eColFieldKey,
     eColFieldType,
     eColMatchRegex,
-    eColTestRegex,
     eColPostfix,
     eNumColumns
   };

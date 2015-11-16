@@ -509,6 +509,11 @@ bool DataStructModel::setData(
       item->setFieldTest(value);
       emit dataChanged(index,index);
     }
+    else if (aCol == eColTestKey)
+    {
+      item->setTestKey(value);
+      emit dataChanged(index,index);
+    }
     else if (aCol == eColPostfix)
     {
       item->setFieldPostfix(value);
@@ -536,6 +541,7 @@ Qt::ItemFlags DataStructModel::flags(const QModelIndex &index) const
 
   if (index.column() == eColMatchRegex ||
       index.column() == eColTestRegex ||
+      index.column() == eColTestKey ||
       index.column() == eColPostfix)
   {
     tFlags |= Qt::ItemIsEditable;
@@ -570,6 +576,10 @@ QVariant DataStructModel::headerData(int section,Qt::Orientation orientation,
     else if (section == eColTestRegex)
     {
       return QVariant("Test Regex");
+    }
+    else if (section == eColTestKey)
+    {
+      return QVariant("Test Key");
     }
     else if (section == eColPostfix)
     {
