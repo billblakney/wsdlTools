@@ -492,7 +492,9 @@ bool DataStructModel::setData(
       setChildrenCheckStates(index,tNewState);
     }
 
+#ifdef UPDATE_PARENT_CHECK_STATES
     updateParentCheckState(index,tNewState);
+#endif
   }
   else if (role == Qt::EditRole)
   {

@@ -89,6 +89,10 @@ bool RecordProcessor::processStructNode(FieldItem *aNode)
     _Matcher.setMatchRegex(aNode->getData().getMatch());
     if (_Matcher.match(tLine))
     {
+      if (aNode->getData().getCheckState() == Qt::Checked)
+      {
+        _LinesOut.push_back(tLine);
+      }
       DEBUG(sLogger,"struct node matched: " << aNode->getData().getMatch());
     }
     else
@@ -122,6 +126,10 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode)
   _Matcher.setMatchRegex(aNode->getData().getMatch());
   if (_Matcher.match(tLine))
   {
+    if (aNode->getData().getCheckState() == Qt::Checked)
+    {
+      _LinesOut.push_back(tLine);
+    }
     DEBUG(sLogger,"struct array node matched: " << aNode->getData().getMatch());
   }
   else
@@ -231,6 +239,10 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode)
   _Matcher.setMatchRegex(aNode->getData().getMatch());
   if (_Matcher.match(tLine))
   {
+    if (aNode->getData().getCheckState() == Qt::Checked)
+    {
+      _LinesOut.push_back(tLine);
+    }
     DEBUG(sLogger,"primitive array node matched: "
         << aNode->getData().getMatch());
   }
@@ -329,9 +341,10 @@ bool RecordProcessor::testForMatch(std::string &aValue,std::string &aTest)
 {
   bool tMatches = true;
 
-std::cout << "value,test: " << aValue << "," << aTest << std::endl;
   if (aTest.length() > 0)
   {
+    DEBUG(sLogger,"value,test: " << aValue << "," << aTest);
+
     boost::regex tMatchRegex(aTest);
     boost::match_results<std::string::const_iterator> what;
 

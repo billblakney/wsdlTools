@@ -41,16 +41,16 @@ MainWindow::~MainWindow()
 //-----------------------------------------------------------------------------
 void MainWindow::setupView()
 {
-  //-------------------------
-  // Parse the header file.
-  //-------------------------
+  /*
+   * Parse the header file.
+   */
   _StructorBuilder = lex_main((char *) _HFile.c_str());
 //   _StructorBuilder->printSummary();
 //   _StructorBuilder->postProcess();
 
-  //-------------------------
-  // Create structure dropdown list.
-  //-------------------------
+  /*
+   * Create structure dropdown list.
+   */
   std::vector<std::string> tStructNames = _StructorBuilder->getStructNames();
   _StructComboBox = new QComboBox(this);
   _StructComboBox->addItems(convertToQStringList(tStructNames));
@@ -62,9 +62,9 @@ void MainWindow::setupView()
   connect(_StructComboBox, SIGNAL(activated(int)), this,
       SLOT(onStructComboBoxActivated(int)));
 
-  //-------------------------
-  // Create structure tree view.
-  //-------------------------
+  /*
+   * Create structure tree view.
+   */
   _StructTree = new StructTreeView(this);
   setTreeViewStruct(_InitialStruct);
   _StructTree->header()->resizeSection(0, 225);
@@ -76,16 +76,16 @@ void MainWindow::setupView()
   _StructTree->expand(_StructTree->model()->index(0, 0, QModelIndex()));
 #endif
 
-  //-------------------------
-  // Pushbutton for setting filter.
-  //-------------------------
+  /*
+   * Pushbutton for setting filter.
+   */
   QPushButton *tButton = new QPushButton("Set Filter", this);
 
   connect(tButton, SIGNAL(clicked(bool)), this, SLOT(onSetFilterClicked(bool)));
 
-  //-------------------------
-  // Put widgets in the dialog using box layout.
-  //-------------------------
+  /*
+   * Put widgets in the dialog using box layout.
+   */
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(_StructComboBox);
   layout->addWidget(_StructTree);
@@ -93,14 +93,14 @@ void MainWindow::setupView()
 
   setLayout(layout);
 
-  //-------------------------
-  // Record writer.
-  //-------------------------
+  /*
+   * Record writer.
+   */
   _Writer = new SimpleRecordWriter();
 
-  //-------------------------
-  // Stream reader.
-  //-------------------------
+  /*
+   * Stream reader.
+   */
   _StreamReader = new StreamReader(_DataStructModel, _Writer);
   _StreamReader->start();
 }

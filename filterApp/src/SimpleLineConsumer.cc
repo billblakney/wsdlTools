@@ -42,7 +42,7 @@ bool SimpleLineConsumer::consume()
   {
     std::getline(_Stream,_LineBuffer);
 
-std::cout << "testing [" << _LineBuffer << "] against [" << _MatchRegex << "]" << std::endl;
+//std::cout << "testing [" << _LineBuffer << "] against [" << _MatchRegex << "]" << std::endl;
     boost::match_results<std::string::const_iterator> what;
     if (boost::regex_match(_LineBuffer,what,_MatchRegex))
     {
