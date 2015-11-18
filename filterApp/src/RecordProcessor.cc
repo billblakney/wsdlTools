@@ -1,3 +1,4 @@
+#include <sstream>
 #include <boost/regex.hpp>
 #include "RecordProcessor.hh"
 
@@ -55,7 +56,7 @@ void RecordProcessor::reset()
 // Doesn't directly consume any lines. Indirectly consumes the set of lines
 // for the entire record represented by the root node.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processRootNode(FieldItem *aNode)
+bool RecordProcessor::processRootNode(FieldItem *aNode,void *aData)
 {
   DEBUG(sLogger,"processing eRoot: " << aNode->getData().getName());
 
@@ -71,7 +72,7 @@ bool RecordProcessor::processRootNode(FieldItem *aNode)
 // When a struct array node is calling this routine, it will call this method
 // repeatedly for the number of struct elements in the array.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processStructNode(FieldItem *aNode)
+bool RecordProcessor::processStructNode(FieldItem *aNode,void *aData)
 {
   DEBUG(sLogger,"processing eStruct: " << aNode->getData().getMatch());
 
@@ -101,6 +102,11 @@ bool RecordProcessor::processStructNode(FieldItem *aNode)
           << aNode->getData().getMatch() << ">");
       return false;
     }
+
+    RecLine tRecLine;
+    tRecLine.line = tLine;
+    tRecLine.scope = aNode->getData().getKey();
+    INFO(sLogger,"<recline> " << tRecLine.scope << ": " << tRecLine.line);
   }
   return processChildren(aNode);
 }
@@ -111,7 +117,7 @@ bool RecordProcessor::processStructNode(FieldItem *aNode)
 // and one specifying the array length. Indirectly consumes all of the lines
 // for all of the struct array elements.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processStructArrayNode(FieldItem *aNode)
+bool RecordProcessor::processStructArrayNode(FieldItem *aNode,void *aData)
 {
   DEBUG(sLogger,"Looking for struct array with match: " << aNode->getData().getMatch());
 
@@ -159,6 +165,11 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode)
     return false;
   }
 
+  RecLine tRecLine;
+  tRecLine.line = tLine;
+  tRecLine.scope = aNode->getData().getKey();
+  INFO(sLogger,"<recline> " << tRecLine.scope << ": " << tRecLine.line);
+
   int tArrayLen = atoi(_Matcher.getWhat().c_str());
 
   /*
@@ -166,7 +177,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode)
    */
   for (int tIdx = 0; tIdx < tArrayLen; tIdx++)
   {
-    bool tResult = processStructNode(aNode);
+    bool tResult = processStructNode(aNode,aData);
     if (tResult == false)
     {
       return false;
@@ -180,7 +191,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode)
 // Processes the line for a primitive node. The line consists of the field
 // name and its value.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processPrimitiveNode(FieldItem *aNode)
+bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,void *aData)
 {
   /*
    * Going to test the single line that represents a primitive field.
@@ -207,6 +218,11 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode)
     return false;
   }
 
+  RecLine tRecLine;
+  tRecLine.line = tLine;
+  tRecLine.scope = aNode->getData().getKey();
+  INFO(sLogger,"<recline> " << tRecLine.scope << ": " << tRecLine.line);
+
   std::string tFieldValue = _Matcher.getWhat();
   if (!testForMatch(tFieldValue,aNode->getData().getTest()))
   {
@@ -223,7 +239,7 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode)
 // specifying the array length. Indirectly consumes all of the lines for the
 // entire primitive array.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode)
+bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,void *aData)
 {
   DEBUG(sLogger,"Looking for primitive array with match: "
       << aNode->getData().getMatch());
@@ -253,6 +269,11 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode)
     return false;
   }
 
+  RecLine tRecLine;
+  tRecLine.line = tLine;
+  tRecLine.scope = aNode->getData().getKey();
+  INFO(sLogger,"<recline> " << tRecLine.scope << ": " << tRecLine.line);
+
   /*
    * Going to test the line that specifies the number of elements in the
    * primitive array. So get a reference to it, and increment the iterator.
@@ -281,7 +302,7 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode)
    */
   for (int tIdx = 0; tIdx < tArrayLen; tIdx++)
   {
-    bool tResult = processPrimitiveArrayLine(aNode);
+    bool tResult = processPrimitiveArrayLine(aNode,aData,tIdx);
     if (tResult == false)
     {
       return false;
@@ -295,7 +316,8 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode)
 // Processes a line that specifies an element of a primitive array.
 // Directly consumes that single line. No other lines are indirectly consumed.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processPrimitiveArrayLine(FieldItem *aNode)
+bool RecordProcessor::processPrimitiveArrayLine(
+    FieldItem *aNode,void *aData,int aIdx)
 {
   /*
    * Going to test the single line that represents a primitive array item.
@@ -324,6 +346,13 @@ bool RecordProcessor::processPrimitiveArrayLine(FieldItem *aNode)
         << tPrimitiveArrayItemRegex << ">");
     return false;
   }
+
+  RecLine tRecLine;
+  tRecLine.line = tLine;
+  std::stringstream tStream;
+  tStream << aIdx;
+  tRecLine.scope = aNode->getData().getKey() + "[" + tStream.str() + "]";
+  INFO(sLogger,"<recline> " << tRecLine.scope << ": " << tRecLine.line);
 
   std::string tFieldValue = _Matcher.getWhat();
   if (!testForMatch(tFieldValue,aNode->getData().getTest()))

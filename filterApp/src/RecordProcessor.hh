@@ -36,6 +36,13 @@ public:
 
 protected:
 
+  struct RecLine {
+    std::string line;
+    std::string scope;
+  };
+
+  std::vector<RecLine> _RecLines;
+
   static ccl::Logger sLogger;
 
   std::vector<std::string>           &_LinesIn;
@@ -47,12 +54,12 @@ protected:
 
   void reset();
 
-  virtual bool processRootNode(FieldItem *aNode);
-  virtual bool processStructNode(FieldItem *aNode);
-  virtual bool processStructArrayNode(FieldItem *aNode);
-  virtual bool processPrimitiveNode(FieldItem *aNode);
-  virtual bool processPrimitiveArrayNode(FieldItem *aNode);
-  bool processPrimitiveArrayLine(FieldItem *aNode);
+  virtual bool processRootNode(FieldItem *aNode,void *aData);
+  virtual bool processStructNode(FieldItem *aNode,void *aData);
+  virtual bool processStructArrayNode(FieldItem *aNode,void *aData);
+  virtual bool processPrimitiveNode(FieldItem *aNode,void *aData);
+  virtual bool processPrimitiveArrayNode(FieldItem *aNode,void *aData);
+  bool processPrimitiveArrayLine(FieldItem *aNode,void *aData,int aIdx);
 
   bool testForMatch(std::string &aValue,std::string &aTest);
 };

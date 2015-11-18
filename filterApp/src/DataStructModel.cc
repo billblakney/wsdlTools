@@ -257,10 +257,12 @@ std::string DataStructModel::buildKey(
     tKey = aField._Name;
   }
 
+#if 0 //TODO remove after confirm don't need anymore
   if (aIsArrayType)
   {
     tKey += "[]";
   }
+#endif
 
   return tKey;
 }

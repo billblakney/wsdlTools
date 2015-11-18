@@ -16,7 +16,7 @@ bool TreeProcessor::process()
   return process(_TopNode);
 }
 
-bool TreeProcessor::process(FieldItem *aNode)
+bool TreeProcessor::process(FieldItem *aNode,void *aData)
 {
   if ( aNode->getData().getNodeType() == FieldItemData::eRoot )
   {
@@ -47,41 +47,41 @@ bool TreeProcessor::process(FieldItem *aNode)
   return true;
 }
 
-bool TreeProcessor::processRootNode(FieldItem *aNode)
+bool TreeProcessor::processRootNode(FieldItem *aNode,void *aData)
 {
   INFO(sLogger,"<process> eRoot: " << aNode->getData().getName());
   return processChildren(aNode);
 }
 
-bool TreeProcessor::processStructNode(FieldItem *aNode)
+bool TreeProcessor::processStructNode(FieldItem *aNode,void *aData)
 {
   INFO(sLogger,"<process> eStruct: " << aNode->getData().getName());
   return processChildren(aNode);
 }
 
-bool TreeProcessor::processStructArrayNode(FieldItem *aNode)
+bool TreeProcessor::processStructArrayNode(FieldItem *aNode,void *aData)
 {
   INFO(sLogger,"<process> eStructArray: " << aNode->getData().getName());
   return processChildren(aNode);
 }
 
-bool TreeProcessor::processPrimitiveNode(FieldItem *aNode)
+bool TreeProcessor::processPrimitiveNode(FieldItem *aNode,void *aData)
 {
   INFO(sLogger,"<process> ePrimitive: " << aNode->getData().getName());
   return true;
 }
 
-bool TreeProcessor::processPrimitiveArrayNode(FieldItem *aNode)
+bool TreeProcessor::processPrimitiveArrayNode(FieldItem *aNode,void *aData)
 {
   INFO(sLogger,"<process> ePrimitiveArray: " << aNode->getData().getName());
   return true;
 }
 
-bool TreeProcessor::processChildren(FieldItem *aNode)
+bool TreeProcessor::processChildren(FieldItem *aNode,void *aData)
 {
   for (int tIdx = 0; tIdx < aNode->childCount(); tIdx++)
   {
-    bool tResult = process(aNode->child(tIdx));
+    bool tResult = process(aNode->child(tIdx),aData);
     if (tResult == false)
     {
       ERROR(sLogger,"<process> traversing child failed");
