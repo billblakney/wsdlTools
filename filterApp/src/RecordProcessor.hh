@@ -20,7 +20,7 @@
  *      linesOut.clear();
  *    }
  */
-class RecordProcessor : public TreeProcessor
+class RecordProcessor
 {
 public:
 
@@ -28,7 +28,7 @@ public:
 
   virtual ~RecordProcessor();
 
-  virtual bool process();
+  bool process();
 
   bool passedFilterTests();
 
@@ -40,6 +40,8 @@ protected:
     std::string line;
     std::string scope;
   };
+
+  FieldItem *_TopNode;
 
   std::vector<RecLine> _RecLines;
 
@@ -54,14 +56,20 @@ protected:
 
   void reset();
 
-  virtual bool processRootNode(FieldItem *aNode,void *aData);
-  virtual bool processStructNode(FieldItem *aNode,void *aData);
-  virtual bool processStructArrayNode(FieldItem *aNode,void *aData);
-  virtual bool processPrimitiveNode(FieldItem *aNode,void *aData);
-  virtual bool processPrimitiveArrayNode(FieldItem *aNode,void *aData);
-  bool processPrimitiveArrayLine(FieldItem *aNode,void *aData,int aIdx);
+  bool process(FieldItem *aNode,std::string &aDotString);
+  bool processRootNode(FieldItem *aNode,std::string &aDotString);
+  bool processStructNode(FieldItem *aNode,std::string &aDotString);
+  bool processStructArrayNode(FieldItem *aNode,std::string &aDotString);
+  bool processPrimitiveNode(FieldItem *aNode,std::string &aDotString);
+  bool processPrimitiveArrayNode(FieldItem *aNode,std::string &aDotString);
+  bool processPrimitiveArrayLine(FieldItem *aNode,std::string &aDotString,int aIdx);
+  bool processChildren(FieldItem *aNode,std::string &aDotString);
 
   bool testForMatch(std::string &aValue,std::string &aTest);
+
+  void appendToDotString( std::string &aSuffix,std::string &aDotString);
+
+  void print(const std::string &s1,const std::string &s2);
 };
 
 #endif /* _RECORDPROCESSOR_HH_ */

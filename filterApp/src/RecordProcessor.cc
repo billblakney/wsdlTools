@@ -8,7 +8,7 @@ ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 //-----------------------------------------------------------------------------
 RecordProcessor::RecordProcessor(
     FieldItem *aTopNode,std::vector<std::string> &aLinesIn)
-  : TreeProcessor(aTopNode),
+  : _TopNode(aTopNode),
     _LinesIn(aLinesIn),
     _TestResult(true)
 {
@@ -25,7 +25,8 @@ RecordProcessor::~RecordProcessor()
 bool RecordProcessor::process()
 {
   reset();
-  return TreeProcessor::process();
+  std::string tDotString;
+  return process(_TopNode,tDotString);
 }
 
 //-----------------------------------------------------------------------------
@@ -52,15 +53,48 @@ void RecordProcessor::reset()
 }
 
 //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool RecordProcessor::process(FieldItem *aNode,std::string &aDotString)
+{
+  if ( aNode->getData().getNodeType() == FieldItemData::eRoot )
+  {
+    processRootNode(aNode,aDotString);
+  }
+  else if ( aNode->getData().getNodeType() == FieldItemData::eStruct)
+  {
+    processStructNode(aNode,aDotString);
+  }
+  else if (aNode->getData().getNodeType() == FieldItemData::eStructArray)
+  {
+    processStructArrayNode(aNode,aDotString);
+  }
+  else if (aNode->getData().getNodeType() == FieldItemData::ePrimitive)
+  {
+    processPrimitiveNode(aNode,aDotString);
+  }
+  else if (aNode->getData().getNodeType() == FieldItemData::ePrimitiveArray)
+  {
+    processPrimitiveArrayNode(aNode,aDotString);
+  }
+  else
+  {
+    ERROR(sLogger,"<process> unknown node type");
+    return false;
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // Processes the set of lines for record.
 // Doesn't directly consume any lines. Indirectly consumes the set of lines
 // for the entire record represented by the root node.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processRootNode(FieldItem *aNode,void *aData)
+bool RecordProcessor::processRootNode(FieldItem *aNode,std::string &aDotString)
 {
   DEBUG(sLogger,"processing eRoot: " << aNode->getData().getName());
 
-  return processChildren(aNode);
+  return processChildren(aNode,aDotString);
 }
 
 //-----------------------------------------------------------------------------
@@ -72,9 +106,11 @@ bool RecordProcessor::processRootNode(FieldItem *aNode,void *aData)
 // When a struct array node is calling this routine, it will call this method
 // repeatedly for the number of struct elements in the array.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processStructNode(FieldItem *aNode,void *aData)
+bool RecordProcessor::processStructNode(FieldItem *aNode,std::string &aDotString)
 {
   DEBUG(sLogger,"processing eStruct: " << aNode->getData().getMatch());
+
+  std::string tDotString = aDotString;
 
   /*
    * If the node being processed is a regular struct node, then the set of
@@ -84,6 +120,9 @@ bool RecordProcessor::processStructNode(FieldItem *aNode,void *aData)
    */
   if (aNode->getData().getNodeType() != FieldItemData::eStructArray)
   {
+    appendToDotString(tDotString,aNode->getData().getName());
+    print("<dotstring>",tDotString);
+
     std::string &tLine = *_LineIter;
     _LineIter++;
 
@@ -108,7 +147,7 @@ bool RecordProcessor::processStructNode(FieldItem *aNode,void *aData)
     tRecLine.scope = aNode->getData().getKey();
     INFO(sLogger,"<recline> " << tRecLine.scope << ": " << tRecLine.line);
   }
-  return processChildren(aNode);
+  return processChildren(aNode,tDotString);
 }
 
 //-----------------------------------------------------------------------------
@@ -117,9 +156,13 @@ bool RecordProcessor::processStructNode(FieldItem *aNode,void *aData)
 // and one specifying the array length. Indirectly consumes all of the lines
 // for all of the struct array elements.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processStructArrayNode(FieldItem *aNode,void *aData)
+bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotString)
 {
   DEBUG(sLogger,"Looking for struct array with match: " << aNode->getData().getMatch());
+
+  std::string tDotString = aDotString;
+  appendToDotString(tDotString,aNode->getData().getName());
+  print("<dotstring>",tDotString);
 
   /*
    * Going to test the line that indicates the start of the struct array.
@@ -177,7 +220,11 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,void *aData)
    */
   for (int tIdx = 0; tIdx < tArrayLen; tIdx++)
   {
-    bool tResult = processStructNode(aNode,aData);
+    std::stringstream tStream;
+    tStream << tDotString << "[" << tIdx << "]";
+    std::string tArrayDotString = tStream.str();
+
+    bool tResult = processStructNode(aNode,tArrayDotString);
     if (tResult == false)
     {
       return false;
@@ -191,8 +238,12 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,void *aData)
 // Processes the line for a primitive node. The line consists of the field
 // name and its value.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,void *aData)
+bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,std::string &aDotString)
 {
+  std::string tDotString = aDotString;
+  appendToDotString(tDotString,aNode->getData().getName());
+  print("<dotstring>",tDotString);
+
   /*
    * Going to test the single line that represents a primitive field.
    * So get a reference to it, and increment the iterator.
@@ -239,10 +290,14 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,void *aData)
 // specifying the array length. Indirectly consumes all of the lines for the
 // entire primitive array.
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,void *aData)
+bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aDotString)
 {
   DEBUG(sLogger,"Looking for primitive array with match: "
       << aNode->getData().getMatch());
+
+  std::string tDotString = aDotString;
+  appendToDotString(tDotString,aNode->getData().getName());
+  print("<dotstring>",tDotString);
 
   /*
    * Going to test the line that indicates the start of the primitive array.
@@ -302,7 +357,11 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,void *aData)
    */
   for (int tIdx = 0; tIdx < tArrayLen; tIdx++)
   {
-    bool tResult = processPrimitiveArrayLine(aNode,aData,tIdx);
+    std::stringstream tStream;
+    tStream << tDotString << "[" << tIdx << "]";
+    std::string tArrayDotString = tStream.str();
+
+    bool tResult = processPrimitiveArrayLine(aNode,tArrayDotString,tIdx);
     if (tResult == false)
     {
       return false;
@@ -317,8 +376,13 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,void *aData)
 // Directly consumes that single line. No other lines are indirectly consumed.
 //-----------------------------------------------------------------------------
 bool RecordProcessor::processPrimitiveArrayLine(
-    FieldItem *aNode,void *aData,int aIdx)
+    FieldItem *aNode,std::string &aDotString,int aIdx)
 {
+//  std::string tDotString = aDotString;
+//  appendToDotString(tDotString,aNode->getData().getName());
+//  print("<dotstring>",tDotString);
+  print("<dotstring>",aDotString);
+
   /*
    * Going to test the single line that represents a primitive array item.
    * So get a reference to it, and increment the iterator.
@@ -384,4 +448,42 @@ bool RecordProcessor::testForMatch(std::string &aValue,std::string &aTest)
   }
 
   return tMatches;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool RecordProcessor::processChildren(FieldItem *aNode,std::string &aDotString)
+{
+  for (int tIdx = 0; tIdx < aNode->childCount(); tIdx++)
+  {
+    bool tResult = process(aNode->child(tIdx),aDotString);
+    if (tResult == false)
+    {
+      ERROR(sLogger,"<process> traversing child failed");
+      return false;
+    }
+  }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// TODO is this really efficient, computing length every time?
+//-----------------------------------------------------------------------------
+void RecordProcessor::appendToDotString(
+    std::string &aDotString,std::string &aSuffix)
+{
+  if (aDotString.length())
+  {
+    aDotString = aDotString + "." + aSuffix;
+  }
+  else
+  {
+    aDotString = aSuffix;
+  }
+}
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::print(const std::string &s1,const std::string &s2)
+{
+  std::cout << s1 << ": " << s2 << std::endl;
 }
