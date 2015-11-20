@@ -6,6 +6,7 @@
 #include <QHeaderView>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include "ComboBoxDelegate.hh"
 #include "DataStructModel.hh"
 #include "StructorBuilder.hh"
 #include "TreeProcessor.hh"
@@ -68,6 +69,11 @@ void MainWindow::setupView()
   _StructTree = new StructTreeView(this);
   setTreeViewStruct(_InitialStruct);
   _StructTree->header()->resizeSection(0, 225);
+
+  ComboBoxDelegate *tDelegate = new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
+  _StructTree->setItemDelegateForColumn(DataStructModel::eColTestKey,tDelegate);
+
+
 
 // TODO works form 4.8 on
 #ifdef EXPAND_ALL

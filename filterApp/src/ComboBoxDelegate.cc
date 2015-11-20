@@ -8,18 +8,13 @@
 
 #include <iostream>
 
-ComboBoxDelegate::ComboBoxDelegate(QObject *parent)
-:QStyledItemDelegate(parent)
+ComboBoxDelegate::ComboBoxDelegate(std::vector<std::string> aValues,QObject *parent)
+  :QStyledItemDelegate(parent)
 {
-  Items.push_back("Test0");
-  Items.push_back("Test1");
-  Items.push_back("Test2");
-  Items.push_back("Test3");
-  Items.push_back("Test4");
-  Items.push_back("Test5");
-  Items.push_back("Test6");
-  Items.push_back("Test7");
-  Items.push_back("Test8");
+  for (size_t tIdx = 0; tIdx < aValues.size(); tIdx++)
+  {
+    Items.push_back(aValues.at(tIdx).c_str());
+  }
 }
 
 
@@ -51,6 +46,7 @@ void ComboBoxDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
   editor->setGeometry(option.rect);
 }
 
+#if 0 // TODO
 void ComboBoxDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
   QStyleOptionViewItemV4 myOption = option;
@@ -60,3 +56,4 @@ void ComboBoxDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
   QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &myOption, painter);
 }
+#endif

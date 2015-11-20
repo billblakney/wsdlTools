@@ -47,6 +47,13 @@ FieldItem *DataStructModel::getTopNode()
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
+std::vector<std::string> DataStructModel::getTestNodes()
+{
+  return _TestNodes;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 void DataStructModel::printTestNodes()
 {
   std::cout << "Test Nodes:" << std::endl;
@@ -465,10 +472,28 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
   FieldItem *item = static_cast<FieldItem*>(index.internalPointer());
 
   switch (role) {
-    case Qt::EditRole:
     case Qt::DisplayRole:
+    {
+      if (index.column() == eColTestKey)
+      {
+        uint tTestNodeIndex = (item->data(eColTestKey)).toUInt();
+        std::string tTestNodeStr = _TestNodes.at(tTestNodeIndex);
+        QString tString(tTestNodeStr.c_str()); //TODO checks or subroutine
+        return tString;
+      }
       return item->data(index.column());
       break;
+    }
+    case Qt::EditRole:
+    {
+      if (index.column() == eColTestKey)
+      {
+        uint tTestNodeIndex = (item->data(eColTestKey)).toUInt();
+        return tTestNodeIndex;
+      }
+      return item->data(index.column());
+      break;
+    }
     case Qt::CheckStateRole:
       if (index.column() == eColFieldName)
       {
