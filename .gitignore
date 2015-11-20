@@ -4,6 +4,7 @@
 bin/
 *.tab.*
 *.yy.*
+*.swp
 Makefile
 Makefile.*
 release/

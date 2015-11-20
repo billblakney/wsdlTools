@@ -28,12 +28,16 @@ bool RecordProcessor::process()
   std::string tDotString;
   bool tResult = process(_TopNode,tDotString);
 
-  std::cout << "=== % dotstring, scope, line, testResult, isChecked" << std::endl;
+  std::cout
+      << "=== % testResult, testScope, isChecked, dotString, scope, line, "
+      << std::endl;
+
   std::vector<RecLine>::iterator tIter;
   for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
   {
     std::cout << "% "
                       << tIter->testResult << ","
+
                       << tIter->isChecked << ","
                       << tIter->dotString << ","
                       << tIter->nodeKey << ","

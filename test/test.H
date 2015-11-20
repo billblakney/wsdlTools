@@ -1,23 +1,28 @@
 typedef struct {
-   int field1;
-   int field2;
-   int field3;
-} INNER_T;
+   int city;
+   int state;
+   int zipcode;
+} ADDRESS_T;
 
 typedef struct {
-   int b1;
-   int b2;
-} BUNCH_T;
-
+   int code;
+   str level;
+} COURSE_T;
 
 typedef struct {
-   int field1;
-   int field2;
-   INNER_T field3;
-   int bunches_size;
-   BUNCH_T *bunches;
-   int counts_size;
-   int *counts;
-   int field4;
-} OUTER_T;
+   int subject;
+   int grade;
+   COURSE_T course;
+   int scores_size;
+   int *scores;
+} GRADE_T;
+
+typedef struct {
+   int firstName;
+   int lastName;
+   ADDRESS_T address;
+   int grades_size;
+   GRADE_T *grades;
+   string school;
+} STUDENT_T;
 

@@ -2,22 +2,29 @@
 some junk here
 some junk there
 struct
-field1:	v1
-field2:	v2
-field3:
-	field1:	f1
-	field2:	f2
-	field3:	f3
-bunches:
+firstName:	Joe
+lastName:	Smith
+address:
+	city:	Reston
+	state:	VA
+	zipcode:	20171
+grades:
 	array of len: 2
-	b1:	ba1
-	b2:	bb1
-	b1:	ba2
-	b2:	bb2
-counts:
-	array of len: 3
-	[0] =	000
-	[1] =	001
-	[2] =	002
-field4:	v4
+	subject:	math
+	grade:	A
+	course:
+		code:	550
+		level:	grad
+	scores:
+		array of len: 3
+		[0] =	89
+		[1] =	95
+		[2] =	100
+	subject:	french
+	grade:	B
+	scores:
+		array of len: 2
+		[0] =	89
+		[1] =	82
+school:	Oakton
 ==============END MESSAGE=========
