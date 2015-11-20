@@ -37,8 +37,11 @@ public:
 protected:
 
   struct RecLine {
-    std::string line;
-    std::string scope;
+    std::string line; // TODO make ref?
+    std::string nodeKey; // TODO make ref?
+    std::string dotString; // TODO make ref?
+    bool testResult;
+    bool isChecked;
   };
 
   FieldItem *_TopNode;

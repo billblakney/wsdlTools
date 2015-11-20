@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 std::cout << "creating main window" << std::endl;
   MainWindow *window = new MainWindow(argc,argv,app,0);
 //  window->setGeometry(1920 + 530,135,625,900);
-  window->setGeometry(1920      ,135,500,900);
+  window->setGeometry(1920      ,135,900,900);
   window->setupView();
 
 std::cout << "showing window" << std::endl;
