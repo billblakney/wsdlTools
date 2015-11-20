@@ -46,6 +46,7 @@ INCLUDEPATH += /opt/log4cxx-0.10.0/include
 
 # Input
 HEADERS += \
+           ComboBoxDelegate.hh \
            DataStructModel.hh \
            FieldItem.hh \
            FieldItemData.hh \
@@ -64,6 +65,7 @@ HEADERS += \
 
 SOURCES += \
            main.cc \
+           ComboBoxDelegate.cc \
            DataStructModel.cc \
            FieldItem.cc \
            FieldItemData.cc \

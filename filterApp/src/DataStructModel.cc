@@ -613,7 +613,7 @@ QVariant DataStructModel::headerData(int section,Qt::Orientation orientation,
     }
     else if (section == eColTestKey)
     {
-      return QVariant("Test Key");
+      return QVariant("Test Scope");
     }
     else if (section == eColPostfix)
     {
