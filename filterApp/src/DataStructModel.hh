@@ -44,6 +44,10 @@ public:
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
+  void printTestNodes();
+
+  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   std::string getFirstFieldMatch();
 
   void buildTree(FieldItem *rootItem,Structure *aStructure,int aLevel = 0);
@@ -114,11 +118,18 @@ protected:
 
   StructorBuilder *_StructBuilder;
 
+  // root and top nodes
   FieldItem *_RootItem;
   FieldItem *_TopNodeItem;
+
+  // test nodes
+  std::vector<std::string> _TestNodes;
+
   void setupModelData() {}
+
   void setChildrenCheckStates(
       const QModelIndex &aParentIndex,Qt::CheckState aCheckState);
+
   void updateParentCheckState(
       const QModelIndex &aChildIndex,Qt::CheckState aNewState);
 };

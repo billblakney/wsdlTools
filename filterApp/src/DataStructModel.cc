@@ -47,6 +47,18 @@ FieldItem *DataStructModel::getTopNode()
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
+void DataStructModel::printTestNodes()
+{
+  std::cout << "Test Nodes:" << std::endl;
+  std::vector<std::string>::iterator tIter;
+  for (tIter = _TestNodes.begin(); tIter != _TestNodes.end(); tIter++)
+  {
+    std::cout << "   " << *tIter << std::endl;
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 DataStructModel::~DataStructModel()
 {
 }
@@ -88,6 +100,7 @@ void DataStructModel::buildTree(
   if (aLevel == 0)
   {
       // nothing special to do at level zero
+    _TestNodes.push_back("Root");
   }
 
   vector<Field>::iterator tIter;
@@ -161,6 +174,13 @@ void DataStructModel::buildPrimitiveArrayNode(
 
   FieldItem *dataItem = new FieldItem(tData,aParentItem);
   aParentItem->appendChild(dataItem);
+
+  //
+  // Set the test nodes - one test node for specifying the whole array, and one
+  // for specifying individual array elements.
+  //
+  _TestNodes.push_back(tData.getKey());
+  _TestNodes.push_back(tData.getKey() + ".Element");
 }
 
 //-------------------------------------------------------------------------------
@@ -186,6 +206,13 @@ void DataStructModel::buildStructArrayNode(
 
     aParentItem->appendChild(dataItem);
 
+  //
+  // Set the test nodes - one test node for specifying the whole array, and one
+  // for specifying individual array elements.
+  //
+  _TestNodes.push_back(tData.getKey());
+  _TestNodes.push_back(tData.getKey() + ".Element");
+
     buildTree(dataItem,tStruct,++aLevel);
     --aLevel;
   }
@@ -208,6 +235,11 @@ void DataStructModel::buildStructNode(
         aField._Name,aField._Type,tMatch);
     FieldItem *dataItem = new FieldItem(tData,aParentItem);
     aParentItem->appendChild(dataItem);
+
+    //
+    // Set the test node.
+    //
+    _TestNodes.push_back(tData.getKey());
 
     buildTree(dataItem,tStruct,++aLevel);
     --aLevel;
