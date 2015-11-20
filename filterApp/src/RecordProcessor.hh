@@ -37,11 +37,14 @@ public:
 protected:
 
   struct RecLine {
-    std::string line; // TODO make ref?
     std::string nodeKey; // TODO make ref?
-    std::string dotString; // TODO make ref?
-    bool testResult;
-    bool isChecked;
+    std::string nodeTestRegex; // TODO make ref?
+    uint        nodeTestScope;
+//    std::string nodeTestScopeName;
+    bool        nodeIsChecked;
+    std::string line; // TODO make ref?
+    std::string lineDotString; // TODO make ref?
+    bool        lineTestResult;
   };
 
   FieldItem *_TopNode;
@@ -69,6 +72,8 @@ protected:
   bool processChildren(FieldItem *aNode,std::string &aDotString);
 
   bool testForMatch(std::string &aValue,std::string &aTest);
+
+  void applyTestResults();
 
   void appendToDotString( std::string &aSuffix,std::string &aDotString);
 

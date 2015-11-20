@@ -22,6 +22,9 @@ grades:
 		[2] =	100
 	subject:	french
 	grade:	B
+	course:
+		code:	415
+		level:	bach
 	scores:
 		array of len: 2
 		[0] =	89
