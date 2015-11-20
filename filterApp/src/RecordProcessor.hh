@@ -36,14 +36,13 @@ public:
 
 protected:
 
-  struct RecLine {
-    std::string nodeKey; // TODO make ref?
-    std::string nodeTestRegex; // TODO make ref?
-    uint        nodeTestScope;
-//    std::string nodeTestScopeName;
+  struct RecLine { //TODO make elts refs?
+    std::string nodeKey;
+    std::string nodeTestRegex;
+    std::string nodeTestScope;
     bool        nodeIsChecked;
-    std::string line; // TODO make ref?
-    std::string lineDotString; // TODO make ref?
+    std::string line;
+    std::string lineDotString;
     bool        lineTestResult;
   };
 

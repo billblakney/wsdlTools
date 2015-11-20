@@ -12,7 +12,7 @@ FieldItemData::FieldItemData()
     _Type(""),
     _FieldMatch(""),
     _FieldTest(""),
-    _TestKey(0),
+    _TestScope(""),
     _Postfix(""),
     _CheckState(Qt::Unchecked)
 {
@@ -27,7 +27,7 @@ FieldItemData::FieldItemData(
       std::string aType,
       std::string aMatch,
       std::string aTest,
-      uint aTestKey,
+      std::string aTestScope,
       std::string aPostfix,
       Qt::CheckState aCheckState)
   : _NodeType(aNodeType),
@@ -36,7 +36,7 @@ FieldItemData::FieldItemData(
     _Type(aType),
     _FieldMatch(aMatch),
     _FieldTest(aTest),
-    _TestKey(aTestKey),
+    _TestScope(aTestScope),
     _Postfix(aPostfix),
     _CheckState(aCheckState)
   {
@@ -82,9 +82,9 @@ std::string& FieldItemData::getTest()
   return _FieldTest;
 }
 
-uint& FieldItemData::getTestKey()
+std::string& FieldItemData::getTestScope()
 {
-  return _TestKey;
+  return _TestScope;
 }
 
 std::string& FieldItemData::getPostfix()
@@ -130,9 +130,9 @@ void FieldItemData::setTest(const std::string& test)
   _FieldTest = test;
 }
 
-void FieldItemData::setTestKey(const uint& testKey)
+void FieldItemData::setTestScope(const std::string& testScope)
 {
-  _TestKey = testKey;
+  _TestScope = testScope;
 }
 
 void FieldItemData::setPostfix(const std::string& postfix)

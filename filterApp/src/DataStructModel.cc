@@ -25,7 +25,7 @@ DataStructModel::DataStructModel(
   _RootItem = new FieldItem(tRootData);
 
   // top node item
-  FieldItemData tTopData(FieldItemData::eRoot,"","struct",aStruct->_Name);
+  FieldItemData tTopData(FieldItemData::eRoot,"","root",aStruct->_Name);
   _TopNodeItem = new FieldItem(tTopData,_RootItem);
 
   _RootItem->appendChild(_TopNodeItem);
@@ -107,7 +107,7 @@ void DataStructModel::buildTree(
   if (aLevel == 0)
   {
       // nothing special to do at level zero
-    _TestNodes.push_back("Root");
+    _TestNodes.push_back("root");
   }
 
   vector<Field>::iterator tIter;
@@ -473,6 +473,7 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
 
   switch (role) {
     case Qt::DisplayRole:
+#ifdef USING_INDEX
     {
       if (index.column() == eColTestKey)
       {
@@ -484,11 +485,27 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
       return item->data(index.column());
       break;
     }
+#endif
+      return item->data(index.column());
+      break;
     case Qt::EditRole:
+#ifdef USING_INDEX
     {
       if (index.column() == eColTestKey)
       {
         uint tTestNodeIndex = (item->data(eColTestKey)).toUInt();
+        return tTestNodeIndex;
+      }
+      return item->data(index.column());
+      break;
+    }
+#endif
+    {
+      if (index.column() == eColTestKey)
+      {
+        uint tTestNodeIndex = getTestScopeIndex(
+            item->data(eColTestKey).toString().toStdString());
+
         return tTestNodeIndex;
       }
       return item->data(index.column());
@@ -570,7 +587,8 @@ bool DataStructModel::setData(
     }
     else if (aCol == eColTestKey)
     {
-      item->setTestKey(value);
+      std::string tStr = _TestNodes.at(value.toUInt());
+      item->setTestScope(QVariant(tStr.c_str()));
       emit dataChanged(index,index);
     }
     else if (aCol == eColPostfix)
@@ -735,6 +753,23 @@ int DataStructModel::columnCount(const QModelIndex &parent) const
   {
     return _RootItem->columnCount();
   }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+uint DataStructModel::getTestScopeIndex(std::string aTestScope) const
+{
+ uint tIdx = 0;
+ std::vector<std::string>::const_iterator tIter;
+ for (tIter = _TestNodes.begin(); tIter != _TestNodes.end(); tIter++)
+ {
+   if (!aTestScope.compare(*tIter))
+   {
+     return tIdx;
+   }
+   tIdx++;
+ }
+ return 0; //TODO should never reach, add warning or err
 }
 
 //-------------------------------------------------------------------------------

@@ -16,7 +16,7 @@ FieldItem::FieldItem(FieldItemData aData,FieldItem *aParentItem)
 
   _ItemData.append(QVariant(aData.getName().c_str()));
   _ItemData.append(QVariant(aData.getTest().c_str()));
-  _ItemData.append(QVariant(aData.getTestKey()));
+  _ItemData.append(QVariant(aData.getTestScope().c_str()));
   _ItemData.append(QVariant(aData.getKey().c_str()));
   _ItemData.append(QVariant(aData.getType().c_str()));
   _ItemData.append(QVariant(aData.getMatch().c_str()));
@@ -100,7 +100,7 @@ void FieldItem::setCheckState(Qt::CheckState aCheckState)
 //-------------------------------------------------------------------------------
 // TODO can probably remove - only test needs to be editable
 //-------------------------------------------------------------------------------
-void FieldItem::setFieldMatch(const QVariant &aValue)
+void FieldItem::setFieldMatch(const QVariant aValue)
 {
   _ItemData[DataStructModel::eColMatchRegex] = QVariant(QString(aValue.toString()));
   _FieldItemData.setMatch(aValue.toString().toStdString());
@@ -108,7 +108,7 @@ void FieldItem::setFieldMatch(const QVariant &aValue)
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
-void FieldItem::setFieldTest(const QVariant &aValue)
+void FieldItem::setFieldTest(const QVariant aValue)
 {
   _ItemData[DataStructModel::eColTestRegex] = QVariant(QString(aValue.toString()));
   _FieldItemData.setTest(aValue.toString().toStdString());
@@ -116,15 +116,15 @@ void FieldItem::setFieldTest(const QVariant &aValue)
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
-void FieldItem::setTestKey(const QVariant &aValue)
+void FieldItem::setTestScope(const QVariant aValue)
 {
-  _ItemData[DataStructModel::eColTestKey] = QVariant(aValue.toUInt());
-  _FieldItemData.setTestKey(aValue.toUInt());
+  _ItemData[DataStructModel::eColTestKey] = QVariant(aValue);
+  _FieldItemData.setTestScope(aValue.toString().toStdString());
 }
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
-void FieldItem::setFieldPostfix(const QVariant &aValue)
+void FieldItem::setFieldPostfix(const QVariant aValue)
 {
   _ItemData[DataStructModel::eColPostfix] = aValue;
   _FieldItemData.setPostfix(aValue.toString().toStdString());

@@ -35,7 +35,7 @@ bool RecordProcessor::process()
 //  sprintf(buff,"%d %-20s %-10s %u: %d, %-30s, %-30s",
 #endif
   char buff[1000];
-  sprintf(buff,"%3s %-20s %-10s %5s: %5s, %-30s, %-30s",
+  sprintf(buff,"%3s %-20s %-10s %-10s: %5s, %-30s, %-30s",
       "nCk","nKey","nTstRgx","nTScp","lTRes","lDotStr","line");
   std::cout << buff << std::endl;
 
@@ -54,11 +54,11 @@ bool RecordProcessor::process()
                       << tIter->line << ","
                       << std::endl;
 #endif
-    sprintf(buff,"%3d %-20s %-10s %5u: %5d, %-30s, %-30s",
+    sprintf(buff,"%3d %-20s %-10s %-10s: %5d, %-30s, %-30s",
         tIter->nodeIsChecked,
         tIter->nodeKey.c_str(),
         tIter->nodeTestRegex.c_str(),
-        tIter->nodeTestScope,
+        tIter->nodeTestScope.c_str(),
         tIter->lineTestResult,
         tIter->lineDotString.c_str(),
         tIter->line.c_str());
@@ -248,7 +248,7 @@ bool RecordProcessor::processStructNode(FieldItem *aNode,std::string &aDotString
     RecLine tRecLine;
     tRecLine.nodeKey = aNode->getData().getKey();
     tRecLine.nodeTestRegex = aNode->getData().getTest();
-    tRecLine.nodeTestScope = 0;
+    tRecLine.nodeTestScope = "";
     tRecLine.nodeIsChecked = tIsChecked;
     tRecLine.line = tLine;
     tRecLine.lineDotString = tDotString;
@@ -302,7 +302,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
   RecLine tRecLine;
   tRecLine.nodeKey = aNode->getData().getKey();
   tRecLine.nodeTestRegex = aNode->getData().getTest();
-  tRecLine.nodeTestScope = 0;
+  tRecLine.nodeTestScope = "";
   tRecLine.nodeIsChecked = tIsChecked;
   tRecLine.line = tLine;
   tRecLine.lineDotString = tDotString;
@@ -334,7 +334,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
   RecLine tArrayRecLine;
   tArrayRecLine.nodeKey = aNode->getData().getKey();
   tArrayRecLine.nodeTestRegex = aNode->getData().getTest();
-  tArrayRecLine.nodeTestScope = 0;
+  tArrayRecLine.nodeTestScope = "";
   tArrayRecLine.nodeIsChecked = tIsChecked;
   tArrayRecLine.line = tLine;
   tArrayRecLine.lineDotString = tDotString;
@@ -401,13 +401,13 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,std::string &aDotStr
   }
 
   bool tTestResult = true;
-  uint tTestScope = 0;
+  std::string tTestScope = "";
 
   std::string tFieldValue = _Matcher.getWhat();
   if (!testForMatch(tFieldValue,aNode->getData().getTest()))
   {
     DEBUG(sLogger,"test FAILED for " << aNode->getData().getName());
-    tTestScope = aNode->getData().getTestKey();
+    tTestScope = aNode->getData().getTestScope();
     tTestResult = false;
     _TestResult = false;
   }
@@ -471,7 +471,7 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
   RecLine tRecLine;
   tRecLine.nodeKey = aNode->getData().getKey();
   tRecLine.nodeTestRegex = aNode->getData().getTest();
-  tRecLine.nodeTestScope = 0;
+  tRecLine.nodeTestScope = "";
   tRecLine.nodeIsChecked = tIsChecked;
   tRecLine.line = tLine;
   tRecLine.lineDotString = tDotString;
@@ -505,7 +505,7 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
   RecLine tArrayRecLine;
   tArrayRecLine.nodeKey = aNode->getData().getKey();
   tArrayRecLine.nodeTestRegex = aNode->getData().getTest();
-  tArrayRecLine.nodeTestScope = 0;
+  tArrayRecLine.nodeTestScope = "";
   tArrayRecLine.nodeIsChecked = tIsChecked;
   tArrayRecLine.line = tLine;
   tArrayRecLine.lineDotString = tDotString;
@@ -585,7 +585,7 @@ bool RecordProcessor::processPrimitiveArrayLine(
   RecLine tRecLine;
   tRecLine.nodeKey = tScope;
   tRecLine.nodeTestRegex = aNode->getData().getTest();
-  tRecLine.nodeTestScope = 0;
+  tRecLine.nodeTestScope = "";
   tRecLine.nodeIsChecked = tIsChecked;
   tRecLine.line = tLine;
   tRecLine.lineDotString = aDotString;

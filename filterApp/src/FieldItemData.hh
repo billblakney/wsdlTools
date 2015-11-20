@@ -24,7 +24,7 @@ public:
       std::string aType,
       std::string aMatch = "",
       std::string aTest = "",
-      uint aTestKey = 0,
+      std::string aTestScope = "root",
       std::string aPostfix = "newline (\"\\n\")",
       Qt::CheckState aCheckState = Qt::Unchecked);
 
@@ -36,7 +36,7 @@ public:
   std::string& getType();
   std::string& getMatch();
   std::string& getTest();
-  uint& getTestKey();
+  std::string& getTestScope();
   std::string& getPostfix();
   Qt::CheckState getCheckState();
 
@@ -46,7 +46,7 @@ public:
   void setType(const std::string& type);
   void setMatch(const std::string& match);
   void setTest(const std::string& test);
-  void setTestKey(const uint& test);
+  void setTestScope(const std::string& testScope);
   void setPostfix(const std::string& postfix);
   void setCheckState(Qt::CheckState checkState);
 
@@ -60,7 +60,7 @@ protected:
   std::string        _Type;
   std::string        _FieldMatch;
   std::string        _FieldTest;
-  uint               _TestKey; // index into DataStructModel._TestNodes
+  std::string        _TestScope;
   std::string        _Postfix;
   Qt::CheckState     _CheckState;
 };

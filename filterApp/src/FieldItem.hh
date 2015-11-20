@@ -46,13 +46,13 @@ public:
 
   void setCheckState(Qt::CheckState aCheckState);
 
-  void setFieldMatch(const QVariant &value);
+  void setFieldMatch(const QVariant value);
 
-  void setFieldTest(const QVariant &value);
+  void setFieldTest(const QVariant value);
 
-  void setTestKey(const QVariant &value);
+  void setTestScope(const QVariant value);
 
-  void setFieldPostfix(const QVariant &value);
+  void setFieldPostfix(const QVariant value);
 
 protected:
 

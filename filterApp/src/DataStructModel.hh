@@ -129,6 +129,8 @@ protected:
   // test nodes
   std::vector<std::string> _TestNodes;
 
+  uint getTestScopeIndex(std::string aTestScope) const;
+
   void setupModelData() {}
 
   void setChildrenCheckStates(
