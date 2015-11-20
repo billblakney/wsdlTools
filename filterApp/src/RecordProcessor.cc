@@ -1,6 +1,7 @@
 #include <sstream>
 #include <boost/regex.hpp>
 #include "RecordProcessor.hh"
+#include "SimpleLineMatcher.hh"
 
 ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 
@@ -28,12 +29,6 @@ bool RecordProcessor::process()
   std::string tDotString;
   bool tResult = process(_TopNode,tDotString);
 
-#ifdef OLD
-  std::cout
-      << "=== % nCk, nKey, nTstRgx, tstScp, lTstRes, lDotStr, line, "
-      << std::endl;
-//  sprintf(buff,"%d %-20s %-10s %u: %d, %-30s, %-30s",
-#endif
   char buff[1000];
   sprintf(buff,"%3s %-20s %-10s %-10s: %5s, %-30s, %-30s",
       "nCk","nKey","nTstRgx","nTScp","lTRes","lDotStr","line");
@@ -45,15 +40,6 @@ bool RecordProcessor::process()
   std::vector<RecLine>::iterator tIter;
   for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
   {
-#if 0
-    std::cout << "% "
-                      << tIter->nodeIsChecked << ","
-                      << tIter->lineTestResult << ","
-                      << tIter->lineDotString << ","
-                      << tIter->nodeKey << ","
-                      << tIter->line << ","
-                      << std::endl;
-#endif
     sprintf(buff,"%3d %-20s %-10s %-10s: %5d, %-30s, %-30s",
         tIter->nodeIsChecked,
         tIter->nodeKey.c_str(),
@@ -65,7 +51,7 @@ bool RecordProcessor::process()
     std::cout << buff << std::endl;
   }
 
-#define OLD_SIMPLE
+//#define OLD_SIMPLE
 #ifdef OLD_SIMPLE
   /*
    * Check test results to see if this record gets printed.
@@ -102,6 +88,15 @@ bool RecordProcessor::process()
 
   applyTestResults();
 
+  for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
+  {
+    if (tIter->nodeIsChecked && !tIter->lineIsExcluded)
+      _LinesOut.push_back(tIter->line);
+  }
+
+  if(tResult==false) //TODO rm
+    exit(0);
+
   return tResult;
 }
 
@@ -109,23 +104,105 @@ bool RecordProcessor::process()
 //-----------------------------------------------------------------------------
 void RecordProcessor::applyTestResults()
 {
-#if 0
   std::vector<RecLine>::iterator tIter;
   for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
   {
+    /*
+     * If no test was specified for this line, go to next.
+     */
     if (tIter->nodeTestRegex.length() < 1)
       continue;
 
-    std::string tScopeRegexStr()
-    boost::regex tScopeRegex("(.*)((\.Element){0,1})");
+    /*
+     * If a line failed the test, and scope is root, then exclude all and
+     * return.
+     */
+    //TODO rm root hard-coding
+      if (tIter->lineTestResult == false && !tIter->nodeTestScope.compare("root"))
+      {
+        excludeAllLines();
+        return;
+      }
+
+    /*
+     * Get the base scope and whether it is an element scope.
+     */
+    std::string tBaseScope;
+    bool tIsEltScope = false;
+
+    /*
+     * Create the regex for matching the test scope. If there is a match, then
+     * what[] will hold three elements.
+     */
+    std::string tStr("(.*?)(\\.Element){0,1}");
+    boost::regex tScopeRegex(tStr);
 
     boost::match_results<std::string::const_iterator> what;
     if (boost::regex_match(tIter->nodeTestScope,what,tScopeRegex))
     {
+      std::cout << "got match on " << tIter->nodeTestScope << std::endl;
+      tBaseScope = what[1];
+      if (what[2].length())
+      {
+        tIsEltScope = true;
+      }
+      std::cout << "tBaseScope,isElt: " << tBaseScope << ","
+          << tIsEltScope << std::endl;
+#if 0
+      for (size_t i = 0; i < what.size(); i++)
+        std::cout << "what[" << i << "]: " << what[i] << std::endl;
+#endif
+    }
+    else
+    {
+      std::cout << "ERROR: failure applying test results" << std::endl;
+      return;
     }
 
+    /*
+     * If this is a regular test scope (i.e. scope is not on array element test
+     * scope), then if the test failed for this line, exclude all of the lines
+     * that match the scope.
+     */
+    if (!tIsEltScope)
+    {
+      if (tIter->lineTestResult == false)
+      {
+        excludeAllLinesMatchingScope(tBaseScope + ".*");
+      }
+    }
   }
-#endif
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::excludeAllLines()
+{
+  _TestResult = false;
+  std::vector<RecLine>::iterator tIter;
+  for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
+  {
+    tIter->lineIsExcluded = true;
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::excludeAllLinesMatchingScope(std::string aBaseScope)
+{
+  std::vector<RecLine>::iterator tIter;
+  for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
+  {
+    if (tIter->nodeIsChecked)
+    {
+      SimpleLineMatcher *tMatcher = new SimpleLineMatcher(aBaseScope);
+      if (tMatcher->match(tIter->lineDotString))
+      {
+        std::cout << "excluding: " << tIter->lineDotString << std::endl;
+        tIter->lineIsExcluded = true;
+      }
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -253,6 +330,7 @@ bool RecordProcessor::processStructNode(FieldItem *aNode,std::string &aDotString
     tRecLine.line = tLine;
     tRecLine.lineDotString = tDotString;
     tRecLine.lineTestResult = true;
+    tRecLine.lineIsExcluded = false;
     _RecLines.push_back(tRecLine);
   }
   return processChildren(aNode,tDotString);
@@ -307,6 +385,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
   tRecLine.line = tLine;
   tRecLine.lineDotString = tDotString;
   tRecLine.lineTestResult = true;
+  tRecLine.lineIsExcluded = false;
   _RecLines.push_back(tRecLine);
 
   /*
@@ -339,6 +418,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
   tArrayRecLine.line = tLine;
   tArrayRecLine.lineDotString = tDotString;
   tArrayRecLine.lineTestResult = true;
+  tArrayRecLine.lineIsExcluded = false;
   _RecLines.push_back(tArrayRecLine);
 
   int tArrayLen = atoi(_Matcher.getWhat().c_str());
@@ -409,7 +489,7 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,std::string &aDotStr
     DEBUG(sLogger,"test FAILED for " << aNode->getData().getName());
     tTestScope = aNode->getData().getTestScope();
     tTestResult = false;
-    _TestResult = false;
+//    _TestResult = false;TODO rm
   }
 
   RecLine tRecLine;
@@ -420,6 +500,7 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,std::string &aDotStr
   tRecLine.line = tLine;
   tRecLine.lineDotString = tDotString;
   tRecLine.lineTestResult = tTestResult;
+  tRecLine.lineIsExcluded = false;
   _RecLines.push_back(tRecLine);
 
   return true;
@@ -476,6 +557,7 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
   tRecLine.line = tLine;
   tRecLine.lineDotString = tDotString;
   tRecLine.lineTestResult = true;
+  tRecLine.lineIsExcluded = false;
   //INFO(sLogger,"<recline> " << tRecLine.scope << ": " << tRecLine.line);
   _RecLines.push_back(tRecLine);
 
@@ -510,6 +592,7 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
   tArrayRecLine.line = tLine;
   tArrayRecLine.lineDotString = tDotString;
   tArrayRecLine.lineTestResult = true;
+  tArrayRecLine.lineIsExcluded = false;
   //INFO(sLogger,"<recline> " << tArrayRecLine.scope << ": " << tRecLine.line);
   _RecLines.push_back(tArrayRecLine);
 
@@ -590,13 +673,14 @@ bool RecordProcessor::processPrimitiveArrayLine(
   tRecLine.line = tLine;
   tRecLine.lineDotString = aDotString;
   tRecLine.lineTestResult = true;
+  tRecLine.lineIsExcluded = false;
   _RecLines.push_back(tRecLine);
 
   std::string tFieldValue = _Matcher.getWhat();
   if (!testForMatch(tFieldValue,aNode->getData().getTest()))
   {
     DEBUG(sLogger,"test FAILED");
-    _TestResult = false;
+//    _TestResult = false;TODO rm
   }
 
   return true;

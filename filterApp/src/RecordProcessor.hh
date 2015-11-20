@@ -44,6 +44,7 @@ protected:
     std::string line;
     std::string lineDotString;
     bool        lineTestResult;
+    bool        lineIsExcluded;
   };
 
   FieldItem *_TopNode;
@@ -73,6 +74,8 @@ protected:
   bool testForMatch(std::string &aValue,std::string &aTest);
 
   void applyTestResults();
+  void excludeAllLines();
+  void excludeAllLinesMatchingScope(std::string aBaseScope);
 
   void appendToDotString( std::string &aSuffix,std::string &aDotString);
 
