@@ -74,11 +74,13 @@ protected:
   bool testForMatch(std::string &aValue,std::string &aTest);
 
   void applyTestResults();
+  void setLinesOut();
   void excludeAllLines();
   void excludeAllLinesMatchingScope(std::string aBaseScope);
 
   void appendToDotString( std::string &aSuffix,std::string &aDotString);
 
+  void printRecLines();
   void print(const std::string &s1,const std::string &s2);
 };
 

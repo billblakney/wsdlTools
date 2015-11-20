@@ -29,73 +29,10 @@ bool RecordProcessor::process()
   std::string tDotString;
   bool tResult = process(_TopNode,tDotString);
 
-  char buff[1000];
-  sprintf(buff,"%3s %-20s %-10s %-10s: %5s, %-30s, %-30s",
-      "nCk","nKey","nTstRgx","nTScp","lTRes","lDotStr","line");
-  std::cout << buff << std::endl;
-
-  /*
-   * Print the rec lines.
-   */
-  std::vector<RecLine>::iterator tIter;
-  for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
-  {
-    sprintf(buff,"%3d %-20s %-10s %-10s: %5d, %-30s, %-30s",
-        tIter->nodeIsChecked,
-        tIter->nodeKey.c_str(),
-        tIter->nodeTestRegex.c_str(),
-        tIter->nodeTestScope.c_str(),
-        tIter->lineTestResult,
-        tIter->lineDotString.c_str(),
-        tIter->line.c_str());
-    std::cout << buff << std::endl;
-  }
-
-//#define OLD_SIMPLE
-#ifdef OLD_SIMPLE
-  /*
-   * Check test results to see if this record gets printed.
-   */
-  bool tGoesOut = true;
-  for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
-  {
-    if (tIter->lineTestResult == false)
-    {
-      tGoesOut = false;
-      break;
-    }
-  }
-
-  /*
-   * Add lines to the output lines.
-   */
-  if (tGoesOut)
-  {
-    for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
-    {
-      if (tIter->nodeIsChecked)
-      {
-        _LinesOut.push_back(tIter->line);
-//        std::cout << "%%- " << tIter->line << std::endl;
-      }
-    }
-  }
-  else
-  {
-    std::cout << "%%- FAILED TEST" << std::endl;
-  }
-#endif
+  //printRecLines();
 
   applyTestResults();
-
-  for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
-  {
-    if (tIter->nodeIsChecked && !tIter->lineIsExcluded)
-      _LinesOut.push_back(tIter->line);
-  }
-
-  if(tResult==false) //TODO rm
-    exit(0);
+  setLinesOut();
 
   return tResult;
 }
@@ -140,14 +77,14 @@ void RecordProcessor::applyTestResults()
     boost::match_results<std::string::const_iterator> what;
     if (boost::regex_match(tIter->nodeTestScope,what,tScopeRegex))
     {
-      std::cout << "got match on " << tIter->nodeTestScope << std::endl;
+//      std::cout << "got match on " << tIter->nodeTestScope << std::endl;
       tBaseScope = what[1];
       if (what[2].length())
       {
         tIsEltScope = true;
       }
-      std::cout << "tBaseScope,isElt: " << tBaseScope << ","
-          << tIsEltScope << std::endl;
+//      std::cout << "tBaseScope,isElt: " << tBaseScope << ","
+//          << tIsEltScope << std::endl;
 #if 0
       for (size_t i = 0; i < what.size(); i++)
         std::cout << "what[" << i << "]: " << what[i] << std::endl;
@@ -176,6 +113,18 @@ void RecordProcessor::applyTestResults()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void RecordProcessor::setLinesOut()
+{
+  std::vector<RecLine>::iterator tIter;
+  for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
+  {
+    if (tIter->nodeIsChecked && !tIter->lineIsExcluded)
+      _LinesOut.push_back(tIter->line);
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void RecordProcessor::excludeAllLines()
 {
   _TestResult = false;
@@ -198,7 +147,7 @@ void RecordProcessor::excludeAllLinesMatchingScope(std::string aBaseScope)
       SimpleLineMatcher *tMatcher = new SimpleLineMatcher(aBaseScope);
       if (tMatcher->match(tIter->lineDotString))
       {
-        std::cout << "excluding: " << tIter->lineDotString << std::endl;
+//        std::cout << "excluding: " << tIter->lineDotString << std::endl;
         tIter->lineIsExcluded = true;
       }
     }
@@ -519,7 +468,7 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
 
   std::string tDotString = aDotString;
   appendToDotString(tDotString,aNode->getData().getName());
-  print("<dotstring>",tDotString);
+//  print("<dotstring>",tDotString);
 
   /*
    * Going to test the line that indicates the start of the primitive array.
@@ -739,6 +688,34 @@ void RecordProcessor::appendToDotString(
     aDotString = aSuffix;
   }
 }
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::printRecLines()
+{
+  char buff[1000];
+  sprintf(buff,"%3s %-20s %-10s %-10s: %5s, %-30s, %-30s",
+      "nCk","nKey","nTstRgx","nTScp","lTRes","lDotStr","line");
+  std::cout << buff << std::endl;
+
+  /*
+   * Print the rec lines.
+   */
+  std::vector<RecLine>::iterator tIter;
+  for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
+  {
+    sprintf(buff,"%3d %-20s %-10s %-10s: %5d, %-30s, %-30s",
+        tIter->nodeIsChecked,
+        tIter->nodeKey.c_str(),
+        tIter->nodeTestRegex.c_str(),
+        tIter->nodeTestScope.c_str(),
+        tIter->lineTestResult,
+        tIter->lineDotString.c_str(),
+        tIter->line.c_str());
+    std::cout << buff << std::endl;
+  }
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void RecordProcessor::print(const std::string &s1,const std::string &s2)
