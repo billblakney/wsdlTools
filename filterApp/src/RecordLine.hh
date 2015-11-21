@@ -11,6 +11,7 @@ public:
   std::string nodeKey;
   std::string nodeTestRegex;
   std::string nodeTestScope;
+  std::string nodePostfix;
   bool        nodeIsChecked;
   std::string line;
   std::string lineDotString;

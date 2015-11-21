@@ -110,7 +110,8 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
             std::vector<std::string>::iterator tIter;
             for (tIter = tOutLines.begin(); tIter != tOutLines.end(); tIter++)
             {
-              std::cout << "%" << *tIter << std::endl; //TODO
+//              std::cout << "%" << *tIter << std::endl; //TODO
+              std::cout << "%" << *tIter; //TODO
             }
           }
           else

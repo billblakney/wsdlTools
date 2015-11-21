@@ -25,7 +25,7 @@ public:
       std::string aMatch = "",
       std::string aTest = "",
       std::string aTestScope = "root",
-      std::string aPostfix = "newline (\"\\n\")",
+      std::string aPostfix = "\\n",
       Qt::CheckState aCheckState = Qt::Unchecked);
 
   virtual ~FieldItemData();

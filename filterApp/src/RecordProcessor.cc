@@ -33,9 +33,29 @@ bool RecordProcessor::process()
 //  printRecordLines();
 
   applyTestResults();
+  formatLines();
   setLinesOut();
 
   return tResult;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::formatLines()
+{
+  std::vector<RecordLine>::iterator tIter;
+  for (tIter = _RecordLines.begin(); tIter != _RecordLines.end(); tIter++)
+  {
+    if (tIter->nodeIsChecked && !tIter->resultLineExcluded)
+    {
+      boost::regex matchAll("(.*)");
+      std::string tFormat("$1");
+      tFormat += tIter->nodePostfix;
+      tIter->line = boost::regex_replace(tIter->line,matchAll,tFormat,
+          boost::format_first_only | boost::format_all);
+    }
+  }
+
 }
 
 //-----------------------------------------------------------------------------

@@ -48,6 +48,7 @@ void RecordLine::setNodeFields(FieldItemData &aFieldItemData)
   nodeKey = aFieldItemData.getKey();
   nodeTestRegex = aFieldItemData.getTest();
   nodeTestScope = aFieldItemData.getTestScope();
+  nodePostfix = aFieldItemData.getPostfix();
   nodeIsChecked = aFieldItemData.isChecked();
 }
 
