@@ -17,10 +17,10 @@ FieldItem::FieldItem(FieldItemData aData,FieldItem *aParentItem)
   _ItemData.append(QVariant(aData.getName().c_str()));
   _ItemData.append(QVariant(aData.getTest().c_str()));
   _ItemData.append(QVariant(aData.getTestScope().c_str()));
+  _ItemData.append(QVariant(QString("newline (\"\\n\")")));
   _ItemData.append(QVariant(aData.getKey().c_str()));
   _ItemData.append(QVariant(aData.getType().c_str()));
   _ItemData.append(QVariant(aData.getMatch().c_str()));
-  _ItemData.append(QVariant(QString("newline (\"\\n\")")));
 }
 
 //-------------------------------------------------------------------------------

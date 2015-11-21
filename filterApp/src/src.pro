@@ -53,8 +53,9 @@ HEADERS += \
            LineConsumer.hh \
            LineMatcher.hh \
            MainWindow.hh \
-           RecordWriter.hh \
+           RecordLine.hh \
            RecordProcessor.hh \
+           RecordWriter.hh \
            SimpleLineConsumer.hh \
            SimpleRecordWriter.hh \
            SimpleLineMatcher.hh \
@@ -72,8 +73,9 @@ SOURCES += \
            LineConsumer.cc \
            LineMatcher.cc \
            MainWindow.cc \
-           RecordWriter.cc \
+           RecordLine.cc \
            RecordProcessor.cc \
+           RecordWriter.cc \
            SimpleLineConsumer.cc \
            SimpleRecordWriter.cc \
            SimpleLineMatcher.cc \

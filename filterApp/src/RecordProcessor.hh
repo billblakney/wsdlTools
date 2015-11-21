@@ -2,6 +2,7 @@
 #define _RECORDPROCESSOR_HH_
 
 #include "FieldItem.hh"
+#include "RecordLine.hh"
 #include "SimpleLineMatcher.hh"
 #include "TreeProcessor.hh"
 #include "Logger.hh"
@@ -36,20 +37,9 @@ public:
 
 protected:
 
-  struct RecLine { //TODO make elts refs?
-    std::string nodeKey;
-    std::string nodeTestRegex;
-    std::string nodeTestScope;
-    bool        nodeIsChecked;
-    std::string line;
-    std::string lineDotString;
-    bool        lineTestResult;
-    bool        lineIsExcluded;
-  };
-
   FieldItem *_TopNode;
 
-  std::vector<RecLine> _RecLines;
+  std::vector<RecordLine> _RecordLines;
 
   static ccl::Logger sLogger;
 
@@ -84,7 +74,7 @@ protected:
 
   void appendToDotString( std::string &aSuffix,std::string &aDotString);
 
-  void printRecLines();
+  void printRecordLines();
   void print(const std::string &s1,const std::string &s2);
 };
 

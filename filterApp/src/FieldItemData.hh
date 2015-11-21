@@ -30,6 +30,8 @@ public:
 
   virtual ~FieldItemData();
 
+  bool isChecked();
+
   FieldItemData::NodeType getNodeType();
   std::string& getKey();
   std::string& getName();
