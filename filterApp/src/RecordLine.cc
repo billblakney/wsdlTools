@@ -19,13 +19,22 @@ RecordLine::RecordLine(FieldItemData &aFieldItemData)
 }
 
 RecordLine::RecordLine(FieldItemData &aFieldItemData,
-      std::string aLine,std::string aLineDotString)
+      std::string &aLine,std::string &aLineDotString)
   : RecordLine(aFieldItemData)
 {
   line = aLine;
   lineDotString = aLineDotString;
 
   initResultFields();
+}
+
+RecordLine::RecordLine(FieldItemData &aFieldItemData,
+      std::string &aLine,std::string &aLineDotString,
+      bool aResultPassedTest,bool aResultLineExcluded)
+  : RecordLine(aFieldItemData,aLine,aLineDotString)
+{
+  resultPassedTest = aResultPassedTest;
+  resultLineExcluded = aResultLineExcluded;
 }
 
 RecordLine::~RecordLine()

@@ -22,7 +22,11 @@ public:
   RecordLine(FieldItemData &aFieldItemData);
 
   RecordLine(FieldItemData &aFieldItemData,
-      std::string aLine,std::string aLineDotString);
+      std::string &aLine,std::string &aLineDotString);
+
+  RecordLine(FieldItemData &aFieldItemData,
+      std::string &aLine,std::string &aLineDotString,
+      bool aResultPassedTest,bool aResultLineExcluded = false);
 
   virtual ~RecordLine();
 
