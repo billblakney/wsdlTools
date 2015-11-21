@@ -501,7 +501,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
   tArrayRecLine.nodeKey = aNode->getData().getKey();
   tArrayRecLine.nodeTestRegex = aNode->getData().getTest();
   tArrayRecLine.nodeTestScope = "";
-  tArrayRecLine.nodeIsChecked = tIsChecked;
+  tArrayRecLine.nodeIsChecked = false;
   tArrayRecLine.line = tLine;
   tArrayRecLine.lineDotString = tDotString;
   tArrayRecLine.lineTestResult = true;
@@ -674,7 +674,7 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
   tArrayRecLine.nodeKey = aNode->getData().getKey();
   tArrayRecLine.nodeTestRegex = aNode->getData().getTest();
   tArrayRecLine.nodeTestScope = "";
-  tArrayRecLine.nodeIsChecked = tIsChecked;
+  tArrayRecLine.nodeIsChecked = false;
   tArrayRecLine.line = tLine;
   tArrayRecLine.lineDotString = tDotString;
   tArrayRecLine.lineTestResult = true;
