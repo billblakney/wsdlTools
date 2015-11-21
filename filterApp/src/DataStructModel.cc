@@ -20,6 +20,8 @@ DataStructModel::DataStructModel(
 {
   kArrayFont.setItalic(true);
 
+  setupPostfixes();
+
   // root item
   FieldItemData tRootData(FieldItemData::eRoot,"root",aStruct->_Name,aStruct->_Name);
   _RootItem = new FieldItem(tRootData);
@@ -49,7 +51,14 @@ FieldItem *DataStructModel::getTopNode()
 //-------------------------------------------------------------------------------
 std::vector<std::string> DataStructModel::getTestNodes()
 {
-  return _TestNodes;
+  return _TestScopes;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::vector<std::string> DataStructModel::getPostfixes()
+{
+  return _Postfixes;
 }
 
 //-------------------------------------------------------------------------------
@@ -58,7 +67,7 @@ void DataStructModel::printTestNodes()
 {
   std::cout << "Test Nodes:" << std::endl;
   std::vector<std::string>::iterator tIter;
-  for (tIter = _TestNodes.begin(); tIter != _TestNodes.end(); tIter++)
+  for (tIter = _TestScopes.begin(); tIter != _TestScopes.end(); tIter++)
   {
     std::cout << "   " << *tIter << std::endl;
   }
@@ -107,7 +116,7 @@ void DataStructModel::buildTree(
   if (aLevel == 0)
   {
       // nothing special to do at level zero
-    _TestNodes.push_back("root");
+    _TestScopes.push_back("root");
   }
 
   vector<Field>::iterator tIter;
@@ -186,8 +195,8 @@ void DataStructModel::buildPrimitiveArrayNode(
   // Set the test nodes - one test node for specifying the whole array, and one
   // for specifying individual array elements.
   //
-  _TestNodes.push_back(tData.getKey());
-  _TestNodes.push_back(tData.getKey() + ".Element");
+  _TestScopes.push_back(tData.getKey());
+  _TestScopes.push_back(tData.getKey() + ".Element");
 }
 
 //-------------------------------------------------------------------------------
@@ -217,8 +226,8 @@ void DataStructModel::buildStructArrayNode(
   // Set the test nodes - one test node for specifying the whole array, and one
   // for specifying individual array elements.
   //
-  _TestNodes.push_back(tData.getKey());
-  _TestNodes.push_back(tData.getKey() + ".Element");
+  _TestScopes.push_back(tData.getKey());
+  _TestScopes.push_back(tData.getKey() + ".Element");
 
     buildTree(dataItem,tStruct,++aLevel);
     --aLevel;
@@ -246,7 +255,7 @@ void DataStructModel::buildStructNode(
     //
     // Set the test node.
     //
-    _TestNodes.push_back(tData.getKey());
+    _TestScopes.push_back(tData.getKey());
 
     buildTree(dataItem,tStruct,++aLevel);
     --aLevel;
@@ -473,40 +482,23 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
 
   switch (role) {
     case Qt::DisplayRole:
-#ifdef USING_INDEX
-    {
-      if (index.column() == eColTestKey)
-      {
-        uint tTestNodeIndex = (item->data(eColTestKey)).toUInt();
-        std::string tTestNodeStr = _TestNodes.at(tTestNodeIndex);
-        QString tString(tTestNodeStr.c_str()); //TODO checks or subroutine
-        return tString;
-      }
-      return item->data(index.column());
-      break;
-    }
-#endif
       return item->data(index.column());
       break;
     case Qt::EditRole:
-#ifdef USING_INDEX
     {
       if (index.column() == eColTestKey)
       {
-        uint tTestNodeIndex = (item->data(eColTestKey)).toUInt();
-        return tTestNodeIndex;
-      }
-      return item->data(index.column());
-      break;
-    }
-#endif
-    {
-      if (index.column() == eColTestKey)
-      {
-        uint tTestNodeIndex = getTestScopeIndex(
-            item->data(eColTestKey).toString().toStdString());
+        std::string tTestScope = item->data(eColTestKey).toString().toStdString();
+        uint tTestNodeIndex = getTestScopeIndex(tTestScope);
 
         return tTestNodeIndex;
+      }
+      else if (index.column() == eColPostfix)
+      {
+        std::string tPostfix = item->data(eColPostfix).toString().toStdString();
+        uint tPostfixIndex = getPostfixIndex(tPostfix);
+
+        return tPostfixIndex;
       }
       return item->data(index.column());
       break;
@@ -523,16 +515,6 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
       {
         return kArrayFont;
       }
-#if 0 //TODO thing if/how to highlight complete array group, if wanted
-      else if (
-          item->parentItem()->getData().getNodeType()
-                                    == FieldItemData::eStructArray
-       || item->parentItem()->getData().getNodeType()
-                                    == FieldItemData::ePrimitiveArray)
-      {
-        return kArrayFont;
-      }
-#endif
       break;
   }
 
@@ -589,13 +571,14 @@ bool DataStructModel::setData(
     }
     else if (aCol == eColTestKey)
     {
-      std::string tStr = _TestNodes.at(value.toUInt());
+      std::string tStr = _TestScopes.at(value.toUInt());
       item->setTestScope(QVariant(tStr.c_str()));
       emit dataChanged(index,index);
     }
     else if (aCol == eColPostfix)
     {
-      item->setFieldPostfix(value);
+      std::string tStr = _Postfixes.at(value.toUInt());
+      item->setFieldPostfix(QVariant(tStr.c_str()));
       emit dataChanged(index,index);
     }
   }
@@ -759,19 +742,43 @@ int DataStructModel::columnCount(const QModelIndex &parent) const
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
-uint DataStructModel::getTestScopeIndex(std::string aTestScope) const
+uint DataStructModel::getStringVectorIndex(
+    const std::vector<std::string> &aStringVector,
+    const std::string &aString) const
 {
  uint tIdx = 0;
  std::vector<std::string>::const_iterator tIter;
- for (tIter = _TestNodes.begin(); tIter != _TestNodes.end(); tIter++)
+ for (tIter = aStringVector.begin(); tIter != aStringVector.end(); tIter++)
  {
-   if (!aTestScope.compare(*tIter))
+   if (!aString.compare(*tIter))
    {
      return tIdx;
    }
    tIdx++;
  }
  return 0; //TODO should never reach, add warning or err
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+uint DataStructModel::getTestScopeIndex(std::string &aTestScope) const
+{
+  return getStringVectorIndex(_TestScopes,aTestScope);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void DataStructModel::setupPostfixes()
+{
+  _Postfixes.push_back("\\n");
+  _Postfixes.push_back("\\t");
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+uint DataStructModel::getPostfixIndex(std::string &aPostfix) const
+{
+  return getStringVectorIndex(_Postfixes,aPostfix);
 }
 
 //-------------------------------------------------------------------------------

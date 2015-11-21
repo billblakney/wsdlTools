@@ -48,6 +48,10 @@ public:
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
+  std::vector<std::string> getPostfixes();
+
+  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   void printTestNodes();
 
   //---------------------------------------------------------------------------
@@ -127,9 +131,18 @@ protected:
   FieldItem *_TopNodeItem;
 
   // test nodes
-  std::vector<std::string> _TestNodes;
+  std::vector<std::string> _TestScopes;
 
-  uint getTestScopeIndex(std::string aTestScope) const;
+  std::vector<std::string> _Postfixes;
+
+  uint getStringVectorIndex(const std::vector<std::string> &aStringVector,
+      const std::string &aString) const;
+
+  void setupPostfixes();
+
+  uint getPostfixIndex(std::string &aPostfix) const;
+
+  uint getTestScopeIndex(std::string &aTestScope) const;
 
   void setupModelData() {}
 

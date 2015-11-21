@@ -72,8 +72,15 @@ void MainWindow::setupView()
   setTreeViewStruct(_InitialStruct);
   _StructTree->header()->resizeSection(0, 225);
 
-  ComboBoxDelegate *tDelegate = new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
-  _StructTree->setItemDelegateForColumn(DataStructModel::eColTestKey,tDelegate);
+  ComboBoxDelegate *tTestScopeDelegate =
+      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
+  _StructTree->setItemDelegateForColumn(
+      DataStructModel::eColTestKey,tTestScopeDelegate);
+
+  ComboBoxDelegate *tPostfixDelegate =
+      new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
+  _StructTree->setItemDelegateForColumn(
+      DataStructModel::eColPostfix,tPostfixDelegate);
 
 
 
