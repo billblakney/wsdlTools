@@ -22,15 +22,15 @@ bool TreeProcessor::process(FieldItem *aNode,void */*aData*/)
   {
     processRootNode(aNode);
   }
-  else if ( aNode->getData().getNodeType() == FieldItemData::eStruct)
+  else if ( aNode->getData().getNodeType() == FieldItemData::eStructHeader)
   {
     processStructNode(aNode);
   }
-  else if (aNode->getData().getNodeType() == FieldItemData::eStructArray)
+  else if (aNode->getData().getNodeType() == FieldItemData::eStructArrayHeader)
   {
     processStructArrayNode(aNode);
   }
-  else if (aNode->getData().getNodeType() == FieldItemData::ePrimitive)
+  else if (aNode->getData().getNodeType() == FieldItemData::ePrimitiveValue)
   {
     processPrimitiveNode(aNode);
   }

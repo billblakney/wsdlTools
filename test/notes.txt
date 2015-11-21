@@ -1,0 +1,43 @@
+PrimitiveValue
+as-is................... a: val
+name-value...... ....... a: val
+longname-value.......... a.b.c: val
+value................... val
+exclude................. -no line-
+
+StructHeader
+as-is................... a:
+name.................... a:
+longname................ a.b.c:
+exclude................. -no line-
+
+StructArrayHeader
+as-is................... a:
+name.................... a:
+longname................ a.b.c:
+exclude................. -no line-
+
+StructArrayLength
+as-is................... array of len: n
+name-value.............. array of len: n
+longname-value.......... a.b.c array of len: n
+exclude................. -no line-
+
+PrimitiveArrayHeader
+as-is................... a:
+name.................... a:
+longname................ a.b.c:
+exclude................. -no line-
+
+PrimitiveArrayLength
+as-is................... array of len: n
+name-value.............. array of len: n
+longname-value.......... a.b.c array of len: n
+exclude................. -no line-
+
+PrimitiveArrayValue
+as-is................... [0] = val
+index-value............. [0] = val
+longname-index-value.... a.b.c [0] = val
+exclude................. -no line-
+

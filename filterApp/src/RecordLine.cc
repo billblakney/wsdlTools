@@ -57,6 +57,7 @@ void RecordLine::initNodeFields()
   nodeKey = "";
   nodeTestRegex = "";
   nodeTestScope = "";
+  nodePostfix = "\n";
   nodeIsChecked = false;
 }
 

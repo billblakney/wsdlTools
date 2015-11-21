@@ -12,8 +12,18 @@ class FieldItemData
 {
 public:
 
-  enum NodeType {eNone, eRoot, ePrimitive, eStruct, ePrimitiveArray,
-    eStructArray};
+  enum NodeType {
+    eNone,
+    eRoot,
+    eStructHeader,
+    eStructArrayHeader,
+    eStructArrayLength,
+    ePrimitiveArray,
+    ePrimitiveArrayLength,
+    ePrimitiveValue,
+    ePrimitiveArrayValue,
+    eEnd
+  };
 
   FieldItemData();
 

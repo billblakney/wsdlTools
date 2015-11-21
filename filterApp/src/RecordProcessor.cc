@@ -344,15 +344,15 @@ bool RecordProcessor::process(FieldItem *aNode,std::string &aDotString)
   {
     processRootNode(aNode,aDotString);
   }
-  else if ( aNode->getData().getNodeType() == FieldItemData::eStruct)
+  else if ( aNode->getData().getNodeType() == FieldItemData::eStructHeader)
   {
     processStructNode(aNode,aDotString);
   }
-  else if (aNode->getData().getNodeType() == FieldItemData::eStructArray)
+  else if (aNode->getData().getNodeType() == FieldItemData::eStructArrayHeader)
   {
     processStructArrayNode(aNode,aDotString);
   }
-  else if (aNode->getData().getNodeType() == FieldItemData::ePrimitive)
+  else if (aNode->getData().getNodeType() == FieldItemData::ePrimitiveValue)
   {
     processPrimitiveNode(aNode,aDotString);
   }
@@ -402,7 +402,7 @@ bool RecordProcessor::processStructNode(FieldItem *aNode,std::string &aDotString
    * If the node being processed is a struct array node, then the set of lines
    * for a struct does not include a header line.
    */
-  if (aNode->getData().getNodeType() != FieldItemData::eStructArray)
+  if (aNode->getData().getNodeType() != FieldItemData::eStructArrayHeader)
   {
     appendToDotString(tDotString,aNode->getData().getName());
 

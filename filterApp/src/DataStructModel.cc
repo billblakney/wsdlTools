@@ -215,7 +215,7 @@ void DataStructModel::buildStructArrayNode(
     std::string tKey = buildKey(aField,aParentItem,true);
     std::string tMatch = buildMatchForStructArrayField(aField,aLevel);
 
-    FieldItemData tData(FieldItemData::eStructArray,tKey,
+    FieldItemData tData(FieldItemData::eStructArrayHeader,tKey,
         aField._Name,aField._Type,tMatch);
 
     FieldItem *dataItem = new FieldItem(tData,aParentItem);
@@ -247,7 +247,7 @@ void DataStructModel::buildStructNode(
   {
     std::string tKey = buildKey(aField,aParentItem,false);
     std::string tMatch = buildMatchForStructField(aField,aLevel);
-    FieldItemData tData(FieldItemData::eStruct,tKey,
+    FieldItemData tData(FieldItemData::eStructHeader,tKey,
         aField._Name,aField._Type,tMatch);
     FieldItem *dataItem = new FieldItem(tData,aParentItem);
     aParentItem->appendChild(dataItem);
@@ -278,7 +278,7 @@ void DataStructModel::buildPrimitiveNode(
   std::string tKey = buildKey(aField,aParentItem,false);
   std::string tMatch = buildMatchForPrimitiveField(aField,aLevel);
 
-  FieldItemData tData(FieldItemData::ePrimitive,tKey,
+  FieldItemData tData(FieldItemData::ePrimitiveValue,tKey,
       aField._Name,aField._Type,tMatch);
 
   FieldItem *dataItem = new FieldItem(tData,aParentItem);
@@ -510,7 +510,7 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
       }
       break;
     case Qt::FontRole:
-      if( item->getData().getNodeType() == FieldItemData::eStructArray
+      if( item->getData().getNodeType() == FieldItemData::eStructArrayHeader
        || item->getData().getNodeType() == FieldItemData::ePrimitiveArray)
       {
         return kArrayFont;
