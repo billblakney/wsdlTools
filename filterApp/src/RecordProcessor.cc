@@ -425,8 +425,6 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
   std::string &tLine = *_LineIter;
   _LineIter++;
 
-  bool tIsChecked = false;
-
   _Matcher.setMatchRegex(aNode->getData().getMatch());
   if (!_Matcher.match(tLine))
   {
@@ -446,8 +444,6 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
    */
   tLine = *_LineIter;
   _LineIter++;
-
-  tIsChecked = true; // good for now; add node to tree?
 
   _Matcher.setMatchRegex(".*array of len: (\\d+)"); //TODO exact match of tabs?
   if (_Matcher.match(tLine))
@@ -500,8 +496,6 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,std::string &aDotStr
    */
   std::string &tLine = *_LineIter;
   _LineIter++;
-
-  bool tIsChecked = false;
 
   _Matcher.setMatchRegex(aNode->getData().getMatch());
   if (!_Matcher.match(tLine))

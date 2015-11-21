@@ -47,8 +47,8 @@ void.*(.*);             {pLex("void fn");}
 
 %%
 
-void yyerror(char *str) {printf("ERROR: Could not parse!\n");}
-int yywrap(void) {}
+void yyerror(char */*str*/) {printf("ERROR: Could not parse!\n");}
+int yywrap(void) {return 0;}
 
 StructorBuilder *lex_main(char *tHeaderFile)
 {

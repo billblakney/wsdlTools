@@ -9,10 +9,7 @@ RecordLine::RecordLine()
 
 RecordLine::RecordLine(FieldItemData &aFieldItemData)
 {
-  nodeKey = aFieldItemData.getKey();
-  nodeTestRegex = aFieldItemData.getTest();
-  nodeTestScope = aFieldItemData.getTestScope();
-  nodeIsChecked = aFieldItemData.isChecked();
+  setNodeFields(aFieldItemData);
 
   initLineFields();
   initResultFields();
@@ -20,8 +17,9 @@ RecordLine::RecordLine(FieldItemData &aFieldItemData)
 
 RecordLine::RecordLine(FieldItemData &aFieldItemData,
       std::string &aLine,std::string &aLineDotString)
-  : RecordLine(aFieldItemData)
 {
+  setNodeFields(aFieldItemData);
+
   line = aLine;
   lineDotString = aLineDotString;
 
@@ -31,14 +29,26 @@ RecordLine::RecordLine(FieldItemData &aFieldItemData,
 RecordLine::RecordLine(FieldItemData &aFieldItemData,
       std::string &aLine,std::string &aLineDotString,
       bool aResultPassedTest,bool aResultLineExcluded)
-  : RecordLine(aFieldItemData,aLine,aLineDotString)
 {
+  setNodeFields(aFieldItemData);
+
+  line = aLine;
+  lineDotString = aLineDotString;
+
   resultPassedTest = aResultPassedTest;
   resultLineExcluded = aResultLineExcluded;
 }
 
 RecordLine::~RecordLine()
 {
+}
+
+void RecordLine::setNodeFields(FieldItemData &aFieldItemData)
+{
+  nodeKey = aFieldItemData.getKey();
+  nodeTestRegex = aFieldItemData.getTest();
+  nodeTestScope = aFieldItemData.getTestScope();
+  nodeIsChecked = aFieldItemData.isChecked();
 }
 
 void RecordLine::initNodeFields()

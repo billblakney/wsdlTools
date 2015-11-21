@@ -8,11 +8,13 @@
 //-------------------------------------------------------------------------------
 void processCommandLine(int argc,char *argv[])
 {
-   if( argc < 2 )
-   {
-      printf("Usage: pp <in_file>\n");
-      exit(0);
-   }
+  Q_UNUSED(argv);
+
+  if( argc < 2 )
+  {
+    printf("Usage: pp <in_file>\n");
+    exit(0);
+  }
 }
 
 enum ReadState {eNone, eStarted, eEnded};

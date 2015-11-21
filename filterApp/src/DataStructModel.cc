@@ -281,7 +281,7 @@ void DataStructModel::buildPrimitiveNode(
 // Build a primitive array node for a struct field.
 //-------------------------------------------------------------------------------
 std::string DataStructModel::buildKey(
-    Field &aField,FieldItem *aParentItem,bool aIsArrayType)
+    Field &aField,FieldItem *aParentItem,bool /*aIsArrayType*/)
 {
   std::string tKey;
 
@@ -544,7 +544,7 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
 bool DataStructModel::setData(
     const QModelIndex &index,const QVariant &value,int role)
 {
-  int aRow = index.row();
+//  int aRow = index.row();
   int aCol = index.column();
 
   if( role == Qt::CheckStateRole && aCol == eColFieldName)

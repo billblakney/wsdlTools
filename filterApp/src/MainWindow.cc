@@ -28,6 +28,8 @@ MainWindow::MainWindow(
     _Writer(0),
     _StreamReader(0)
 {
+  Q_UNUSED(aApp);
+  Q_UNUSED(argc);
   _HFile = argv[1];
   _InitialStruct = argv[2];
 }

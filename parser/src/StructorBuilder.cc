@@ -53,7 +53,7 @@ void StructorBuilder::onMatch(const char *aRuleName)
 //-----------------------------------------------------------------------------
 void StructorBuilder::onField(string *aName,string *aType,int aIsPointer)
 {
-   static int _debug = 0;
+//   static int _debug = 0;
    Field tField(*aName,*aType,aIsPointer);
    pushField(tField);
 }
@@ -176,7 +176,7 @@ void StructorBuilder::postProcess()
 //-----------------------------------------------------------------------------
 void StructorBuilder::printSummary()
 {
-   static int _debug = 1;
+//   static int _debug = 1;
    map<std::string,Structure *>::iterator it;
 #if 0
    for( it = _Structs.begin() ; it != _Structs.end(); it++ ){

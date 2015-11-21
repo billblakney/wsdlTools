@@ -32,6 +32,8 @@ public:
 
 protected:
 
+  void setNodeFields(FieldItemData &aFieldItemData);
+
   void initNodeFields();
 
   void initLineFields();

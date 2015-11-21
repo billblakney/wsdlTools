@@ -61,7 +61,7 @@ getLevel()
 bool ccl::Logger::
 isEnabledFor(ccl::Logger::LOG_LEVEL aLogLevel)
 {
-   bool tReturn;
+   bool tReturn = true;
 
 #ifdef USE_LOG4CXX
    switch(aLogLevel)
