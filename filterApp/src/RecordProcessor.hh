@@ -56,7 +56,6 @@ protected:
   std::vector<std::string>           &_LinesIn;
   std::vector<std::string>            _LinesOut;
   std::vector<std::string>::iterator  _LineIter;
-  bool                                _TestResult;
 
   SimpleLineMatcher _Matcher;
 
@@ -74,7 +73,7 @@ protected:
   bool testForMatch(std::string &aValue,std::string &aTest);
 
   void applyTestResults();
-  void getScopeInfo(std::string aTestScope,std::string &aBaseScope,
+  void parseScope(std::string aTestScope,std::string &aBaseScope,
       bool &aIsEltScope);
   void setLinesOut();
   void excludeAllLines();

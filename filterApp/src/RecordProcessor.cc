@@ -12,8 +12,7 @@ ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 RecordProcessor::RecordProcessor(
     FieldItem *aTopNode,std::vector<std::string> &aLinesIn)
   : _TopNode(aTopNode),
-    _LinesIn(aLinesIn),
-    _TestResult(true)
+    _LinesIn(aLinesIn)
 {
 }
 
@@ -31,7 +30,7 @@ bool RecordProcessor::process()
   std::string tDotString;
   bool tResult = process(_TopNode,tDotString);
 
-  printRecLines();
+//  printRecLines();
 
   applyTestResults();
   setLinesOut();
@@ -42,6 +41,7 @@ bool RecordProcessor::process()
 //-----------------------------------------------------------------------------
 // Look for record lines that have test conditions, and apply those to the
 // include/exclude as appropriate.
+// TODO rm root hard-coding
 //-----------------------------------------------------------------------------
 void RecordProcessor::applyTestResults()
 {
@@ -49,16 +49,15 @@ void RecordProcessor::applyTestResults()
   for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
   {
     /*
-     * If no test was specified for this line, go to next.
+     * If no test was specified for this line, go to the next line.
      */
     if (tIter->nodeTestRegex.length() < 1)
       continue;
 
     /*
-     * If a line failed the test, and scope is root, then exclude all and
-     * return.
+     * If a line failed its test, and the test scope is root, then exclude
+     * all lines and return.
      */
-    //TODO rm root hard-coding
       if (tIter->lineTestResult == false && !tIter->nodeTestScope.compare("root"))
       {
         excludeAllLines();
@@ -66,17 +65,17 @@ void RecordProcessor::applyTestResults()
       }
 
     /*
-     * Get the base scope and whether it is an element scope.
+     * Get the test base scope and whether it is an element scope.
      */
     std::string tBaseScope;
     bool tIsEltScope = false;
 
-    getScopeInfo(tIter->nodeTestScope,tBaseScope,tIsEltScope);
+    parseScope(tIter->nodeTestScope,tBaseScope,tIsEltScope);
 
     /*
      * If this is a regular test scope (i.e. scope is not on array element test
      * scope), then if the test failed for this line, exclude all of the lines
-     * that match the scope.
+     * that match the test scope.
      */
     if (!tIsEltScope)
     {
@@ -87,7 +86,7 @@ void RecordProcessor::applyTestResults()
     }
     /*
      * If this is an element test scope, then if the test failed for this line,
-     * exclude all of the lines in scope for this element.
+     * exclude all of the lines in scope for this particular element.
      */
     else // is an Element test scope
     {
@@ -100,13 +99,22 @@ void RecordProcessor::applyTestResults()
 }
 
 //-----------------------------------------------------------------------------
+// Parse a test scope to get the test scope base and determine if it is an
+// array element scope or not. For example. if the test scope is
+// "mailingList.contacts.Element", the base scope will be set to
+// "mailingList.contacts", and the scope-is-array-element flag will be set
+// to true.
+// TODO return false, and propogate up?
 //-----------------------------------------------------------------------------
-void RecordProcessor::getScopeInfo(
+void RecordProcessor::parseScope(
     std::string aTestScope,std::string &aBaseScope,bool &aIsEltScope)
 {
   /*
-   * Create the regex for matching the test scope. If there is a match, then
-   * what[] will hold three elements.
+   * Create a regex to capture the base scope and optional "array element"
+   * keyword. If there is a match, then what[] will hold three elements:
+   * 1) the whole test scope
+   * 2) the base scope
+   * 3) optional "array element" keyword
    */
   std::string tStr("(.*?)(\\.Element){0,1}");
   boost::regex tScopeRegex(tStr);
@@ -122,10 +130,6 @@ void RecordProcessor::getScopeInfo(
     }
     //      std::cout << "tBaseScope,isElt: " << tBaseScope << ","
     //          << tIsEltScope << std::endl;
-#if 0
-    for (size_t i = 0; i < what.size(); i++)
-      std::cout << "what[" << i << "]: " << what[i] << std::endl;
-#endif
   }
   else
   {
@@ -135,6 +139,10 @@ void RecordProcessor::getScopeInfo(
 }
 
 //-----------------------------------------------------------------------------
+// Load "lines out" from the processed record line set. To be loaded into the
+// lines out list, the record line must have it's tree node checked and have
+// its "is excluded" flag set to false. This method is called after the
+// processing of the record lines is complete.
 //-----------------------------------------------------------------------------
 void RecordProcessor::setLinesOut()
 {
@@ -147,10 +155,11 @@ void RecordProcessor::setLinesOut()
 }
 
 //-----------------------------------------------------------------------------
+// Sets all record lines to the "is excluded" state. Also sets the "test
+// result" flag to false.
 //-----------------------------------------------------------------------------
 void RecordProcessor::excludeAllLines()
 {
-  _TestResult = false;
   std::vector<RecLine>::iterator tIter;
   for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
   {
@@ -266,7 +275,7 @@ getBaseScopeComponents(std::string aBaseScope)
 //-----------------------------------------------------------------------------
 bool RecordProcessor::passedFilterTests()
 {
-  return _TestResult;
+  return (_LinesOut.size() > 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -283,7 +292,6 @@ void RecordProcessor::reset()
   _RecLines.clear();
   _LineIter = _LinesIn.begin();
   _LinesOut.clear();
-  _TestResult = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -546,7 +554,6 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,std::string &aDotStr
     DEBUG(sLogger,"test FAILED for " << aNode->getData().getName());
     tTestScope = aNode->getData().getTestScope();
     tTestResult = false;
-//    _TestResult = false;TODO rm
   }
 
   RecLine tRecLine;
@@ -737,7 +744,6 @@ bool RecordProcessor::processPrimitiveArrayLine(
   if (!testForMatch(tFieldValue,aNode->getData().getTest()))
   {
     DEBUG(sLogger,"test FAILED");
-//    _TestResult = false;TODO rm
   }
 
   return true;
