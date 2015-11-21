@@ -48,6 +48,7 @@ void.*(.*);             {pLex("void fn");}
 %%
 
 void yyerror(char */*str*/) {printf("ERROR: Could not parse!\n");}
+/* TODO what does yywrap do? return 1 seems to work, but never checked why */
 int yywrap(void) {return 1;}
 
 StructorBuilder *lex_main(char *tHeaderFile)
