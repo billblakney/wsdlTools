@@ -1,5 +1,7 @@
 #include <sstream>
 #include <boost/regex.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include "RecordProcessor.hh"
 #include "SimpleLineMatcher.hh"
 
@@ -29,7 +31,7 @@ bool RecordProcessor::process()
   std::string tDotString;
   bool tResult = process(_TopNode,tDotString);
 
-  //printRecLines();
+  printRecLines();
 
   applyTestResults();
   setLinesOut();
@@ -38,6 +40,8 @@ bool RecordProcessor::process()
 }
 
 //-----------------------------------------------------------------------------
+// Look for record lines that have test conditions, and apply those to the
+// include/exclude as appropriate.
 //-----------------------------------------------------------------------------
 void RecordProcessor::applyTestResults()
 {
@@ -67,34 +71,7 @@ void RecordProcessor::applyTestResults()
     std::string tBaseScope;
     bool tIsEltScope = false;
 
-    /*
-     * Create the regex for matching the test scope. If there is a match, then
-     * what[] will hold three elements.
-     */
-    std::string tStr("(.*?)(\\.Element){0,1}");
-    boost::regex tScopeRegex(tStr);
-
-    boost::match_results<std::string::const_iterator> what;
-    if (boost::regex_match(tIter->nodeTestScope,what,tScopeRegex))
-    {
-//      std::cout << "got match on " << tIter->nodeTestScope << std::endl;
-      tBaseScope = what[1];
-      if (what[2].length())
-      {
-        tIsEltScope = true;
-      }
-//      std::cout << "tBaseScope,isElt: " << tBaseScope << ","
-//          << tIsEltScope << std::endl;
-#if 0
-      for (size_t i = 0; i < what.size(); i++)
-        std::cout << "what[" << i << "]: " << what[i] << std::endl;
-#endif
-    }
-    else
-    {
-      std::cout << "ERROR: failure applying test results" << std::endl;
-      return;
-    }
+    getScopeInfo(tIter->nodeTestScope,tBaseScope,tIsEltScope);
 
     /*
      * If this is a regular test scope (i.e. scope is not on array element test
@@ -105,9 +82,55 @@ void RecordProcessor::applyTestResults()
     {
       if (tIter->lineTestResult == false)
       {
-        excludeAllLinesMatchingScope(tBaseScope + ".*");
+        excludeAllLinesMatchingScope(tBaseScope + ".*"); //TODO mv dotstar to meth
       }
     }
+    /*
+     * If this is an element test scope, then if the test failed for this line,
+     * exclude all of the lines in scope for this element.
+     */
+    else // is an Element test scope
+    {
+      if (tIter->lineTestResult == false)
+      {
+        excludeAllLinesMatchingElementScope(tBaseScope,tIter->lineDotString);
+      }
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::getScopeInfo(
+    std::string aTestScope,std::string &aBaseScope,bool &aIsEltScope)
+{
+  /*
+   * Create the regex for matching the test scope. If there is a match, then
+   * what[] will hold three elements.
+   */
+  std::string tStr("(.*?)(\\.Element){0,1}");
+  boost::regex tScopeRegex(tStr);
+
+  boost::match_results<std::string::const_iterator> what;
+  if (boost::regex_match(aTestScope,what,tScopeRegex))
+  {
+    std::cout << "got match on " << aBaseScope << std::endl;
+    aBaseScope = what[1];
+    if (what[2].length())
+    {
+      aIsEltScope = true;
+    }
+    //      std::cout << "tBaseScope,isElt: " << tBaseScope << ","
+    //          << tIsEltScope << std::endl;
+#if 0
+    for (size_t i = 0; i < what.size(); i++)
+      std::cout << "what[" << i << "]: " << what[i] << std::endl;
+#endif
+  }
+  else
+  {
+    std::cout << "ERROR: failure applying test results" << std::endl;
+    return;
   }
 }
 
@@ -139,6 +162,9 @@ void RecordProcessor::excludeAllLines()
 //-----------------------------------------------------------------------------
 void RecordProcessor::excludeAllLinesMatchingScope(std::string aBaseScope)
 {
+  std::cout << "calling excludeAllLinesMatchingScope: "
+      << aBaseScope  << std::endl;
+
   std::vector<RecLine>::iterator tIter;
   for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
   {
@@ -147,11 +173,93 @@ void RecordProcessor::excludeAllLinesMatchingScope(std::string aBaseScope)
       SimpleLineMatcher *tMatcher = new SimpleLineMatcher(aBaseScope);
       if (tMatcher->match(tIter->lineDotString))
       {
-//        std::cout << "excluding: " << tIter->lineDotString << std::endl;
+        std::cout << "excluding: " << tIter->lineDotString << std::endl;
         tIter->lineIsExcluded = true;
       }
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::excludeAllLinesMatchingElementScope(
+    std::string aBaseScope,std::string aLineDotString)
+{
+  std::cout << "calling excludeAllLinesMatchingELEMENTScope:"
+      << aBaseScope << "," << aLineDotString << std::endl;
+
+  std::vector<std::string> tComponents =
+      getBaseScopeComponents(aBaseScope);
+
+  std::string tStr("(");
+  std::vector<std::string>::size_type tIdx;
+  for (tIdx = 0; tIdx < tComponents.size(); tIdx++)
+  {
+    bool tIsLastPass = ((tIdx+1 == tComponents.size())? true:false);
+
+    if (tIsLastPass)
+    {
+      tStr += tComponents[tIdx] + "[^\\.]*).*";
+    }
+    else
+    {
+      tStr += tComponents[tIdx] + "[^\\.]*\\.";
+    }
+  }
+  std::cout << "MATCH STRING: " << tStr << std::endl;
+
+  /*
+   */
+  std::string tExcludeMatch;
+
+  boost::regex tScopeRegex(tStr);
+  boost::match_results<std::string::const_iterator> what;
+  if (boost::regex_match(aLineDotString,what,tScopeRegex))
+  {
+    std::cout << "got match on " << aLineDotString << std::endl;
+
+    tExcludeMatch = what[1] + ".*";
+    std::cout << "tExcludeMatch: " << tExcludeMatch << std::endl;
+  }
+  else
+  {
+    std::cout << "ERROR: failure applying test results" << std::endl;
+    return;
+  }
+
+#if 0
+  boost::sregex tSearchL("\\[");
+  boost::sregex tSearchR("\\]");
+  std::string tReplaceL("\\[");
+  std::string tReplaceR("\\]");
+  std::string tAfterReplaceL = boost::regex_replace(tExcludeMatch,tSearchL,tReplaceL);
+  std::string tAfterReplaceR = boost::regex_replace(tAfterReplaceL,tSearchR,tReplaceR);
+#endif
+  boost::replace_all(tExcludeMatch,"\[","\\\[");
+  boost::replace_all(tExcludeMatch,"]","\\]");
+
+  /*
+   *
+   */
+//  excludeAllLinesMatchingScope(tAfterReplaceR);
+  excludeAllLinesMatchingScope(tExcludeMatch);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+std::vector<std::string> RecordProcessor::
+getBaseScopeComponents(std::string aBaseScope)
+{
+  std::vector<std::string> tComponents;
+
+  boost::char_separator<char> tSeparator(".");
+  boost::tokenizer<boost::char_separator<char> > tTokens(aBaseScope,tSeparator);
+  boost::tokenizer<boost::char_separator<char> >::iterator tIter;
+  for (tIter = tTokens.begin(); tIter != tTokens.end(); tIter++)
+  {
+    tComponents.push_back(*tIter);
+  }
+  return tComponents;
 }
 
 //-----------------------------------------------------------------------------

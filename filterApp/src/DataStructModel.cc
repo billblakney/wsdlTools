@@ -523,6 +523,7 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
       {
         return kArrayFont;
       }
+#if 0 //TODO thing if/how to highlight complete array group, if wanted
       else if (
           item->parentItem()->getData().getNodeType()
                                     == FieldItemData::eStructArray
@@ -531,6 +532,7 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
       {
         return kArrayFont;
       }
+#endif
       break;
   }
 

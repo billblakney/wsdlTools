@@ -74,9 +74,14 @@ protected:
   bool testForMatch(std::string &aValue,std::string &aTest);
 
   void applyTestResults();
+  void getScopeInfo(std::string aTestScope,std::string &aBaseScope,
+      bool &aIsEltScope);
   void setLinesOut();
   void excludeAllLines();
   void excludeAllLinesMatchingScope(std::string aBaseScope);
+  void excludeAllLinesMatchingElementScope(
+      std::string aBaseScope,std::string aLineDotString);
+  std::vector<std::string> getBaseScopeComponents(std::string aBaseScope);
 
   void appendToDotString( std::string &aSuffix,std::string &aDotString);
 
