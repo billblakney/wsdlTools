@@ -122,7 +122,7 @@ void RecordProcessor::parseScope(
   boost::match_results<std::string::const_iterator> what;
   if (boost::regex_match(aTestScope,what,tScopeRegex))
   {
-    std::cout << "got match on " << aBaseScope << std::endl;
+//    std::cout << "got match on " << aBaseScope << std::endl;
     aBaseScope = what[1];
     if (what[2].length())
     {
@@ -168,11 +168,14 @@ void RecordProcessor::excludeAllLines()
 }
 
 //-----------------------------------------------------------------------------
+// Excludes all lines that match a test scope. A match exists if the record
+// line's dot string matches the test scope (up through the length of the
+// test scope).
 //-----------------------------------------------------------------------------
 void RecordProcessor::excludeAllLinesMatchingScope(std::string aBaseScope)
 {
-  std::cout << "calling excludeAllLinesMatchingScope: "
-      << aBaseScope  << std::endl;
+//  std::cout << "calling excludeAllLinesMatchingScope: "
+//      << aBaseScope  << std::endl;
 
   std::vector<RecLine>::iterator tIter;
   for (tIter = _RecLines.begin(); tIter != _RecLines.end(); tIter++)
@@ -182,7 +185,7 @@ void RecordProcessor::excludeAllLinesMatchingScope(std::string aBaseScope)
       SimpleLineMatcher *tMatcher = new SimpleLineMatcher(aBaseScope);
       if (tMatcher->match(tIter->lineDotString))
       {
-        std::cout << "excluding: " << tIter->lineDotString << std::endl;
+//        std::cout << "excluding: " << tIter->lineDotString << std::endl;
         tIter->lineIsExcluded = true;
       }
     }
@@ -190,16 +193,37 @@ void RecordProcessor::excludeAllLinesMatchingScope(std::string aBaseScope)
 }
 
 //-----------------------------------------------------------------------------
+// Excludes all lines that match a test scope for an array element.
 //-----------------------------------------------------------------------------
 void RecordProcessor::excludeAllLinesMatchingElementScope(
     std::string aBaseScope,std::string aLineDotString)
 {
-  std::cout << "calling excludeAllLinesMatchingELEMENTScope:"
-      << aBaseScope << "," << aLineDotString << std::endl;
+//  std::cout << "calling excludeAllLinesMatchingELEMENTScope:"
+//      << aBaseScope << "," << aLineDotString << std::endl;
 
+  /*
+   * From the test scope string we'll need to build a string to test against
+   * the record line dot strings. The scope string a concatenation of node
+   * names separated by periods. The dot string for a record line is
+   * similar, but has the complication that it may contain array indices
+   * (at any node level that is an array). So to build a match string from
+   * the test scope that will match a record line dot string, we'll need to
+   * build a custom match string.
+   *
+   * To start with, get the list of node names from the test scope string.
+   */
   std::vector<std::string> tComponents =
       getBaseScopeComponents(aBaseScope);
 
+  /*
+   * Build a string that we'll use to extract the portion of the line dot
+   * string that can be used to exclude the other lines that match the same
+   * arry element. It will be similar to the base test scope string, but it
+   * will include an optional array indices at each level.
+   * (The array indices may or may not even be applicable at the various
+   * node levels, so just allow for them optionally to be there to extract
+   * the desired match string.
+   */
   std::string tStr("(");
   std::vector<std::string>::size_type tIdx;
   for (tIdx = 0; tIdx < tComponents.size(); tIdx++)
@@ -215,9 +239,11 @@ void RecordProcessor::excludeAllLinesMatchingElementScope(
       tStr += tComponents[tIdx] + "[^\\.]*\\.";
     }
   }
-  std::cout << "MATCH STRING: " << tStr << std::endl;
+//  std::cout << "MATCH STRING: " << tStr << std::endl;
 
   /*
+   * Use the match string constructed above to extract the match string that
+   * will be used to exclude record lines.
    */
   std::string tExcludeMatch;
 
@@ -225,36 +251,32 @@ void RecordProcessor::excludeAllLinesMatchingElementScope(
   boost::match_results<std::string::const_iterator> what;
   if (boost::regex_match(aLineDotString,what,tScopeRegex))
   {
-    std::cout << "got match on " << aLineDotString << std::endl;
+//    std::cout << "got match on " << aLineDotString << std::endl;
 
     tExcludeMatch = what[1] + ".*";
-    std::cout << "tExcludeMatch: " << tExcludeMatch << std::endl;
+//    std::cout << "tExcludeMatch: " << tExcludeMatch << std::endl;
   }
   else
   {
-    std::cout << "ERROR: failure applying test results" << std::endl;
+//    std::cout << "ERROR: failure applying test results" << std::endl;
     return;
   }
 
-#if 0
-  boost::sregex tSearchL("\\[");
-  boost::sregex tSearchR("\\]");
-  std::string tReplaceL("\\[");
-  std::string tReplaceR("\\]");
-  std::string tAfterReplaceL = boost::regex_replace(tExcludeMatch,tSearchL,tReplaceL);
-  std::string tAfterReplaceR = boost::regex_replace(tAfterReplaceL,tSearchR,tReplaceR);
-#endif
+  /*
+   * Need to escape some of the characters to create the final match string.
+   */
   boost::replace_all(tExcludeMatch,"\[","\\\[");
   boost::replace_all(tExcludeMatch,"]","\\]");
 
   /*
-   *
+   * Finally, exclude all of the record lines that match the array element
+   * that originally failed the test.
    */
-//  excludeAllLinesMatchingScope(tAfterReplaceR);
   excludeAllLinesMatchingScope(tExcludeMatch);
 }
 
 //-----------------------------------------------------------------------------
+// Tokenizes a base scope string to get its components.
 //-----------------------------------------------------------------------------
 std::vector<std::string> RecordProcessor::
 getBaseScopeComponents(std::string aBaseScope)
@@ -810,7 +832,7 @@ void RecordProcessor::printRecLines()
   char buff[1000];
   sprintf(buff,"%3s %-20s %-10s %-10s: %5s, %-30s, %-30s",
       "nCk","nKey","nTstRgx","nTScp","lTRes","lDotStr","line");
-  std::cout << buff << std::endl;
+//  std::cout << buff << std::endl;
 
   /*
    * Print the rec lines.
@@ -826,7 +848,7 @@ void RecordProcessor::printRecLines()
         tIter->lineTestResult,
         tIter->lineDotString.c_str(),
         tIter->line.c_str());
-    std::cout << buff << std::endl;
+//    std::cout << buff << std::endl;
   }
 }
 
