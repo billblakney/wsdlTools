@@ -74,6 +74,7 @@ void RecordProcessor::applyFormat(RecordLine &aRecordLine,
 {
   switch (aFormat) {
     case FieldItemData::eValue:
+      aRecordLine.line = aRecordLine.lineFieldValue;
       break;
     case FieldItemData::eLongnameValue:
       aRecordLine.line = aRecordLine.lineDotString + ": " + aRecordLine.lineFieldValue;

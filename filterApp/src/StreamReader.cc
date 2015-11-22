@@ -41,6 +41,8 @@ void StreamReader::setRecordWriter(RecordWriter *aWriter)
 //-----------------------------------------------------------------------------
 void StreamReader::run()
 {
+  static std::string _prefix = "";
+  static bool _printStartAndEnd = false;
 
   SimpleLineMatcher tBeginMessageMatcher(".*===RECEIVED MESSAGE===.*");
   SimpleLineMatcher tEndMessageMatcher(".*===END MESSAGE===.*");
@@ -66,7 +68,10 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
       if (tBeginMessageMatcher.match(tLineBuffer) )
       {
         DEBUG(sLogger,"found start match");
-        std::cout << "=== start ===" << std::endl;
+        if (_printStartAndEnd)
+        {
+          std::cout << "=== start ===" << std::endl;
+        }
         tFoundStart = true;
       }
       else
@@ -110,8 +115,7 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
             std::vector<std::string>::iterator tIter;
             for (tIter = tOutLines.begin(); tIter != tOutLines.end(); tIter++)
             {
-//              std::cout << "%" << *tIter << std::endl; //TODO
-              std::cout << "%" << *tIter; //TODO
+              std::cout << _prefix << *tIter; //TODO
             }
           }
           else
@@ -131,7 +135,10 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
         }
 #endif
         tStructLines.clear();
-        std::cout << "=== end ===" << std::endl;
+        if (_printStartAndEnd)
+        {
+          std::cout << "=== end ===" << std::endl;
+        }
         tFoundStart = false;
         tFoundFirstField = false;
       }
