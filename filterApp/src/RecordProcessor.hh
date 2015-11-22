@@ -58,7 +58,8 @@ protected:
   bool processPrimitiveNode(FieldItem *aNode,std::string &aDotString);
   bool processPrimitiveArrayNode(FieldItem *aNode,std::string &aDotString);
   bool processPrimitiveArrayLine(FieldItem *aNode,std::string &aDotString,int aIdx);
-  bool processChildren(FieldItem *aNode,std::string &aDotString);
+  bool processChildren(FieldItem *aNode,std::string &aDotString,
+      bool aSkipFirstChild = false);
 
   bool testForMatch(std::string &aValue,std::string &aTest);
 

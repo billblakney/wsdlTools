@@ -344,11 +344,11 @@ bool RecordProcessor::process(FieldItem *aNode,std::string &aDotString)
   {
     processRootNode(aNode,aDotString);
   }
-  else if ( aNode->getData().getNodeType() == FieldItemData::eStructHeader)
+  else if ( aNode->getData().getNodeType() == FieldItemData::eStruct)
   {
     processStructNode(aNode,aDotString);
   }
-  else if (aNode->getData().getNodeType() == FieldItemData::eStructArrayHeader)
+  else if (aNode->getData().getNodeType() == FieldItemData::eStructArray)
   {
     processStructArrayNode(aNode,aDotString);
   }
@@ -396,13 +396,19 @@ bool RecordProcessor::processStructNode(FieldItem *aNode,std::string &aDotString
 
   std::string tDotString = aDotString;
 
+  bool tSkipFirstChild = false;
+
   /*
    * If the node being processed is a regular struct node, then the set of
    * lines to be processed will include a header line with the struct name.
    * If the node being processed is a struct array node, then the set of lines
    * for a struct does not include a header line.
    */
-  if (aNode->getData().getNodeType() != FieldItemData::eStructArrayHeader)
+  if (aNode->getData().getNodeType() == FieldItemData::eStructArray)
+  {
+    tSkipFirstChild = true;
+  }
+  else
   {
     appendToDotString(tDotString,aNode->getData().getName());
 
@@ -421,7 +427,7 @@ bool RecordProcessor::processStructNode(FieldItem *aNode,std::string &aDotString
     _RecordLines.push_back(tRecordLine);
   }
 
-  return processChildren(aNode,tDotString);
+  return processChildren(aNode,tDotString,tSkipFirstChild);
 }
 
 //-----------------------------------------------------------------------------
@@ -484,7 +490,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
   /*
    * Process the structures that follow per the array length.
    */
-  for (int tIdx = 0; tIdx < tArrayLen; tIdx++)
+  for (int tIdx = 0; tIdx < tArrayLen; tIdx++) //TODO process first "length" node
   {
     std::stringstream tStream;
     tStream << tDotString << "[" << tIdx << "]";
@@ -698,10 +704,14 @@ bool RecordProcessor::testForMatch(std::string &aValue,std::string &aTest)
 }
 
 //-----------------------------------------------------------------------------
+// TODO comment on aSkipFirstChild
 //-----------------------------------------------------------------------------
-bool RecordProcessor::processChildren(FieldItem *aNode,std::string &aDotString)
+bool RecordProcessor::processChildren(FieldItem *aNode,std::string &aDotString,
+    bool aSkipFirstChild)
 {
-  for (int tIdx = 0; tIdx < aNode->childCount(); tIdx++)
+  int tIdx = (aSkipFirstChild ? 1 : 0);
+
+  for (; tIdx < aNode->childCount(); tIdx++)
   {
     bool tResult = process(aNode->child(tIdx),aDotString);
     if (tResult == false)

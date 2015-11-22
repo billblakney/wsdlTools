@@ -15,8 +15,8 @@ public:
   enum NodeType {
     eNone,
     eRoot,
-    eStructHeader,
-    eStructArrayHeader,
+    eStruct,
+    eStructArray,
     eStructArrayLength,
     ePrimitiveArray,
     ePrimitiveArrayLength,

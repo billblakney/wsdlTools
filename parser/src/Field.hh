@@ -17,6 +17,7 @@ public:
 	string _Name;
 	Level  _Level;
 
+	Field();
 	Field(string aType, string aName, int aIsPointer);
 	virtual ~Field();
 

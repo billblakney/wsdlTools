@@ -103,6 +103,8 @@ std::string DataStructModel::getFirstFieldMatch()
   return _TopNodeItem->child(0)->getData().getMatch();
 }
 
+static Field _lastLengthField; //TODO
+
 //-------------------------------------------------------------------------------
 // Completes building a tree if field items after the root and top items have
 // been created. Is initially called with the top item, and then is called
@@ -119,6 +121,9 @@ void DataStructModel::buildTree(
     _TestScopes.push_back("root");
   }
 
+  /*
+   * Build a node for each child of aStruct.
+   */
   vector<Field>::iterator tIter;
   for (tIter = aStruct->_Fields.begin();
        tIter != aStruct->_Fields.end(); tIter++)
@@ -133,6 +138,17 @@ void DataStructModel::buildTree(
       //std::string tName = what[1];
       DEBUG(sLogger,blanks[aLevel] << "array size entry: "
           << tIter->_Type << ":" << tIter->_Name);
+
+#if 1
+      if (aParentItem->getData().getNodeType() == FieldItemData::eStructArray)
+      {
+        _lastLengthField = *tIter;
+      }
+      else if (aParentItem->getData().getNodeType() == FieldItemData::ePrimitiveArray)
+      {
+//        buildPrimitiveArrayLengthNode(*tIter,aParentItem,aLevel);
+      }
+#endif
     }
     else if (tIter->_IsPointer)
     {
@@ -154,23 +170,102 @@ void DataStructModel::buildTree(
       buildPrimitiveNode(*tIter,aParentItem,aLevel);
     }
   }
-#if 0
-  for( it = tStructure->_Fields.begin(); it != tStructure->_Fields.end(); it++)
+}
+
+//-------------------------------------------------------------------------------
+// Build a tree node for a struct field.
+//-------------------------------------------------------------------------------
+void DataStructModel::buildStructNode(
+    Field &aField,FieldItem *aParentItem,int &aLevel)
+{
+  DEBUG(sLogger,blanks[aLevel] << "struct node: "
+      << aField._Type << ":" << aField._Name);
+
+  Structure *tStruct = _StructBuilder->getStructure(aField._Type);
+
+  if (tStruct == NULL)
   {
-    std::string tName = it->_Name;
-    std::string tType = it->_Type;
-    std::string tFieldString = aPrefix + "." + tName;
-    std::string tFieldDotString = getDotString(tType,tFieldString);
-    if( tFieldDotString.length() )
-    {
-      tReturn << tFieldDotString;
-    }
-    else
-    {
-      tReturn << tFieldString << endl;
-    }
+    ERROR(sLogger,blanks[aLevel] << "Can't find struct " << aField._Name);
+    return;
   }
-#endif
+
+  std::string tKey = buildKey(aField,aParentItem,false);
+  std::string tMatch = buildMatchForStructField(aField,aLevel);
+  FieldItemData tData(FieldItemData::eStruct,tKey,
+      aField._Name,aField._Type,tMatch);
+  FieldItem *dataItem = new FieldItem(tData,aParentItem);
+  aParentItem->appendChild(dataItem);
+
+  //
+  // Set the test node.
+  //
+  _TestScopes.push_back(tData.getKey());
+
+  buildTree(dataItem,tStruct,++aLevel);
+  --aLevel;
+}
+
+//-------------------------------------------------------------------------------
+// Build a struct array node for a struct field.
+//-------------------------------------------------------------------------------
+void DataStructModel::buildStructArrayNode(
+    Field &aField,FieldItem *aParentItem,int &aLevel)
+{
+  DEBUG(sLogger,blanks[aLevel] << "struct array node: "
+      << aField._Type << ":" << aField._Name);
+
+  Structure *tStruct = _StructBuilder->getStructure(aField._Type);
+  if (tStruct == NULL)
+  {
+    ERROR(sLogger,blanks[aLevel]
+        << "Can't find struct array node " << aField._Name);
+    return;
+  }
+
+  std::string tKey = buildKey(aField,aParentItem,true);
+  std::string tMatch = buildMatchForStructArrayField(aField,aLevel);
+
+  FieldItemData tData(FieldItemData::eStructArray,tKey,
+      aField._Name,aField._Type,tMatch);
+
+  FieldItem *dataItem = new FieldItem(tData,aParentItem);
+
+  aParentItem->appendChild(dataItem);
+
+  //
+  // Set the test nodes - one test node for specifying the whole array, and one
+  // for specifying individual array elements.
+  //
+  _TestScopes.push_back(tData.getKey());
+  _TestScopes.push_back(tData.getKey() + ".Element");
+
+  /*
+   * Build the array length node, which will be a child to this node.
+   */
+  int tNextLevel = aLevel + 1;
+  buildStructArrayLengthNode(_lastLengthField,dataItem,tNextLevel);
+
+  buildTree(dataItem,tStruct,++aLevel);
+  --aLevel;
+}
+
+//-------------------------------------------------------------------------------
+// Build a struct array length node for a struct field.
+//-------------------------------------------------------------------------------
+void DataStructModel::buildStructArrayLengthNode(
+    Field &aField,FieldItem *aParentItem,int &aLevel)
+{
+  DEBUG(sLogger,blanks[aLevel] << "struct array length node: "
+      << aField._Type << ":" << aField._Name);
+
+  std::string tKey = buildArrayLengthKey(aParentItem);
+  std::string tMatch = buildMatchForArrayLengthField(aField,aLevel);
+
+  FieldItemData tData(FieldItemData::eStructArrayLength,tKey,
+      "array_size","-",tMatch);
+
+  FieldItem *dataItem = new FieldItem(tData,aParentItem);
+  aParentItem->appendChild(dataItem);
 }
 
 //-------------------------------------------------------------------------------
@@ -197,73 +292,34 @@ void DataStructModel::buildPrimitiveArrayNode(
   //
   _TestScopes.push_back(tData.getKey());
   _TestScopes.push_back(tData.getKey() + ".Element");
+
+  /*
+   * Build the array length node, which will be a child to this node.
+   */
+  int tNextLevel = aLevel + 1;
+  buildPrimitiveArrayLengthNode(_lastLengthField,dataItem,tNextLevel);
 }
 
 //-------------------------------------------------------------------------------
-// Build a struct array node for a struct field.
-// TODO what if tStruct is NULL?
+// Build a primitive array length node for a struct field.
+// Design note: This is basically the same as the buildStructArrayLengthNode()
+// method. A single method with an additional FieldItemData::NodeType parameter
+// could be abstracted and used in both cases.
 //-------------------------------------------------------------------------------
-void DataStructModel::buildStructArrayNode(
+void DataStructModel::buildPrimitiveArrayLengthNode(
     Field &aField,FieldItem *aParentItem,int &aLevel)
 {
-  DEBUG(sLogger,blanks[aLevel] << "struct array node: "
+  DEBUG(sLogger,blanks[aLevel] << "struct array length node: "
       << aField._Type << ":" << aField._Name);
 
-  Structure *tStruct = _StructBuilder->getStructure(aField._Type);
-  if (tStruct != NULL)
-  {
-    std::string tKey = buildKey(aField,aParentItem,true);
-    std::string tMatch = buildMatchForStructArrayField(aField,aLevel);
+  std::string tKey = buildArrayLengthKey(aParentItem);
+  std::string tMatch = buildMatchForArrayLengthField(aField,aLevel);
 
-    FieldItemData tData(FieldItemData::eStructArrayHeader,tKey,
-        aField._Name,aField._Type,tMatch);
+  FieldItemData tData(FieldItemData::ePrimitiveArrayLength,tKey,
+      "array_size","-",tMatch);
 
-    FieldItem *dataItem = new FieldItem(tData,aParentItem);
-
-    aParentItem->appendChild(dataItem);
-
-  //
-  // Set the test nodes - one test node for specifying the whole array, and one
-  // for specifying individual array elements.
-  //
-  _TestScopes.push_back(tData.getKey());
-  _TestScopes.push_back(tData.getKey() + ".Element");
-
-    buildTree(dataItem,tStruct,++aLevel);
-    --aLevel;
-  }
-}
-
-//-------------------------------------------------------------------------------
-// Build a tree node for a struct field.
-//-------------------------------------------------------------------------------
-void DataStructModel::buildStructNode(
-    Field &aField,FieldItem *aParentItem,int &aLevel)
-{
-  DEBUG(sLogger,blanks[aLevel] << "struct node: "
-      << aField._Type << ":" << aField._Name);
-  Structure *tStruct = _StructBuilder->getStructure(aField._Type);
-  if (tStruct != NULL)
-  {
-    std::string tKey = buildKey(aField,aParentItem,false);
-    std::string tMatch = buildMatchForStructField(aField,aLevel);
-    FieldItemData tData(FieldItemData::eStructHeader,tKey,
-        aField._Name,aField._Type,tMatch);
-    FieldItem *dataItem = new FieldItem(tData,aParentItem);
-    aParentItem->appendChild(dataItem);
-
-    //
-    // Set the test node.
-    //
-    _TestScopes.push_back(tData.getKey());
-
-    buildTree(dataItem,tStruct,++aLevel);
-    --aLevel;
-  }
-  else
-  {
-    ERROR(sLogger,blanks[aLevel] << "Can't find struct " << aField._Name);
-  }
+  FieldItem *dataItem = new FieldItem(tData,aParentItem);
+  aParentItem->appendChild(dataItem);
 }
 
 //-------------------------------------------------------------------------------
@@ -305,12 +361,32 @@ std::string DataStructModel::buildKey(
     tKey = aField._Name;
   }
 
-#if 0 //TODO remove after confirm don't need anymore
+#if 0 //TODO ok remove if not used at some point
   if (aIsArrayType)
   {
-    tKey += "[]";
   }
 #endif
+
+  return tKey;
+}
+
+//-------------------------------------------------------------------------------
+// Build a primitive array node for a struct field.
+//-------------------------------------------------------------------------------
+std::string DataStructModel::buildArrayLengthKey(FieldItem *aParentItem)
+{
+  std::string tKey;
+
+  FieldItemData &tParentData = aParentItem->getData();
+
+  if (tParentData.getKey().length() > 0)
+  {
+    tKey = tParentData.getKey() + "_size";
+  }
+  else
+  {
+    // ERROR case
+  }
 
   return tKey;
 }
@@ -327,10 +403,36 @@ std::string DataStructModel::buildMatchForField(
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
-std::string DataStructModel::buildMatchForPrimitiveArrayField(
+std::string DataStructModel::buildMatchForArrayLengthField(
+    const Field &/*aField*/,int aIndentLevel)
+{
+  char tBuffer[50];
+  sprintf(tBuffer,"^[\\t]{%d}array of len:",aIndentLevel);
+  return tBuffer;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::string DataStructModel::buildMatchForStructField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForField(aField,aIndentLevel);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::string DataStructModel::buildMatchForStructArrayField(
+    const Field &aField,int aIndentLevel)
+{
+  return buildMatchForField(aField,aIndentLevel);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::string DataStructModel::buildMatchForStructArrayLengthField(
+    const Field &aField,int aIndentLevel)
+{
+  return buildMatchForArrayLengthField(aField,aIndentLevel);
 }
 
 //-------------------------------------------------------------------------------
@@ -345,15 +447,16 @@ std::string DataStructModel::buildMatchForPrimitiveField(
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
-std::string DataStructModel::buildMatchForStructArrayField(
+std::string DataStructModel::buildMatchForPrimitiveArrayField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForField(aField,aIndentLevel);
 }
 
 //-------------------------------------------------------------------------------
+//TODO
 //-------------------------------------------------------------------------------
-std::string DataStructModel::buildMatchForStructField(
+std::string DataStructModel::buildMatchForPrimitiveArrayLengthField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForField(aField,aIndentLevel);
@@ -510,8 +613,10 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
       }
       break;
     case Qt::FontRole:
-      if( item->getData().getNodeType() == FieldItemData::eStructArrayHeader
-       || item->getData().getNodeType() == FieldItemData::ePrimitiveArray)
+      if( item->getData().getNodeType() == FieldItemData::eStructArray
+       || item->getData().getNodeType() == FieldItemData::eStructArrayLength
+       || item->getData().getNodeType() == FieldItemData::ePrimitiveArray
+       || item->getData().getNodeType() == FieldItemData::ePrimitiveArrayLength)
       {
         return kArrayFont;
       }

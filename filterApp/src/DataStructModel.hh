@@ -60,26 +60,38 @@ public:
 
   void buildTree(FieldItem *rootItem,Structure *aStructure,int aLevel = 0);
 
-  void buildPrimitiveArrayNode(
+  void buildStructNode(
       Field &aField,FieldItem *aParentItem,int &aLevel);
   void buildStructArrayNode(
       Field &aField,FieldItem *aParentItem,int &aLevel);
-  void buildStructNode(
+  void buildStructArrayLengthNode(
+      Field &aField,FieldItem *aParentItem,int &aLevel);
+  void buildPrimitiveArrayNode(
+      Field &aField,FieldItem *aParentItem,int &aLevel);
+  void buildPrimitiveArrayLengthNode(
       Field &aField,FieldItem *aParentItem,int &aLevel);
   void buildPrimitiveNode(
       Field &aField,FieldItem *aParentItem,int &aLevel);
 
-  std::string buildKey(Field &aField,FieldItem *aParentItem,bool aIsArrayType);
+  std::string buildKey(Field &aField,FieldItem *aParentItem,
+      bool aIsArrayType = false);
+  std::string buildArrayLengthKey(FieldItem *aParentItem);
 
   std::string buildMatchForField(
       const Field &aField,int aIndentLevel);
+  std::string buildMatchForArrayLengthField(
+      const Field &aField,int aIndentLevel);
   std::string buildMatchForStructField(
       const Field &aField,int aIndentLevel);
-  std::string buildMatchForPrimitiveArrayField(
+  std::string buildMatchForStructArrayField(
+      const Field &aField,int aIndentLevel);
+  std::string buildMatchForStructArrayLengthField(
       const Field &aField,int aIndentLevel);
   std::string buildMatchForPrimitiveField(
       const Field &aField,int aIndentLevel);
-  std::string buildMatchForStructArrayField(
+  std::string buildMatchForPrimitiveArrayField(
+      const Field &aField,int aIndentLevel);
+  std::string buildMatchForPrimitiveArrayLengthField(
       const Field &aField,int aIndentLevel);
 
   bool processStructLines(std::vector<std::string> &aLinesIn,

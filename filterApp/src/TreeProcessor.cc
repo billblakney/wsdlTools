@@ -22,11 +22,11 @@ bool TreeProcessor::process(FieldItem *aNode,void */*aData*/)
   {
     processRootNode(aNode);
   }
-  else if ( aNode->getData().getNodeType() == FieldItemData::eStructHeader)
+  else if ( aNode->getData().getNodeType() == FieldItemData::eStruct)
   {
     processStructNode(aNode);
   }
-  else if (aNode->getData().getNodeType() == FieldItemData::eStructArrayHeader)
+  else if (aNode->getData().getNodeType() == FieldItemData::eStructArray)
   {
     processStructArrayNode(aNode);
   }
