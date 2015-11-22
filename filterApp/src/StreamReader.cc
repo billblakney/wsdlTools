@@ -38,6 +38,14 @@ void StreamReader::setDataStructModel(DataStructModel *aModel)
 }
 
 //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
+{
+  std::cout << "XXXXXXXXXXXXXXXXXXXXX " << aDataStructModel <<std::endl;
+  _DataStructModel = static_cast<DataStructModel *>(aDataStructModel);
+}
+
+//-----------------------------------------------------------------------------
 // TODO mem leak
 //-----------------------------------------------------------------------------
 void StreamReader::setRecordWriter(RecordWriter *aWriter)
@@ -92,9 +100,12 @@ void StreamReader::run()
    * TODO signal to main window directly possible/better?
    */
   emit structNameAvailable(QString(tStructName.c_str()));
-  _SetStructCallback(tStructName); //TODO cleanup
+//  _SetStructCallback(tStructName); //TODO cleanup
 
+  while(!_DataStructModel)
+  {
   sleep(1);
+  }
   std::cout << "continuing with reading the input..." << std::endl;
 
   /*

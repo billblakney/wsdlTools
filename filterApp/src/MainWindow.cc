@@ -19,12 +19,13 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
-    int argc, char *argv[],QApplication &aApp,QWidget *aParent)
+    int argc, char *argv[],QApplication &aApp,QWidget *aParent,StreamReader *aStreamReader)
   : QWidget(aParent),
     _StructorBuilder(0),
     _DataStructModel(0),
     _StructComboBox(0),
     _StructTree(0),
+#define OLD
 #ifdef OLD //TODO
     _Writer(0),
     _StreamReader(0),
@@ -260,6 +261,26 @@ QStringList MainWindow::convertToQStringList(std::vector<std::string> aStrings)
 void MainWindow::onStructNameAvailable(QString aStructName)
 {
   std::cout << "RECEIVED stream reader ready signal " << aStructName.toStdString() << std::endl;
+  std::cout << "============launching " << aStructName.toStdString() << std::endl;
+  setInitialStructName(aStructName.toStdString());
+  setupView();
+
+  /*
+   * Give the stream reader the data struct model so that it can start
+   * processing incoming lines.
+   * TODO maybe can get rid of the getFirstField function to eliminate this
+   * step? Need to check if that first field is needed anymore now that
+   * RecordProcessor has been implemented.
+   */
+  std::cout << "============launching" << std::endl;
+//  _StreamReader->setDataStructModel(_DataStructModel);
+  emit dataStructModelAvailable(static_cast<void *>(_DataStructModel));
+
+  /*
+   * Everthing ready to go, so show the main window.
+   */
+  std::cout << "============launching" << std::endl;
+  show();
 }
 
 //-------------------------------------------------------------------------------

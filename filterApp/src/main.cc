@@ -99,10 +99,15 @@ int main(int argc, char *argv[])
   else
   {
     /*
+     * Create the stream reader.
+     */
+    _StreamReader = new StreamReader(&setStructName);
+
+    /*
      * Create the main window. It won't be launched until later though, after
      * the stream reader has determined which data structure type is being read.
      */
-    _MainWindow = new MainWindow(argc,argv,app,0);
+    _MainWindow = new MainWindow(argc,argv,app,0,_StreamReader);
     //  window->setGeometry(1920 + 530,135,625,900);
     _MainWindow->setGeometry(1920      ,135,900,900);
 
@@ -113,23 +118,24 @@ int main(int argc, char *argv[])
      */
 //    _MainWindow->parseHeaderFile(); //TODO mutex issues
 
-    /*
-     * Create the stream reader and start it.
-     */
-    _StreamReader = new StreamReader(&setStructName);
-
 
     /*
      *
      */
-    QApplication::connect(_StreamReader,SIGNAL(structNameAvailable(QString)),
+    QApplication::connect(
+        _StreamReader,SIGNAL(structNameAvailable(QString)),
         _MainWindow,SLOT(onStructNameAvailable(QString)));
+
+    QApplication::connect(
+        _MainWindow,SIGNAL(dataStructModelAvailable(void *)),
+        _StreamReader,SLOT(onDataStructModelAvailable(void *)));
 
     /*
      * Create the stream reader and start it.
      */
     _StreamReader->start();
 
+#if 0
     /*
      * Wait for the stream reader to determine the structure type before doing
      * the final GUI configuration and launch.
@@ -138,6 +144,7 @@ int main(int argc, char *argv[])
       sleep(0.001);
     }
     launchGUI(_StructName);
+#endif
   }
   return app.exec();
 }

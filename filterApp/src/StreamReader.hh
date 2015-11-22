@@ -6,7 +6,7 @@
 #include <QThread>
 #include "DataStructModel.hh"
 #include "Logger.hh"
-#include "MainWindow.hh"
+//#include "MainWindow.hh" //TODO
 #include "RecordWriter.hh"
 
 class StreamReader: public QThread
@@ -26,6 +26,8 @@ signals:
 public slots:
 
   void run();
+
+  void onDataStructModelAvailable(void * aDataStructModel);
 
 protected:
   static ccl::Logger sLogger;
