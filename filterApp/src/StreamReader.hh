@@ -16,7 +16,6 @@ public:
   StreamReader(DataStructModel *aModel,RecordWriter *aWriter);
   virtual ~StreamReader();
   void setRecordWriter(RecordWriter *aWriter);
-  void setDataStructModel(DataStructModel *aModel);
 
 signals:
 
@@ -36,6 +35,7 @@ protected:
   QMutex _Mutex;
 
   void readForStructName(std::string &aMsgId,std::string &aStructName);
+  void setDataStructModel(DataStructModel *aModel);
 };
 
 #endif /* STREAMREADER_HH_ */

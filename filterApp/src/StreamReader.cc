@@ -42,7 +42,7 @@ void StreamReader::setDataStructModel(DataStructModel *aModel)
 //-----------------------------------------------------------------------------
 void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
 {
-  _DataStructModel = static_cast<DataStructModel *>(aDataStructModel);
+  setDataStructModel(static_cast<DataStructModel *>(aDataStructModel));
 }
 
 //-----------------------------------------------------------------------------
