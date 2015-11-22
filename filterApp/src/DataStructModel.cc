@@ -614,10 +614,11 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
       }
       break;
     case Qt::FontRole:
-      if( item->getData().getNodeType() == FieldItemData::eStructArray
-       || item->getData().getNodeType() == FieldItemData::eStructArrayLength
-       || item->getData().getNodeType() == FieldItemData::ePrimitiveArray
-       || item->getData().getNodeType() == FieldItemData::ePrimitiveArrayLength)
+      if( (index.column() == eColFieldName) &&
+       (item->getData().getNodeType() == FieldItemData::eStructArray ||
+        item->getData().getNodeType() == FieldItemData::eStructArrayLength ||
+        item->getData().getNodeType() == FieldItemData::ePrimitiveArray ||
+        item->getData().getNodeType() == FieldItemData::ePrimitiveArrayLength))
       {
         return kArrayFont;
       }
