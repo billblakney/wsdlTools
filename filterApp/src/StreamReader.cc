@@ -126,7 +126,7 @@ std::cout << "============ going to start reading STREAM" << std::endl;
    */
 
   static std::string _prefix = "";
-  static bool _printStartAndEnd = false;
+  static bool _printStartAndEnd = true;
 
   SimpleLineMatcher tBeginMessageMatcher(".*===RECEIVED MESSAGE===.*");
   SimpleLineMatcher tEndMessageMatcher(".*===END MESSAGE===.*");

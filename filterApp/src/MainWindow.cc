@@ -27,10 +27,11 @@ MainWindow::MainWindow(
     _StructTree(0),
 #ifdef OLD //TODO
     _Writer(0),
-    _StreamReader(0)
+    _StreamReader(0),
 #else
-    _Writer(0)
+    _Writer(0),
 #endif
+  _HeaderFileWasParsed(false)
 {
   Q_UNUSED(aApp);
   Q_UNUSED(argc);
@@ -127,14 +128,25 @@ void MainWindow::processCommandLine(int argc,char *argv[])
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::parseHeaderFile()
+{
+  if (!_HeaderFileWasParsed)
+  {
+    _StructorBuilder = lex_main((char *) _HeaderFile.c_str());
+    //   _StructorBuilder->printSummary();
+    //   _StructorBuilder->postProcess();
+    _HeaderFileWasParsed = true;
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::setupView()
 {
   /*
    * Parse the header file.
    */
-  _StructorBuilder = lex_main((char *) _HeaderFile.c_str());
-//   _StructorBuilder->printSummary();
-//   _StructorBuilder->postProcess();
+  parseHeaderFile(); // ok if already called before
 
   /*
    * Create structure dropdown list.

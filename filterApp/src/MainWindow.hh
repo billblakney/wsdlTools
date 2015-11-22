@@ -20,6 +20,8 @@ public:
 
   virtual ~MainWindow();
 
+  void parseHeaderFile();
+
 	void setupView();
 
 	void setInitialStructName(std::string aStructName); //TODO
@@ -44,6 +46,7 @@ protected:
 	StructTreeView     *_StructTree;
   SimpleRecordWriter *_Writer;
 //  StreamReader       *_StreamReader;
+  bool               _HeaderFileWasParsed;
 
   void readEnvironmentVariables();
 
