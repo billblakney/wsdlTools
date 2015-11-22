@@ -25,6 +25,8 @@ protected:
   std::vector<RecordWriter *> _Writers;
   DataStructModel *_DataStructModel;
   QMutex _Mutex;
+
+  void readForStructName(std::string &aMsgId,std::string &aStructName);
 };
 
 #endif /* STREAMREADER_HH_ */

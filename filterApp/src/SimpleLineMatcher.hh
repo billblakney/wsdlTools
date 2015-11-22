@@ -13,11 +13,12 @@ public:
   virtual bool match(std::string &aStr);
   void setMatchRegex(std::string aMatchRegex);
 
-  std::string getWhat() {return _What; } //TODO
+  std::string getWhat(int aIdx = 1) {return _What[aIdx]; } //TODO
 protected:
   boost::regex _MatchRegex;
+  boost::match_results<std::string::const_iterator> _What;
 
-  std::string _What; //TODO
+//  std::string _What; //TODO
 };
 
 #endif /* SIMPLELINEMATCHER_HH_ */

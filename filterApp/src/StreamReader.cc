@@ -39,8 +39,43 @@ void StreamReader::setRecordWriter(RecordWriter *aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void StreamReader::readForStructName(
+    std::string &aMsgId,std::string &aStructName)
+{
+  std::string tStructNameLineMatch(".*(ssifg_[^\\s]+)\\s+.*?([\\w]+)$");
+  SimpleLineMatcher tMatcher(tStructNameLineMatch);
+
+  std::string tLineBuffer;
+  while (std::getline(std::cin,tLineBuffer))
+  {
+      if (tMatcher.match(tLineBuffer) )
+      {
+        aMsgId = tMatcher.getWhat(1);
+        aStructName = tMatcher.getWhat(2);
+        return;
+      }
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void StreamReader::run()
 {
+  /*
+   * Read the input to find the structure name that is being used.
+   */
+  std::string tMsgId;
+  std::string tStructName;
+
+  readForStructName(tMsgId,tStructName);
+
+  std::cout << "msgID: " << tMsgId << std::endl;
+  std::cout << "struct: " << tStructName << std::endl;
+
+  /*
+   *
+   */
+
   static std::string _prefix = "";
   static bool _printStartAndEnd = false;
 
