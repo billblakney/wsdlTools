@@ -42,11 +42,12 @@ static bool structTypeHasBeenSet = false;
 //-----------------------------------------------------------------------------
 void launchGUI(std::string aStructName)
 {
+//_MainWindow->parseHeaderFile(); //TODO mutex issues
   /*
    * Tell the main window what the structure type being processed is, and then
    * tell it to setup its view.
    */
-  std::cout << "============launching" << std::endl;
+  std::cout << "============launching " << aStructName << std::endl;
   _MainWindow->setInitialStructName(aStructName);
   _MainWindow->setupView();
 
@@ -57,11 +58,13 @@ void launchGUI(std::string aStructName)
    * step? Need to check if that first field is needed anymore now that
    * RecordProcessor has been implemented.
    */
+  std::cout << "============launching" << std::endl;
   _StreamReader->setDataStructModel(_MainWindow->getDataStructModel());
 
   /*
    * Everthing ready to go, so show the main window.
    */
+  std::cout << "============launching" << std::endl;
   _MainWindow->show();
 }
 
@@ -72,7 +75,7 @@ void launchGUI(std::string aStructName)
 //-----------------------------------------------------------------------------
 void setStructName(std::string aStructName)
 {
-//  std::cout << "============setStructName" << std::endl;
+  std::cout << "============setStructName " << aStructName << std::endl;
   _StructName = aStructName;
   structTypeHasBeenSet = true;
 }
@@ -108,12 +111,23 @@ int main(int argc, char *argv[])
      * the main window will be as ready to go as possible before the stream
      * reader starts feeding it lines to process.
      */
-    _MainWindow->parseHeaderFile();
+//    _MainWindow->parseHeaderFile(); //TODO mutex issues
 
     /*
      * Create the stream reader and start it.
      */
     _StreamReader = new StreamReader(&setStructName);
+
+
+    /*
+     *
+     */
+    QApplication::connect(_StreamReader,SIGNAL(structNameAvailable(QString)),
+        _MainWindow,SLOT(onStructNameAvailable(QString)));
+
+    /*
+     * Create the stream reader and start it.
+     */
     _StreamReader->start();
 
     /*

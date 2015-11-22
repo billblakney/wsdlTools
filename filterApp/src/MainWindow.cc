@@ -132,6 +132,7 @@ void MainWindow::parseHeaderFile()
 {
   if (!_HeaderFileWasParsed)
   {
+    std::cout << "parsing header file " << _HeaderFile << std::endl;
     _StructorBuilder = lex_main((char *) _HeaderFile.c_str());
     //   _StructorBuilder->printSummary();
     //   _StructorBuilder->postProcess();
@@ -143,25 +144,39 @@ void MainWindow::parseHeaderFile()
 //-----------------------------------------------------------------------------
 void MainWindow::setupView()
 {
+std::cout << "in setupView" << std::endl;
   /*
    * Parse the header file.
    */
   parseHeaderFile(); // ok if already called before
 
+std::cout << "in setupView" << std::endl;
   /*
    * Create structure dropdown list.
    */
   std::vector<std::string> tStructNames = _StructorBuilder->getStructNames();
+
+std::cout << "structorbuilder: " << _StructorBuilder << std::endl;
+std::vector<std::string>::iterator it;
+for(it=tStructNames.begin();it!=tStructNames.end();it++)
+  {
+  std::cout << "name--------------" << *it << std::endl;
+  }
+std::cout << "WOW" << std::endl;
   _StructComboBox = new QComboBox(this);
   _StructComboBox->addItems(convertToQStringList(tStructNames));
+
+std::cout << "_InitialStruct " << _InitialStruct << std::endl;
 
   QString tSelectionStr(_InitialStruct.c_str());
   int tSelection = _StructComboBox->findText(tSelectionStr);
   _StructComboBox->setCurrentIndex(tSelection);
+std::cout << "in setupView" << std::endl;
 
   connect(_StructComboBox, SIGNAL(activated(int)), this,
       SLOT(onStructComboBoxActivated(int)));
 
+std::cout << "in setupView" << std::endl;
   /*
    * Create structure tree view.
    */
@@ -169,6 +184,7 @@ void MainWindow::setupView()
   setTreeViewStruct(_InitialStruct);
   _StructTree->header()->resizeSection(0, 225);
 
+std::cout << "in setupView" << std::endl;
   ComboBoxDelegate *tTestScopeDelegate =
       new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
   _StructTree->setItemDelegateForColumn(
@@ -222,6 +238,7 @@ void MainWindow::setupView()
   _StreamReader = new StreamReader(_DataStructModel, _Writer);
   _StreamReader->start();
 #endif
+std::cout << "exit setupView" << std::endl;
 }
 
 //-------------------------------------------------------------------------------
@@ -239,6 +256,13 @@ QStringList MainWindow::convertToQStringList(std::vector<std::string> aStrings)
 }
 
 //-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onStructNameAvailable(QString aStructName)
+{
+  std::cout << "RECEIVED stream reader ready signal " << aStructName.toStdString() << std::endl;
+}
+
+//-------------------------------------------------------------------------------
 // Load the newly user-selected structure into the tree view.
 //-------------------------------------------------------------------------------
 void MainWindow::onStructComboBoxActivated(int index)
@@ -247,13 +271,11 @@ void MainWindow::onStructComboBoxActivated(int index)
   setTreeViewStruct(tString.toStdString());
 }
 
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 void MainWindow::onSetFilterClicked(bool)
 {
   std::string tMatchString = _DataStructModel->getMatchString();
   _Writer->setMatchRegex(tMatchString);
-#ifdef OLD //TODO rm
-TreeProcessor *tProcessor = new TreeProcessor(_DataStructModel->getTopNode());
-tProcessor->process();
-#endif
   _DataStructModel->printTestNodes();
 }

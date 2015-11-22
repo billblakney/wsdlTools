@@ -13,11 +13,15 @@ class StreamReader: public QThread
 {
   Q_OBJECT;
 public:
-  StreamReader(void (*fn)(std::string aStructName));
+  StreamReader(void (*aSetStructCallback)(std::string aStructName));
   StreamReader(DataStructModel *aModel,RecordWriter *aWriter);
   virtual ~StreamReader();
   void setRecordWriter(RecordWriter *aWriter);
   void setDataStructModel(DataStructModel *aModel);
+
+signals:
+
+  void structNameAvailable(QString aStructName);
 
 public slots:
 
@@ -26,7 +30,7 @@ public slots:
 protected:
   static ccl::Logger sLogger;
 
-  void (*_fn)(std::string aStructName);
+  void (*_SetStructCallback)(std::string aStructName);
   std::vector<RecordWriter *> _Writers;
   DataStructModel *_DataStructModel;
   QMutex _Mutex;

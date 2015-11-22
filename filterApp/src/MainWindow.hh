@@ -32,6 +32,8 @@ public:
 
 public slots:
 
+  void onStructNameAvailable(QString aStructName);
+
   void onStructComboBoxActivated(int index);
 
   void onSetFilterClicked(bool);
