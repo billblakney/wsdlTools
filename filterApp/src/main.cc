@@ -33,6 +33,52 @@ void runBrowseMode(QApplication &app,int argc,char *argv[])
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
+void runStreamReaderMode(QApplication &app,int argc,char *argv[])
+{
+  /*
+   * Create the main window. It won't be launched until later though, after
+   * the stream reader has determined which data structure type is being read.
+   */
+  MainWindow *tMainWindow = new MainWindow(argc,argv,app,0);
+  //  window->setGeometry(1920 + 530,135,625,900);
+  tMainWindow->setGeometry(1920      ,135,900,900);
+
+  /*
+   * Do as much work as possible before starting the stream reader, so that
+   * the main window will be as ready to go as possible before the stream
+   * reader starts feeding it lines to process.
+   */
+  tMainWindow->parseHeaderFile();
+
+  /*
+   * Create the stream reader.
+   */
+  StreamReader * tStreamReader = new StreamReader();
+
+  /*
+   * Setup connection to let the main window know when the reader has found
+   * the type of structure to be processed.
+   */
+  QApplication::connect(
+      tStreamReader,SIGNAL(structNameAvailable(QString)),
+      tMainWindow,SLOT(onStructNameAvailable(QString)));
+
+  /*
+   * Setup connection to let the stream reader have access to the data struct
+   * model.
+   */
+  QApplication::connect(
+      tMainWindow,SIGNAL(dataStructModelAvailable(void *)),
+      tStreamReader,SLOT(onDataStructModelAvailable(void *)));
+
+  /*
+   * Run the stream reader.
+   */
+  tStreamReader->start();
+}
+
+/*------------------------------------------------------------------------------
+ *----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
   ccl::Logger::initialize();
@@ -48,41 +94,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-    /*
-     * Create the main window. It won't be launched until later though, after
-     * the stream reader has determined which data structure type is being read.
-     */
-    MainWindow *tMainWindow = new MainWindow(argc,argv,app,0);
-    //  window->setGeometry(1920 + 530,135,625,900);
-    tMainWindow->setGeometry(1920      ,135,900,900);
-
-    /*
-     * Do as much work as possible before starting the stream reader, so that
-     * the main window will be as ready to go as possible before the stream
-     * reader starts feeding it lines to process.
-     */
-    tMainWindow->parseHeaderFile();
-
-    /*
-     * Create the stream reader.
-     */
-    StreamReader * tStreamReader = new StreamReader();
-
-    /*
-     *
-     */
-    QApplication::connect(
-        tStreamReader,SIGNAL(structNameAvailable(QString)),
-        tMainWindow,SLOT(onStructNameAvailable(QString)));
-
-    QApplication::connect(
-        tMainWindow,SIGNAL(dataStructModelAvailable(void *)),
-        tStreamReader,SLOT(onDataStructModelAvailable(void *)));
-
-    /*
-     * Create the stream reader and start it.
-     */
-    tStreamReader->start();
+    runStreamReaderMode(app,argc,argv);
   }
   return app.exec();
 }
