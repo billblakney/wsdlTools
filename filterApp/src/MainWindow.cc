@@ -19,7 +19,7 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
-    int argc, char *argv[], QApplication &aApp,QWidget *aParent)
+    int argc, char *argv[],QApplication &aApp,QWidget *aParent)
   : QWidget(aParent),
     _StructorBuilder(0),
     _DataStructModel(0),
@@ -30,14 +30,67 @@ MainWindow::MainWindow(
 {
   Q_UNUSED(aApp);
   Q_UNUSED(argc);
-  _HFile = argv[1];
-  _InitialStruct = argv[2];
+
+  readEnvironmentVariables();
+
+  processCommandLine(argc,argv);
+
+  if (!_HeaderFile.length())
+  {
+    std::cerr << "ERROR: CLIRCAR_H env var is not set!\n";
+    exit(1);
+  }
+  std::cerr << "using header file " << _HeaderFile << std::endl;
+
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::~MainWindow()
 {
+}
+
+/*------------------------------------------------------------------------------
+ *----------------------------------------------------------------------------*/
+void MainWindow::readEnvironmentVariables()
+{
+  if(getenv("CLIRCAR_H"))
+  {
+    _HeaderFile = getenv("CLIRCAR_H");
+  }
+}
+
+/*------------------------------------------------------------------------------
+ *----------------------------------------------------------------------------*/
+void MainWindow::processCommandLine(int argc,char *argv[])
+{
+  for (int tIdx = 0; tIdx < argc; tIdx++)
+  {
+    if (!strcmp(argv[tIdx],"-f"))
+    {
+      if (++tIdx < argc)
+      {
+        _HeaderFile = argv[tIdx];
+      }
+      else
+      {
+        std::cerr << "ERROR: missing header name after -f\n";
+        exit(0);
+      }
+    }
+    if (!strcmp(argv[tIdx],"-s"))
+    {
+      if (++tIdx < argc)
+      {
+        _InitialStruct = argv[tIdx];
+      }
+      else
+      {
+        std::cerr << "ERROR: missing struct name after -s\n";
+        exit(0);
+      }
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -47,7 +100,7 @@ void MainWindow::setupView()
   /*
    * Parse the header file.
    */
-  _StructorBuilder = lex_main((char *) _HFile.c_str());
+  _StructorBuilder = lex_main((char *) _HeaderFile.c_str());
 //   _StructorBuilder->printSummary();
 //   _StructorBuilder->postProcess();
 

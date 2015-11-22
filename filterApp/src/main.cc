@@ -17,8 +17,6 @@ void processCommandLine(int argc,char *argv[])
   }
 }
 
-enum ReadState {eNone, eStarted, eEnded};
-
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
@@ -31,13 +29,11 @@ int main(int argc, char *argv[])
 
 //  bool tLaunchGUI = false;
 
-std::cout << "creating main window" << std::endl;
   MainWindow *window = new MainWindow(argc,argv,app,0);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
   window->setupView();
 
-std::cout << "showing window" << std::endl;
   window->show();
   return app.exec();
 }

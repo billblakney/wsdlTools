@@ -30,7 +30,7 @@ public slots:
 
 protected:
 
-	std::string         _HFile;
+	std::string         _HeaderFile;
 	std::string         _InitialStruct;
 	StructorBuilder    *_StructorBuilder;
 	DataStructModel    *_DataStructModel;
@@ -38,6 +38,10 @@ protected:
 	StructTreeView     *_StructTree;
   SimpleRecordWriter *_Writer;
   StreamReader       *_StreamReader;
+
+  void readEnvironmentVariables();
+
+  void processCommandLine(int argc,char *argv[]);
 
 	void setTreeViewStruct(std::string aStructName);
 
