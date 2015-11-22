@@ -34,7 +34,9 @@ StreamReader::~StreamReader()
 //-----------------------------------------------------------------------------
 void StreamReader::setDataStructModel(DataStructModel *aModel)
 {
+  _Mutex.lock();
   _DataStructModel = aModel;
+  _Mutex.unlock();
 }
 
 //-----------------------------------------------------------------------------
@@ -102,9 +104,15 @@ void StreamReader::run()
   emit structNameAvailable(QString(tStructName.c_str()));
 //  _SetStructCallback(tStructName); //TODO cleanup
 
-  while(!_DataStructModel)
+  bool tDataStructModelReady = false;
+  while(!tDataStructModelReady)
   {
-  sleep(1);
+    _Mutex.lock();
+    if (_DataStructModel != 0)
+    {
+      tDataStructModelReady = true;
+    }
+    _Mutex.unlock();
   }
   std::cout << "continuing with reading the input..." << std::endl;
 

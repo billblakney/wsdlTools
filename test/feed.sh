@@ -1,6 +1,6 @@
 #!/bin/bash
 counter=0
-delay=2
+delay=1
 while [ $counter -lt 1000 ]; do
    cat test.in
    sleep $delay

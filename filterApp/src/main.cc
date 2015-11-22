@@ -116,8 +116,7 @@ int main(int argc, char *argv[])
      * the main window will be as ready to go as possible before the stream
      * reader starts feeding it lines to process.
      */
-//    _MainWindow->parseHeaderFile(); //TODO mutex issues
-
+    _MainWindow->parseHeaderFile(); //TODO mutex issues
 
     /*
      *
