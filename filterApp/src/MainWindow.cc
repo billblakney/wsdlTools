@@ -1,15 +1,11 @@
 #include <cstdio>
 #include <iostream>
 #include <vector>
-#include <QFileSystemModel>
 #include <QAbstractItemModel>
 #include <QHeaderView>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include "ComboBoxDelegate.hh"
-#include "DataStructModel.hh"
-#include "StructorBuilder.hh"
-#include "TreeProcessor.hh"
 #include "MainWindow.hh"
 
 using namespace std;
@@ -19,8 +15,10 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
-    int argc, char *argv[],QApplication &aApp,QWidget *aParent)
+    int argc, char *argv[],QApplication &aApp,QWidget *aParent,
+    StreamReader *aStreamReader)
   : QWidget(aParent),
+    _StreamReader(0),
     _StructorBuilder(0),
     _DataStructModel(0),
     _StructComboBox(0),
@@ -30,10 +28,20 @@ MainWindow::MainWindow(
   Q_UNUSED(aApp);
   Q_UNUSED(argc);
 
+  /*
+   * Read the environment variables. Currently only one: CLIRCAR_H.
+   * It may optionally be set by command-line instead.
+   */
   readEnvironmentVariables();
 
+  /*
+   * Process command line arguments.
+   */
   processCommandLine(argc,argv);
 
+  /*
+   * Must have a header file specified.
+   */
   if (!_HeaderFile.length())
   {
     std::cerr << "ERROR: CLIRCAR_H env var is not set!\n";
@@ -158,6 +166,11 @@ void MainWindow::setupView()
       SLOT(onStructComboBoxActivated(int)));
 
   /*
+   * Create bypass checkbox.
+   */
+  QCheckBox *tBypassCheckBox = new QCheckBox("Bypass",this);
+
+  /*
    * Create structure tree view.
    */
   _StructTree = new StructTreeView(this);
@@ -198,6 +211,8 @@ void MainWindow::setupView()
    */
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(_StructComboBox);
+  layout->addWidget(tBypassCheckBox);
+  layout->addWidget(_StructTree);
   layout->addWidget(_StructTree);
   layout->addWidget(tButton);
 

@@ -25,9 +25,11 @@ class RecordProcessor
 {
 public:
 
-  RecordProcessor(FieldItem *aTopNode,std::vector<std::string> &aLinesIn);
+  RecordProcessor(std::vector<std::string> &aLinesIn);
 
   virtual ~RecordProcessor();
+
+  void configure(FieldItem *aTopNode);
 
   bool process();
 

@@ -6,6 +6,7 @@
 #include <QThread>
 #include "DataStructModel.hh"
 #include "Logger.hh"
+#include "RecordProcessor.hh"
 #include "RecordWriter.hh"
 
 class StreamReader: public QThread
@@ -30,8 +31,11 @@ public slots:
 protected:
   static ccl::Logger sLogger;
 
-  std::vector<RecordWriter *> _Writers;
-  DataStructModel *_DataStructModel;
+  vector<std::string>          _StructLines;
+  std::vector<RecordWriter *>  _Writers;
+  DataStructModel             *_DataStructModel;
+  RecordProcessor             *_RecordProcessor;
+
   QMutex _Mutex;
 
   void readForStructName(std::string &aMsgId,std::string &aStructName);

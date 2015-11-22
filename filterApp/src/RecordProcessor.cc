@@ -9,10 +9,8 @@ ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-RecordProcessor::RecordProcessor(
-    FieldItem *aTopNode,std::vector<std::string> &aLinesIn)
-  : _TopNode(aTopNode),
-    _LinesIn(aLinesIn)
+RecordProcessor::RecordProcessor(std::vector<std::string> &aLinesIn)
+  : _LinesIn(aLinesIn)
 {
 }
 
@@ -23,6 +21,15 @@ RecordProcessor::~RecordProcessor()
 }
 
 //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::configure(
+    FieldItem *aTopNode)
+{
+  _TopNode = aTopNode;
+}
+
+//-----------------------------------------------------------------------------
+// TODO should check that was configured
 //-----------------------------------------------------------------------------
 bool RecordProcessor::process()
 {

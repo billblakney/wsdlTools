@@ -5,8 +5,9 @@
 #include <QComboBox>
 #include <QStringList>
 #include <QWidget>
-#include "StructorBuilder.hh"
 #include "DataStructModel.hh"
+#include "StreamReader.hh"
+#include "StructorBuilder.hh"
 #include "StructTreeView.hh"
 
 class MainWindow: public QWidget
@@ -14,7 +15,8 @@ class MainWindow: public QWidget
   Q_OBJECT
 public:
 
-  MainWindow(int argc,char *argv[],QApplication &aApp,QWidget *aParent);
+  MainWindow(int argc,char *argv[],QApplication &aApp,QWidget *aParent,
+      StreamReader *aStreamReader = 0);
 
   virtual ~MainWindow();
 
@@ -42,6 +44,7 @@ public slots:
 
 protected:
 
+  StreamReader       *_StreamReader;
 	std::string         _HeaderFile;
 	std::string         _InitialStruct;
 	StructorBuilder    *_StructorBuilder;

@@ -36,10 +36,15 @@ void runBrowseMode(QApplication &app,int argc,char *argv[])
 void runStreamReaderMode(QApplication &app,int argc,char *argv[])
 {
   /*
+   * Create the stream reader.
+   */
+  StreamReader * tStreamReader = new StreamReader();
+
+  /*
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(argc,argv,app,0);
+  MainWindow *tMainWindow = new MainWindow(argc,argv,app,0,tStreamReader);
   //  window->setGeometry(1920 + 530,135,625,900);
   tMainWindow->setGeometry(1920      ,135,900,900);
 
@@ -49,11 +54,6 @@ void runStreamReaderMode(QApplication &app,int argc,char *argv[])
    * reader starts feeding it lines to process.
    */
   tMainWindow->parseHeaderFile();
-
-  /*
-   * Create the stream reader.
-   */
-  StreamReader * tStreamReader = new StreamReader();
 
   /*
    * Setup connection to let the main window know when the reader has found

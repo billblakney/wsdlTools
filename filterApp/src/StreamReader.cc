@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "SimpleLineMatcher.hh"
 
@@ -9,15 +8,20 @@ ccl::Logger StreamReader::sLogger("StreamReader");
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader()
-  : _DataStructModel(0)
+  : _DataStructModel(0),
+    _RecordProcessor(0)
 {
+  _RecordProcessor = new RecordProcessor(_StructLines);
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader(DataStructModel *aModel,RecordWriter *aWriter)
-  : _DataStructModel(aModel)
+  : _DataStructModel(aModel),
+    _RecordProcessor(0)
 {
+  _RecordProcessor = new RecordProcessor(_StructLines);
+
   _Mutex.lock();
   setRecordWriter(aWriter);
   _Mutex.unlock();
@@ -136,10 +140,7 @@ void StreamReader::readAndProcessStructLines()
 
   SimpleLineMatcher tFirstFieldMatcher(tFirstFieldMatch);
 
-  vector<std::string> tStructLines;
-
-RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
-    _DataStructModel->getTopNode(),tStructLines);
+  _RecordProcessor->configure(_DataStructModel->getTopNode());
 
   bool tFoundStart = false;
   bool tFoundFirstField = false;
@@ -181,7 +182,7 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
           }
         }
         DEBUG(sLogger,"pushing back struct line");
-        tStructLines.push_back(tLineBuffer);
+        _StructLines.push_back(tLineBuffer);
       }
       else
       {
@@ -189,12 +190,12 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
 
         std::vector<std::string> tOutLines;
 
-        if (tRecordProcessor->process())
+        if (_RecordProcessor->process())
         {
-          if (tRecordProcessor->passedFilterTests())
+          if (_RecordProcessor->passedFilterTests())
           {
             DEBUG(sLogger,"record passed filter tests");
-            std::vector<std::string> &tOutLines = tRecordProcessor->getOutLines();
+            std::vector<std::string> &tOutLines = _RecordProcessor->getOutLines();
             std::vector<std::string>::iterator tIter;
             for (tIter = tOutLines.begin(); tIter != tOutLines.end(); tIter++)
             {
@@ -208,9 +209,9 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
         }
         else
         {
-          std::cout << "ERROR: tRecordProcessor->process() returned false" << std::endl;
+          std::cout << "ERROR: _RecordProcessor->process() returned false" << std::endl;
         }
-        tStructLines.clear();
+        _StructLines.clear();
         if (_printStartAndEnd)
         {
           std::cout << "=== end ===" << std::endl;
