@@ -6,6 +6,44 @@
 
 ccl::Logger StreamReader::sLogger("StreamReader");
 
+#ifdef OLD //TODO rm
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+StreamReader::StreamReader(int argc,char *argv[],QApplication &aApp,QWidget *aParent)
+  : _MainWindow(0)
+  {
+//  bool tLaunchGUI = false;
+
+  _MainWindow = new MainWindow(argc,argv,aApp,0);
+//  window->setGeometry(1920 + 530,135,625,900);
+  _MainWindow->setGeometry(1920      ,135,900,900);
+  _MainWindow->setupView();
+
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+StreamReader::StreamReader()
+  : _MainWindow(0)
+{
+}
+#endif
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+StreamReader::StreamReader(void (*fn)(std::string aStructName))
+  : _DataStructModel(0)
+{
+  _fn =fn;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::setDataStructModel(DataStructModel *aModel)
+{
+  _DataStructModel = aModel;
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader(DataStructModel *aModel,RecordWriter *aWriter)
@@ -72,6 +110,17 @@ void StreamReader::run()
   std::cout << "msgID: " << tMsgId << std::endl;
   std::cout << "struct: " << tStructName << std::endl;
 
+  /*
+   *
+   */
+  std::cout << "============calling _fn" << std::endl;
+  _fn(tStructName); //TODO cleanup
+//  launchGUI(tStructName);
+
+
+  sleep(2);
+
+std::cout << "============ going to start reading STREAM" << std::endl;
   /*
    *
    */

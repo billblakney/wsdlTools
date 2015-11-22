@@ -8,7 +8,7 @@
 #include "StructorBuilder.hh"
 #include "DataStructModel.hh"
 #include "SimpleRecordWriter.hh"
-#include "StreamReader.hh"
+//#include "StreamReader.hh" //TODO
 #include "StructTreeView.hh"
 
 class MainWindow: public QWidget
@@ -21,6 +21,12 @@ public:
   virtual ~MainWindow();
 
 	void setupView();
+
+	void setInitialStructName(std::string aStructName); //TODO
+
+	void setTreeViewStruct(std::string aStructName); //TODO
+
+	DataStructModel *getDataStructModel(){return _DataStructModel;}//TODO
 
 public slots:
 
@@ -37,13 +43,11 @@ protected:
 	QComboBox          *_StructComboBox;
 	StructTreeView     *_StructTree;
   SimpleRecordWriter *_Writer;
-  StreamReader       *_StreamReader;
+//  StreamReader       *_StreamReader;
 
   void readEnvironmentVariables();
 
   void processCommandLine(int argc,char *argv[]);
-
-	void setTreeViewStruct(std::string aStructName);
 
 	QStringList convertToQStringList(std::vector<std::string> aStrings);
 

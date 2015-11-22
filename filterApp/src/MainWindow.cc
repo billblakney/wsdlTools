@@ -25,8 +25,12 @@ MainWindow::MainWindow(
     _DataStructModel(0),
     _StructComboBox(0),
     _StructTree(0),
+#ifdef OLD //TODO
     _Writer(0),
     _StreamReader(0)
+#else
+    _Writer(0)
+#endif
 {
   Q_UNUSED(aApp);
   Q_UNUSED(argc);
@@ -48,6 +52,30 @@ MainWindow::MainWindow(
 //-----------------------------------------------------------------------------
 MainWindow::~MainWindow()
 {
+}
+
+//-------------------------------------------------------------------------------
+// Create a struct data model for the specified struct name and load it in the
+// tree.
+//-------------------------------------------------------------------------------
+void MainWindow::setTreeViewStruct(std::string aStructName)
+{
+  Structure *tStructure = _StructorBuilder->getStructure(aStructName);
+  _DataStructModel = new DataStructModel(tStructure, _StructorBuilder);
+  _StructTree->setModel(_DataStructModel);
+#if 0 //  seems to have no effect
+  _StructTree->resizeColumnToContents(0);
+  _StructTree->resizeColumnToContents(1);
+#endif
+}
+
+//-------------------------------------------------------------------------------
+// Create a struct data model for the specified struct name and load it in the
+// tree.
+//-------------------------------------------------------------------------------
+void MainWindow::setInitialStructName(std::string aStructName)
+{
+  _InitialStruct = aStructName;
 }
 
 /*------------------------------------------------------------------------------
@@ -166,6 +194,7 @@ void MainWindow::setupView()
 
   setLayout(layout);
 
+#if 0 //TODO
   /*
    * Record writer.
    */
@@ -176,20 +205,6 @@ void MainWindow::setupView()
    */
   _StreamReader = new StreamReader(_DataStructModel, _Writer);
   _StreamReader->start();
-}
-
-//-------------------------------------------------------------------------------
-// Create a struct data model for the specified struct name and load it in the
-// tree.
-//-------------------------------------------------------------------------------
-void MainWindow::setTreeViewStruct(std::string aStructName)
-{
-  Structure *tStructure = _StructorBuilder->getStructure(aStructName);
-  _DataStructModel = new DataStructModel(tStructure, _StructorBuilder);
-  _StructTree->setModel(_DataStructModel);
-#if 0 //  seems to have no effect
-  _StructTree->resizeColumnToContents(0);
-  _StructTree->resizeColumnToContents(1);
 #endif
 }
 
