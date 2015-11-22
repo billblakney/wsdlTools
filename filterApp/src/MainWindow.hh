@@ -7,8 +7,6 @@
 #include <QWidget>
 #include "StructorBuilder.hh"
 #include "DataStructModel.hh"
-#include "SimpleRecordWriter.hh"
-#include "StreamReader.hh" //TODO
 #include "StructTreeView.hh"
 
 class MainWindow: public QWidget
@@ -16,8 +14,7 @@ class MainWindow: public QWidget
   Q_OBJECT
 public:
 
-  MainWindow(int argc,char *argv[],QApplication &aApp,QWidget *aParent,
-      StreamReader *aStreamReader = 0);
+  MainWindow(int argc,char *argv[],QApplication &aApp,QWidget *aParent);
 
   virtual ~MainWindow();
 
@@ -51,8 +48,6 @@ protected:
 	DataStructModel    *_DataStructModel;
 	QComboBox          *_StructComboBox;
 	StructTreeView     *_StructTree;
-  SimpleRecordWriter *_Writer;
-  StreamReader       *_StreamReader;
   bool               _HeaderFileWasParsed;
 
   void readEnvironmentVariables();

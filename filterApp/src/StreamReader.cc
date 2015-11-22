@@ -8,10 +8,9 @@ ccl::Logger StreamReader::sLogger("StreamReader");
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-StreamReader::StreamReader(void (*aSetStructCallback)(std::string aStructName))
+StreamReader::StreamReader()
   : _DataStructModel(0)
 {
-  _SetStructCallback =aSetStructCallback;
 }
 
 //-----------------------------------------------------------------------------
@@ -43,7 +42,6 @@ void StreamReader::setDataStructModel(DataStructModel *aModel)
 //-----------------------------------------------------------------------------
 void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
 {
-  std::cout << "XXXXXXXXXXXXXXXXXXXXX " << aDataStructModel <<std::endl;
   _DataStructModel = static_cast<DataStructModel *>(aDataStructModel);
 }
 
@@ -102,7 +100,6 @@ void StreamReader::run()
    * TODO signal to main window directly possible/better?
    */
   emit structNameAvailable(QString(tStructName.c_str()));
-//  _SetStructCallback(tStructName); //TODO cleanup
 
   bool tDataStructModelReady = false;
   while(!tDataStructModelReady)
@@ -183,8 +180,6 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
 
         std::vector<std::string> tOutLines;
 
-#define USE_NEW
-#ifdef USE_NEW
         if (tRecordProcessor->process())
         {
           if (tRecordProcessor->passedFilterTests())
@@ -206,13 +201,6 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
         {
           std::cout << "ERROR: tRecordProcessor->process() returned false" << std::endl;
         }
-#else
-        std::vector<RecordWriter *>::iterator tIt;
-        for (tIt = _Writers.begin(); tIt != _Writers.end(); tIt++)
-        {
-          (*tIt)->process(tStructLines);
-        }
-#endif
         tStructLines.clear();
         if (_printStartAndEnd)
         {

@@ -19,20 +19,13 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
-    int argc, char *argv[],QApplication &aApp,QWidget *aParent,StreamReader *aStreamReader)
+    int argc, char *argv[],QApplication &aApp,QWidget *aParent)
   : QWidget(aParent),
     _StructorBuilder(0),
     _DataStructModel(0),
     _StructComboBox(0),
     _StructTree(0),
-#define OLD
-#ifdef OLD //TODO
-    _Writer(0),
-    _StreamReader(0),
-#else
-    _Writer(0),
-#endif
-  _HeaderFileWasParsed(false)
+    _HeaderFileWasParsed(false)
 {
   Q_UNUSED(aApp);
   Q_UNUSED(argc);
@@ -145,39 +138,25 @@ void MainWindow::parseHeaderFile()
 //-----------------------------------------------------------------------------
 void MainWindow::setupView()
 {
-std::cout << "in setupView" << std::endl;
   /*
    * Parse the header file.
    */
   parseHeaderFile(); // ok if already called before
 
-std::cout << "in setupView" << std::endl;
   /*
    * Create structure dropdown list.
    */
   std::vector<std::string> tStructNames = _StructorBuilder->getStructNames();
-
-std::cout << "structorbuilder: " << _StructorBuilder << std::endl;
-std::vector<std::string>::iterator it;
-for(it=tStructNames.begin();it!=tStructNames.end();it++)
-  {
-  std::cout << "name--------------" << *it << std::endl;
-  }
-std::cout << "WOW" << std::endl;
   _StructComboBox = new QComboBox(this);
   _StructComboBox->addItems(convertToQStringList(tStructNames));
-
-std::cout << "_InitialStruct " << _InitialStruct << std::endl;
 
   QString tSelectionStr(_InitialStruct.c_str());
   int tSelection = _StructComboBox->findText(tSelectionStr);
   _StructComboBox->setCurrentIndex(tSelection);
-std::cout << "in setupView" << std::endl;
 
   connect(_StructComboBox, SIGNAL(activated(int)), this,
       SLOT(onStructComboBoxActivated(int)));
 
-std::cout << "in setupView" << std::endl;
   /*
    * Create structure tree view.
    */
@@ -185,7 +164,6 @@ std::cout << "in setupView" << std::endl;
   setTreeViewStruct(_InitialStruct);
   _StructTree->header()->resizeSection(0, 225);
 
-std::cout << "in setupView" << std::endl;
   ComboBoxDelegate *tTestScopeDelegate =
       new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
   _StructTree->setItemDelegateForColumn(
@@ -200,8 +178,6 @@ std::cout << "in setupView" << std::endl;
       new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
   _StructTree->setItemDelegateForColumn(
       DataStructModel::eColPostfix,tPostfixDelegate);
-
-
 
 // TODO works form 4.8 on
 #ifdef EXPAND_ALL
@@ -226,20 +202,6 @@ std::cout << "in setupView" << std::endl;
   layout->addWidget(tButton);
 
   setLayout(layout);
-
-#if 0 //TODO
-  /*
-   * Record writer.
-   */
-  _Writer = new SimpleRecordWriter();
-
-  /*
-   * Stream reader.
-   */
-  _StreamReader = new StreamReader(_DataStructModel, _Writer);
-  _StreamReader->start();
-#endif
-std::cout << "exit setupView" << std::endl;
 }
 
 //-------------------------------------------------------------------------------
@@ -260,8 +222,10 @@ QStringList MainWindow::convertToQStringList(std::vector<std::string> aStrings)
 //-------------------------------------------------------------------------------
 void MainWindow::onStructNameAvailable(QString aStructName)
 {
-  std::cout << "RECEIVED stream reader ready signal " << aStructName.toStdString() << std::endl;
-  std::cout << "============launching " << aStructName.toStdString() << std::endl;
+  /*
+   * Need to set the structure name before setting up the view and launching
+   * the window.
+   */
   setInitialStructName(aStructName.toStdString());
   setupView();
 
@@ -272,14 +236,11 @@ void MainWindow::onStructNameAvailable(QString aStructName)
    * step? Need to check if that first field is needed anymore now that
    * RecordProcessor has been implemented.
    */
-  std::cout << "============launching" << std::endl;
-//  _StreamReader->setDataStructModel(_DataStructModel);
   emit dataStructModelAvailable(static_cast<void *>(_DataStructModel));
 
   /*
-   * Everthing ready to go, so show the main window.
+   * Everything ready to go, so show the main window.
    */
-  std::cout << "============launching" << std::endl;
   show();
 }
 
@@ -296,7 +257,5 @@ void MainWindow::onStructComboBoxActivated(int index)
 //-------------------------------------------------------------------------------
 void MainWindow::onSetFilterClicked(bool)
 {
-  std::string tMatchString = _DataStructModel->getMatchString();
-  _Writer->setMatchRegex(tMatchString);
   _DataStructModel->printTestNodes();
 }
