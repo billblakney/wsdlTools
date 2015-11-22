@@ -16,24 +16,28 @@ RecordLine::RecordLine(FieldItemData &aFieldItemData)
 }
 
 RecordLine::RecordLine(FieldItemData &aFieldItemData,
-      std::string &aLine,std::string &aLineDotString)
+      std::string &aLine,std::string &aLineDotString,
+      std::string aLineFieldValue)
 {
   setNodeFields(aFieldItemData);
 
   line = aLine;
   lineDotString = aLineDotString;
+  lineFieldValue = aLineFieldValue;
 
   initResultFields();
 }
 
 RecordLine::RecordLine(FieldItemData &aFieldItemData,
       std::string &aLine,std::string &aLineDotString,
+      std::string aLineFieldValue,
       bool aResultPassedTest,bool aResultLineExcluded)
 {
   setNodeFields(aFieldItemData);
 
   line = aLine;
   lineDotString = aLineDotString;
+  lineFieldValue = aLineFieldValue;
 
   resultPassedTest = aResultPassedTest;
   resultLineExcluded = aResultLineExcluded;
@@ -48,6 +52,7 @@ void RecordLine::setNodeFields(FieldItemData &aFieldItemData)
   nodeKey = aFieldItemData.getKey();
   nodeTestRegex = aFieldItemData.getTest();
   nodeTestScope = aFieldItemData.getTestScope();
+  nodeFormat = aFieldItemData.getFormat();
   nodePostfix = aFieldItemData.getPostfix();
   nodeIsChecked = aFieldItemData.isChecked();
 }
@@ -57,6 +62,7 @@ void RecordLine::initNodeFields()
   nodeKey = "";
   nodeTestRegex = "";
   nodeTestScope = "";
+  nodeFormat = FieldItemData::eAsIs;
   nodePostfix = "\n";
   nodeIsChecked = false;
 }
@@ -65,6 +71,7 @@ void RecordLine::initLineFields()
 {
   line = "";
   lineDotString = "";
+  lineFieldValue = "";
 }
 
 void RecordLine::initResultFields()

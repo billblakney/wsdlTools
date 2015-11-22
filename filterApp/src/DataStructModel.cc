@@ -903,9 +903,10 @@ uint DataStructModel::getTestScopeIndex(std::string &aTestScope) const
 //-------------------------------------------------------------------------------
 void DataStructModel::setupFormats()
 {
-  _Formats.push_back("as-is");
-  _Formats.push_back("longname: value");
-  _Formats.push_back("value");
+  _Formats.push_back("as-is");           // eAsIs
+  _Formats.push_back("name: value");     // eNameValue
+  _Formats.push_back("longname: value"); // eLongnameValue
+  _Formats.push_back("value");           // eValue
 }
 
 //-------------------------------------------------------------------------------

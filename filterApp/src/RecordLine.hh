@@ -11,10 +11,12 @@ public:
   std::string nodeKey;
   std::string nodeTestRegex;
   std::string nodeTestScope;
+  FieldItemData::Format nodeFormat;
   std::string nodePostfix;
   bool        nodeIsChecked;
   std::string line;
   std::string lineDotString;
+  std::string lineFieldValue;
   bool        resultPassedTest;
   bool        resultLineExcluded;
 
@@ -23,10 +25,12 @@ public:
   RecordLine(FieldItemData &aFieldItemData);
 
   RecordLine(FieldItemData &aFieldItemData,
-      std::string &aLine,std::string &aLineDotString);
+      std::string &aLine,std::string &aLineDotString,
+      std::string aLineFieldValue);
 
   RecordLine(FieldItemData &aFieldItemData,
       std::string &aLine,std::string &aLineDotString,
+      std::string aLineFieldValue,
       bool aResultPassedTest,bool aResultLineExcluded = false);
 
   virtual ~RecordLine();

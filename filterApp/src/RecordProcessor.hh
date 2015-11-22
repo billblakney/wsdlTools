@@ -64,6 +64,7 @@ protected:
   bool testForMatch(std::string &aValue,std::string &aTest);
 
   void formatLines();
+  void applyFormat(RecordLine &aRecordLine,FieldItemData::Format aFormat);
   void applyTestResults();
   void parseScope(std::string aTestScope,std::string &aBaseScope,
       bool &aIsEltScope);

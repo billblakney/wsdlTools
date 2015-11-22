@@ -27,6 +27,8 @@ public:
 
   enum Format {
     eAsIs,
+    eNameValue,
+    eLongnameValue,
     eValue,
     eFormatEnd
   };

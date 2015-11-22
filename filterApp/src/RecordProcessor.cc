@@ -48,6 +48,13 @@ void RecordProcessor::formatLines()
   {
     if (tIter->nodeIsChecked && !tIter->resultLineExcluded)
     {
+      if (tIter->nodeFormat != FieldItemData::eAsIs)
+      {
+        applyFormat(*tIter,tIter->nodeFormat);
+      }
+      /*
+       * Add the postfix, i.e. line-ending.
+       */
       boost::regex matchAll("(.*)");
       std::string tFormat("$1");
       tFormat += tIter->nodePostfix;
@@ -56,6 +63,24 @@ void RecordProcessor::formatLines()
     }
   }
 
+}
+
+//-----------------------------------------------------------------------------
+// TODO at this point, we are changing the referenced line. This may mess
+// things up if later more things are done with the original lines.
+//-----------------------------------------------------------------------------
+void RecordProcessor::applyFormat(RecordLine &aRecordLine,
+    FieldItemData::Format aFormat)
+{
+  switch (aFormat) {
+    case FieldItemData::eValue:
+      break;
+    case FieldItemData::eLongnameValue:
+      aRecordLine.line = aRecordLine.lineDotString + ": " + aRecordLine.lineFieldValue;
+      break;
+    default:
+      break;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -423,7 +448,7 @@ bool RecordProcessor::processStructNode(FieldItem *aNode,std::string &aDotString
       return false;
     }
 
-    RecordLine tRecordLine(aNode->getData(),tLine,tDotString);
+    RecordLine tRecordLine(aNode->getData(),tLine,tDotString,"");
     _RecordLines.push_back(tRecordLine);
   }
 
@@ -459,7 +484,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
     return false;
   }
 
-  RecordLine tRecordLine(aNode->getData(),tLine,tDotString);
+  RecordLine tRecordLine(aNode->getData(),tLine,tDotString,"");
   _RecordLines.push_back(tRecordLine);
 
   /*
@@ -495,7 +520,7 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
   }
 
   RecordLine tArrayRecordLine(aFirstChildNode->getData(),tLine,tSizeDotString,
-      tTestResult);
+      tFieldValue,tTestResult);
   _RecordLines.push_back(tArrayRecordLine);
 
   int tArrayLen = atoi(_Matcher.getWhat().c_str());
@@ -553,7 +578,8 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,std::string &aDotStr
     tTestResult = false;
   }
 
-  RecordLine tRecordLine(aNode->getData(),tLine,tDotString,tTestResult);
+  RecordLine tRecordLine(aNode->getData(),tLine,tDotString,tFieldValue,
+      tTestResult);
   _RecordLines.push_back(tRecordLine);
 
   return true;
@@ -589,7 +615,7 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
     return false;
   }
 
-  RecordLine tRecordLine(aNode->getData(),tLine,tDotString,true);
+  RecordLine tRecordLine(aNode->getData(),tLine,tDotString,"",true);
   _RecordLines.push_back(tRecordLine);
 
   /*
@@ -626,7 +652,7 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
   }
 
   RecordLine tArrayRecordLine(aFirstChildNode->getData(),tLine,tSizeDotString,
-      tTestResult);
+      tFieldValue,tTestResult);
   _RecordLines.push_back(tArrayRecordLine);
 
   int tArrayLen = atoi(_Matcher.getWhat().c_str());
@@ -682,6 +708,15 @@ bool RecordProcessor::processPrimitiveArrayLine(
     return false;
   }
 
+  bool tTestResult = true;
+
+  std::string tFieldValue = _Matcher.getWhat();
+  if (!testForMatch(tFieldValue,aNode->getData().getTest()))
+  {
+    DEBUG(sLogger,"test FAILED");
+    tTestResult = false;
+  }
+
   std::string tScope;
   std::stringstream tStream;
   tStream << aIdx;
@@ -694,15 +729,10 @@ bool RecordProcessor::processPrimitiveArrayLine(
   tRecordLine.nodeIsChecked = aNode->getData().isChecked();
   tRecordLine.line = tLine;
   tRecordLine.lineDotString = aDotString;
-  tRecordLine.resultPassedTest = true;
+  tRecordLine.lineFieldValue = tFieldValue;
+  tRecordLine.resultPassedTest = tTestResult;
   tRecordLine.resultLineExcluded = false;
   _RecordLines.push_back(tRecordLine);
-
-  std::string tFieldValue = _Matcher.getWhat();
-  if (!testForMatch(tFieldValue,aNode->getData().getTest()))
-  {
-    DEBUG(sLogger,"test FAILED");
-  }
 
   return true;
 }
