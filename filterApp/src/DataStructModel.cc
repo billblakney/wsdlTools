@@ -402,12 +402,13 @@ std::string DataStructModel::buildMatchForField(
 }
 
 //-------------------------------------------------------------------------------
+// TODO check spaces vs. tabs
 //-------------------------------------------------------------------------------
 std::string DataStructModel::buildMatchForArrayLengthField(
     const Field &/*aField*/,int aIndentLevel)
 {
   char tBuffer[50];
-  sprintf(tBuffer,"^[\\t]{%d}array of len:",aIndentLevel);
+  sprintf(tBuffer,"^[\\t]{%d}array of len:[\\s]+(.*)",aIndentLevel);
   return tBuffer;
 }
 

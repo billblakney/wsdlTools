@@ -471,7 +471,10 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
   tLine = *_LineIter;
   _LineIter++;
 
-  _Matcher.setMatchRegex(".*array of len: (\\d+)"); //TODO exact match of tabs?
+  FieldItem *aFirstChildNode = aNode->child(0);
+  std::string tSizeDotString = tDotString + "_size";
+
+  _Matcher.setMatchRegex(aFirstChildNode->getData().getMatch());
   if (_Matcher.match(tLine))
   {
     DEBUG(sLogger,"array of len matched: " << tLine);
@@ -482,7 +485,17 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
     return false;
   }
 
-  RecordLine tArrayRecordLine(aNode->getData(),tLine,tDotString);
+  bool tTestResult = true;
+
+  std::string tFieldValue = _Matcher.getWhat();
+  if (!testForMatch(tFieldValue,aFirstChildNode->getData().getTest()))
+  {
+    DEBUG(sLogger,"test FAILED for " << aFirstChildNode->getData().getName());
+    tTestResult = false;
+  }
+
+  RecordLine tArrayRecordLine(aFirstChildNode->getData(),tLine,tSizeDotString,
+      tTestResult);
   _RecordLines.push_back(tArrayRecordLine);
 
   int tArrayLen = atoi(_Matcher.getWhat().c_str());
@@ -588,8 +601,11 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
   tLine = *_LineIter;
   _LineIter++;
 
+  FieldItem *aFirstChildNode = aNode->child(0);
+  std::string tSizeDotString = tDotString + "_size";
+
   // TODO better to use exact match of leading tabs in match regex?
-  _Matcher.setMatchRegex(".*array of len: (\\d+)");
+  _Matcher.setMatchRegex(aFirstChildNode->getData().getMatch());
   if (_Matcher.match(tLine))
   {
     DEBUG(sLogger,"array of len matched: " << tLine);
@@ -600,7 +616,17 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
     return false;
   }
 
-  RecordLine tArrayRecordLine(aNode->getData(),tLine,tDotString,true);
+  bool tTestResult = true;
+
+  std::string tFieldValue = _Matcher.getWhat();
+  if (!testForMatch(tFieldValue,aFirstChildNode->getData().getTest()))
+  {
+    DEBUG(sLogger,"test FAILED for " << aFirstChildNode->getData().getName());
+    tTestResult = false;
+  }
+
+  RecordLine tArrayRecordLine(aFirstChildNode->getData(),tLine,tSizeDotString,
+      tTestResult);
   _RecordLines.push_back(tArrayRecordLine);
 
   int tArrayLen = atoi(_Matcher.getWhat().c_str());
@@ -746,10 +772,10 @@ void RecordProcessor::printRecordLines()
   char buff[1000];
   sprintf(buff,"%3s %-20s %-10s %-10s: %5s, %-30s, %-30s",
       "nCk","nKey","nTstRgx","nTScp","lTRes","lDotStr","line");
-//  std::cout << buff << std::endl;
+  std::cout << buff << std::endl;
 
   /*
-   * Print the rec lines.
+   * Print the record lines.
    */
   std::vector<RecordLine>::iterator tIter;
   for (tIter = _RecordLines.begin(); tIter != _RecordLines.end(); tIter++)
@@ -762,7 +788,7 @@ void RecordProcessor::printRecordLines()
         tIter->resultPassedTest,
         tIter->lineDotString.c_str(),
         tIter->line.c_str());
-//    std::cout << buff << std::endl;
+    std::cout << buff << std::endl;
   }
 }
 
