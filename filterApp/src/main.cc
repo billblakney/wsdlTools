@@ -5,19 +5,25 @@
 #include "StreamReader.hh"
 #include "Logger.hh"
 
+static bool _BrowseMode = false;
+
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 void processCommandLine(int argc,char *argv[])
 {
-  Q_UNUSED(argc);
-  Q_UNUSED(argv);
+  for (int tIdx = 0; tIdx < argc; tIdx++)
+  {
+    if (!strcmp(argv[tIdx],"-b"))
+    {
+      _BrowseMode = true;
+    }
+  }
 }
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void justBrowse(QApplication &app,int argc,char *argv[])
+void runBrowseMode(QApplication &app,int argc,char *argv[])
 {
-  std::cout << "just browsing" << std::endl;
   MainWindow *window = new MainWindow(argc,argv,app,0);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
@@ -29,17 +35,16 @@ void justBrowse(QApplication &app,int argc,char *argv[])
  *----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
-  bool tJustBrowse = false;
-
   ccl::Logger::initialize();
 
   QApplication app(argc, argv);
 
-//  processCommandLine(argc,argv);
+  processCommandLine(argc,argv);
 
-  if (tJustBrowse)
+  if (_BrowseMode)
   {
-    justBrowse(app,argc,argv);
+    std::cout << "running in browse mode" << std::endl;
+    runBrowseMode(app,argc,argv);
   }
   else
   {
