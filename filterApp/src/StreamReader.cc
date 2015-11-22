@@ -9,7 +9,8 @@ ccl::Logger StreamReader::sLogger("StreamReader");
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader()
   : _DataStructModel(0),
-    _RecordProcessor(0)
+    _RecordProcessor(0),
+    _InBypassMode(false)
 {
   _RecordProcessor = new RecordProcessor(_StructLines);
 }
@@ -18,7 +19,8 @@ StreamReader::StreamReader()
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader(DataStructModel *aModel,RecordWriter *aWriter)
   : _DataStructModel(aModel),
-    _RecordProcessor(0)
+    _RecordProcessor(0),
+    _InBypassMode(false)
 {
   _RecordProcessor = new RecordProcessor(_StructLines);
 
@@ -50,9 +52,47 @@ void StreamReader::setRecordWriter(RecordWriter *aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+bool StreamReader::inBypassMode()
+{
+  bool tInBypassMode;
+
+  _Mutex.lock();
+  tInBypassMode = _InBypassMode;
+  _Mutex.unlock();
+
+  return tInBypassMode;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::setInBypassMode(bool aInBypassMode)
+{
+  if (aInBypassMode)
+  {
+    std::cout << "Switching to BYPASS mode." << std::endl;
+  }
+  else
+  {
+    std::cout << "Switching to NORMAL mode." << std::endl;
+  }
+
+  _Mutex.lock();
+  _InBypassMode = aInBypassMode;
+  _Mutex.unlock();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
 {
   setDataStructModel(static_cast<DataStructModel *>(aDataStructModel));
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::onBypassCheckBoxToggle(bool aIsChecked)
+{
+  setInBypassMode(aIsChecked);
 }
 
 //-----------------------------------------------------------------------------
@@ -149,6 +189,18 @@ void StreamReader::readAndProcessStructLines()
 
   while (std::getline(std::cin,tLineBuffer))
   {
+    /*
+     * If in bypass mode, just echo lines.
+     */
+    if (inBypassMode() == true)
+    {
+      std::cout << tLineBuffer << std::endl;
+      continue;
+    }
+
+    /*
+     * Not in bypass mode, so do normal processing.
+     */
     if (!tFoundStart)
     {
       if (tBeginMessageMatcher.match(tLineBuffer) )

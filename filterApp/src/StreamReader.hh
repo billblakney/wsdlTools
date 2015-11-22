@@ -17,6 +17,8 @@ public:
   StreamReader(DataStructModel *aModel,RecordWriter *aWriter);
   virtual ~StreamReader();
   void setRecordWriter(RecordWriter *aWriter);
+  bool inBypassMode();
+  void setInBypassMode(bool aInBypassMode);
 
 signals:
 
@@ -25,6 +27,8 @@ signals:
 public slots:
 
   void onDataStructModelAvailable(void * aDataStructModel);
+
+  void onBypassCheckBoxToggle(bool aIsChecked);
 
   void run();
 
@@ -35,6 +39,7 @@ protected:
   std::vector<RecordWriter *>  _Writers;
   DataStructModel             *_DataStructModel;
   RecordProcessor             *_RecordProcessor;
+  bool                         _InBypassMode;
 
   QMutex _Mutex;
 

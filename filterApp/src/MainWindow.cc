@@ -18,7 +18,7 @@ MainWindow::MainWindow(
     int argc, char *argv[],QApplication &aApp,QWidget *aParent,
     StreamReader *aStreamReader)
   : QWidget(aParent),
-    _StreamReader(0),
+    _StreamReader(aStreamReader),
     _StructorBuilder(0),
     _DataStructModel(0),
     _StructComboBox(0),
@@ -166,9 +166,12 @@ void MainWindow::setupView()
       SLOT(onStructComboBoxActivated(int)));
 
   /*
-   * Create bypass checkbox.
+   * Create bypass checkbox and connect it to the stream reader.
    */
   QCheckBox *tBypassCheckBox = new QCheckBox("Bypass",this);
+
+  connect(tBypassCheckBox,SIGNAL(toggled(bool)),
+      _StreamReader,SLOT(onBypassCheckBoxToggle(bool)));
 
   /*
    * Create structure tree view.

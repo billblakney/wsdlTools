@@ -38,7 +38,7 @@ void runStreamReaderMode(QApplication &app,int argc,char *argv[])
   /*
    * Create the stream reader.
    */
-  StreamReader * tStreamReader = new StreamReader();
+  StreamReader *tStreamReader = new StreamReader();
 
   /*
    * Create the main window. It won't be launched until later though, after
