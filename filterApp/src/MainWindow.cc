@@ -61,6 +61,10 @@ MainWindow::~MainWindow()
 void MainWindow::setTreeViewStruct(std::string aStructName)
 {
   Structure *tStructure = _StructorBuilder->getStructure(aStructName);
+  if (!tStructure)
+  {
+    std::cerr << "ERROR: couldn't find struct " << aStructName << std::endl;
+  }
   _DataStructModel = new DataStructModel(tStructure, _StructorBuilder);
   _StructTree->setModel(_DataStructModel);
 #if 0 //  seems to have no effect

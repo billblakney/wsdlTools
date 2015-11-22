@@ -22,6 +22,7 @@ void processCommandLine(int argc,char *argv[])
  *----------------------------------------------------------------------------*/
 void justBrowse(QApplication &app,int argc,char *argv[])
 {
+  std::cout << "just browsing" << std::endl;
   MainWindow *window = new MainWindow(argc,argv,app,0);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
@@ -53,9 +54,6 @@ std::cout << "============launching" << std::endl;
 void setStructName(std::string aStructName)
 {
   std::cout << "============setStructName" << std::endl;
-#if 0
-  launchGUI(aStructName);
-#endif
   _StructName = aStructName;
   isReady = true;
 }
@@ -64,37 +62,35 @@ void setStructName(std::string aStructName)
  *----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
+  bool tJustBrowse = false;
+
   ccl::Logger::initialize();
 
   QApplication app(argc, argv);
 
 //  processCommandLine(argc,argv);
 
-//#define JUST_BROWSE
-#ifdef JUST_BROWSE
-  justBrowse(app,argc,argv);
-#else
-#if 1
-std::cout << "creating new main window" << std::endl;
-  _MainWindow = new MainWindow(argc,argv,app,0);
-//  window->setGeometry(1920 + 530,135,625,900);
-  _MainWindow->setGeometry(1920      ,135,900,900);
-//  _MainWindow->setupView();
-#endif
-//  justBrowse(app,argc,argv);
-
-#if 1
-//  StreamReader *tStreamReader = new StreamReader(argc,argv,app,0);
-std::cout << "running stream reader" << std::endl;
-  _StreamReader = new StreamReader(&setStructName);
-  _StreamReader->start();
-#endif
-#endif
-std::cout << "going to check isReady" << std::endl;
-  while (!isReady){
-std::cout << "NOT READY" << std::endl;
-    sleep(1);
+  if (tJustBrowse)
+  {
+    justBrowse(app,argc,argv);
   }
-  launchGUI(_StructName);
+  else
+  {
+    //std::cout << "creating new main window" << std::endl;
+    _MainWindow = new MainWindow(argc,argv,app,0);
+    //  window->setGeometry(1920 + 530,135,625,900);
+    _MainWindow->setGeometry(1920      ,135,900,900);
+
+    //  StreamReader *tStreamReader = new StreamReader(argc,argv,app,0);
+    std::cout << "running stream reader" << std::endl;
+    _StreamReader = new StreamReader(&setStructName);
+    _StreamReader->start();
+    std::cout << "going to check isReady" << std::endl;
+    while (!isReady){
+      std::cout << "NOT READY" << std::endl;
+      sleep(1);
+    }
+    launchGUI(_StructName);
+  }
   return app.exec();
 }
