@@ -52,6 +52,8 @@ public:
 
   void setTestScope(const QVariant value);
 
+  void setFieldFormat(const QVariant value);
+
   void setFieldPostfix(const QVariant value);
 
 protected:

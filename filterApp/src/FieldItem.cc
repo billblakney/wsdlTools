@@ -17,7 +17,8 @@ FieldItem::FieldItem(FieldItemData aData,FieldItem *aParentItem)
   _ItemData.append(QVariant(aData.getName().c_str()));
   _ItemData.append(QVariant(aData.getTest().c_str()));
   _ItemData.append(QVariant(aData.getTestScope().c_str()));
-  _ItemData.append(QVariant(QString("\\n")));
+  _ItemData.append(QVariant(aData.getFormat()));
+  _ItemData.append(QVariant(aData.getPostfix().c_str()));
   _ItemData.append(QVariant(aData.getKey().c_str()));
   _ItemData.append(QVariant(aData.getType().c_str()));
   _ItemData.append(QVariant(aData.getMatch().c_str()));
@@ -118,8 +119,18 @@ void FieldItem::setFieldTest(const QVariant aValue)
 //-------------------------------------------------------------------------------
 void FieldItem::setTestScope(const QVariant aValue)
 {
-  _ItemData[DataStructModel::eColTestKey] = QVariant(aValue);
+  _ItemData[DataStructModel::eColTestScope] = QVariant(aValue);
   _FieldItemData.setTestScope(aValue.toString().toStdString());
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void FieldItem::setFieldFormat(const QVariant aValue)
+{
+  _ItemData[DataStructModel::eColFormat] = aValue;
+  FieldItemData::Format tFormat =
+      static_cast<FieldItemData::Format>(aValue.toInt());
+  _FieldItemData.setFormat(tFormat);
 }
 
 //-------------------------------------------------------------------------------

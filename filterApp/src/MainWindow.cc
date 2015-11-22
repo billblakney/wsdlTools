@@ -75,7 +75,12 @@ void MainWindow::setupView()
   ComboBoxDelegate *tTestScopeDelegate =
       new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
   _StructTree->setItemDelegateForColumn(
-      DataStructModel::eColTestKey,tTestScopeDelegate);
+      DataStructModel::eColTestScope,tTestScopeDelegate);
+
+  ComboBoxDelegate *tFormatDelegate =
+      new ComboBoxDelegate(_DataStructModel->getFormats(),this);
+  _StructTree->setItemDelegateForColumn(
+      DataStructModel::eColFormat,tFormatDelegate);
 
   ComboBoxDelegate *tPostfixDelegate =
       new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);

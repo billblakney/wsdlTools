@@ -17,7 +17,8 @@ public:
   enum ColumnId {
     eColFieldName = 0,
     eColTestRegex,
-    eColTestKey,
+    eColTestScope,
+    eColFormat,
     eColPostfix,
     eColFieldKey,
     eColFieldType,
@@ -45,6 +46,10 @@ public:
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
   std::vector<std::string> getTestNodes();
+
+  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  std::vector<std::string> getFormats();
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
@@ -144,16 +149,16 @@ protected:
 
   // test nodes
   std::vector<std::string> _TestScopes;
-
+  std::vector<std::string> _Formats;
   std::vector<std::string> _Postfixes;
 
   uint getStringVectorIndex(const std::vector<std::string> &aStringVector,
       const std::string &aString) const;
 
+  void setupFormats();
   void setupPostfixes();
 
   uint getPostfixIndex(std::string &aPostfix) const;
-
   uint getTestScopeIndex(std::string &aTestScope) const;
 
   void setupModelData() {}

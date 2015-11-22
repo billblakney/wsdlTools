@@ -22,7 +22,13 @@ public:
     ePrimitiveArrayLength,
     ePrimitiveValue,
     ePrimitiveArrayValue,
-    eEnd
+    eNodeTypeEnd
+  };
+
+  enum Format {
+    eAsIs,
+    eValue,
+    eFormatEnd
   };
 
   FieldItemData();
@@ -35,6 +41,7 @@ public:
       std::string aMatch = "",
       std::string aTest = "",
       std::string aTestScope = "root",
+      Format      aFormat = eAsIs,
       std::string aPostfix = "\\n",
       Qt::CheckState aCheckState = Qt::Unchecked);
 
@@ -49,6 +56,7 @@ public:
   std::string& getMatch();
   std::string& getTest();
   std::string& getTestScope();
+  Format&      getFormat();
   std::string& getPostfix();
   Qt::CheckState getCheckState();
 
@@ -59,6 +67,7 @@ public:
   void setMatch(const std::string& match);
   void setTest(const std::string& test);
   void setTestScope(const std::string& testScope);
+  void setFormat(const Format& format);
   void setPostfix(const std::string& postfix);
   void setCheckState(Qt::CheckState checkState);
 
@@ -73,6 +82,7 @@ protected:
   std::string        _FieldMatch;
   std::string        _FieldTest;
   std::string        _TestScope;
+  Format             _Format;
   std::string        _Postfix;
   Qt::CheckState     _CheckState;
 };

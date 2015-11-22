@@ -20,6 +20,7 @@ DataStructModel::DataStructModel(
 {
   kArrayFont.setItalic(true);
 
+  setupFormats();
   setupPostfixes();
 
   // root item
@@ -52,6 +53,13 @@ FieldItem *DataStructModel::getTopNode()
 std::vector<std::string> DataStructModel::getTestNodes()
 {
   return _TestScopes;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::vector<std::string> DataStructModel::getFormats()
+{
+  return _Formats;
 }
 
 //-------------------------------------------------------------------------------
@@ -586,13 +594,21 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
 
   switch (role) {
     case Qt::DisplayRole:
+    {
+      if (index.column() == eColFormat)
+      {
+        uint tFormatEnum = item->data(eColFormat).toInt();
+        std::string tFormatName = _Formats.at(tFormatEnum);
+        return tFormatName.c_str();
+      }
       return item->data(index.column());
       break;
+    }
     case Qt::EditRole:
     {
-      if (index.column() == eColTestKey)
+      if (index.column() == eColTestScope)
       {
-        std::string tTestScope = item->data(eColTestKey).toString().toStdString();
+        std::string tTestScope = item->data(eColTestScope).toString().toStdString();
         uint tTestNodeIndex = getTestScopeIndex(tTestScope);
 
         return tTestNodeIndex;
@@ -676,10 +692,15 @@ bool DataStructModel::setData(
       item->setFieldTest(value);
       emit dataChanged(index,index);
     }
-    else if (aCol == eColTestKey)
+    else if (aCol == eColTestScope)
     {
       std::string tStr = _TestScopes.at(value.toUInt());
       item->setTestScope(QVariant(tStr.c_str()));
+      emit dataChanged(index,index);
+    }
+    else if (aCol == eColFormat)
+    {
+      item->setFieldFormat(value);
       emit dataChanged(index,index);
     }
     else if (aCol == eColPostfix)
@@ -710,7 +731,8 @@ Qt::ItemFlags DataStructModel::flags(const QModelIndex &index) const
 
   if (index.column() == eColMatchRegex ||
       index.column() == eColTestRegex ||
-      index.column() == eColTestKey ||
+      index.column() == eColTestScope ||
+      index.column() == eColFormat ||
       index.column() == eColPostfix)
   {
     tFlags |= Qt::ItemIsEditable;
@@ -746,9 +768,13 @@ QVariant DataStructModel::headerData(int section,Qt::Orientation orientation,
     {
       return QVariant("Test Regex");
     }
-    else if (section == eColTestKey)
+    else if (section == eColTestScope)
     {
       return QVariant("Test Scope");
+    }
+    else if (section == eColFormat)
+    {
+      return QVariant("Format");
     }
     else if (section == eColPostfix)
     {
@@ -871,6 +897,15 @@ uint DataStructModel::getStringVectorIndex(
 uint DataStructModel::getTestScopeIndex(std::string &aTestScope) const
 {
   return getStringVectorIndex(_TestScopes,aTestScope);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void DataStructModel::setupFormats()
+{
+  _Formats.push_back("as-is");
+  _Formats.push_back("longname: value");
+  _Formats.push_back("value");
 }
 
 //-------------------------------------------------------------------------------
