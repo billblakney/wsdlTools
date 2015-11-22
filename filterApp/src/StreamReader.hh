@@ -23,9 +23,9 @@ signals:
 
 public slots:
 
-  void run();
-
   void onDataStructModelAvailable(void * aDataStructModel);
+
+  void run();
 
 protected:
   static ccl::Logger sLogger;
@@ -35,6 +35,9 @@ protected:
   QMutex _Mutex;
 
   void readForStructName(std::string &aMsgId,std::string &aStructName);
+  void waitUntilDataModelAvailable();
+  void readAndProcessStructLines();
+
   void setDataStructModel(DataStructModel *aModel);
 };
 

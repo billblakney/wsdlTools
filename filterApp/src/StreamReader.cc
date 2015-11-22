@@ -30,22 +30,6 @@ StreamReader::~StreamReader()
 }
 
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void StreamReader::setDataStructModel(DataStructModel *aModel)
-{
-  _Mutex.lock();
-  _DataStructModel = aModel;
-  _Mutex.unlock();
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
-{
-  setDataStructModel(static_cast<DataStructModel *>(aDataStructModel));
-}
-
-//-----------------------------------------------------------------------------
 // TODO mem leak
 //-----------------------------------------------------------------------------
 void StreamReader::setRecordWriter(RecordWriter *aWriter)
@@ -58,6 +42,46 @@ void StreamReader::setRecordWriter(RecordWriter *aWriter)
   {
     _Writers[0] = aWriter;
   }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
+{
+  setDataStructModel(static_cast<DataStructModel *>(aDataStructModel));
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::run()
+{
+  /*
+   * Read the input to find the structure name that is being used.
+   */
+  std::string tMsgId;
+  std::string tStructName;
+
+  readForStructName(tMsgId,tStructName);
+  std::cout << "processing for " << tMsgId << " " << tStructName << std::endl;
+
+  /*
+   * Invoke the callback to let the main window (via main stuff) know the
+   * structure type that will be processed.
+   * TODO signal to main window directly possible/better?
+   */
+  emit structNameAvailable(QString(tStructName.c_str()));
+
+  /*
+   * Wait until the main window has set the data struct model before
+   * continuing.
+   */
+  waitUntilDataModelAvailable();
+  std::cout << "continuing with reading the input..." << std::endl;
+
+  /*
+   * Read and process the incoming struct lines.
+   */
+  readAndProcessStructLines();
 }
 
 //-----------------------------------------------------------------------------
@@ -82,25 +106,10 @@ void StreamReader::readForStructName(
 }
 
 //-----------------------------------------------------------------------------
+// Waits for the data model from the main window to be available.
 //-----------------------------------------------------------------------------
-void StreamReader::run()
+void StreamReader::waitUntilDataModelAvailable()
 {
-  /*
-   * Read the input to find the structure name that is being used.
-   */
-  std::string tMsgId;
-  std::string tStructName;
-
-  readForStructName(tMsgId,tStructName);
-  std::cout << "processing for " << tMsgId << " " << tStructName << std::endl;
-
-  /*
-   * Invoke the callback to let the main window (via main stuff) know the
-   * structure type that will be processed.
-   * TODO signal to main window directly possible/better?
-   */
-  emit structNameAvailable(QString(tStructName.c_str()));
-
   bool tDataStructModelReady = false;
   while(!tDataStructModelReady)
   {
@@ -111,12 +120,12 @@ void StreamReader::run()
     }
     _Mutex.unlock();
   }
-  std::cout << "continuing with reading the input..." << std::endl;
+}
 
-  /*
-   *
-   */
-
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::readAndProcessStructLines()
+{
   static std::string _prefix = "";
   static bool _printStartAndEnd = true;
 
@@ -211,4 +220,13 @@ RecordProcessor *tRecordProcessor = new RecordProcessor( //TODO
       }
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::setDataStructModel(DataStructModel *aModel)
+{
+  _Mutex.lock();
+  _DataStructModel = aModel;
+  _Mutex.unlock();
 }
