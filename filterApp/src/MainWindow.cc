@@ -18,8 +18,9 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
     int argc, char *argv[],QApplication &aApp,QWidget *aParent,
-    StreamReader *aStreamReader)
+    bool aIsFilterMode,StreamReader *aStreamReader)
   : QWidget(aParent),
+    _IsFilterMode(aIsFilterMode),
     _StreamReader(aStreamReader),
     _StructorBuilder(0),
     _DataStructModel(0),
@@ -168,59 +169,63 @@ void MainWindow::setupView()
       SLOT(onStructComboBoxActivated(int)));
 
   /*
-   *
+   * The options will only be populated when in filter mode.
    */
   QWidget *tOptions = new QWidget(this);
 
-  /*
-   * Create widget to hold miscellaneous options.
-   */
-  QWidget *tMainOptions = new QWidget(tOptions);
+  if (_IsFilterMode)
+  {
 
-  /*
-   * Create bypass checkbox and connect it to the stream reader.
-   */
-  QCheckBox *tBypassCheckBox = new QCheckBox("Bypass",tMainOptions);
+    /*
+     * Create widget to hold miscellaneous options.
+     */
+    QWidget *tMainOptions = new QWidget(tOptions);
 
-  connect(tBypassCheckBox,SIGNAL(toggled(bool)),
-      _StreamReader,SLOT(onBypassToggle(bool)));
+    /*
+     * Create bypass checkbox and connect it to the stream reader.
+     */
+    QCheckBox *tBypassCheckBox = new QCheckBox("Bypass",tMainOptions);
 
-  /*
-   * Create delimit records checkbox and connect it to the stream reader.
-   */
-  QCheckBox *tDelimitRecordsCheckBox = new QCheckBox("Delimit records",tMainOptions);
-  tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
+    connect(tBypassCheckBox,SIGNAL(toggled(bool)),
+        _StreamReader,SLOT(onBypassToggle(bool)));
 
-  QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
-  tMainOptionsLayout->addWidget(tBypassCheckBox);
-  tMainOptionsLayout->addWidget(tDelimitRecordsCheckBox);
-  tMainOptions->setLayout(tMainOptionsLayout);
+    /*
+     * Create delimit records checkbox and connect it to the stream reader.
+     */
+    QCheckBox *tDelimitRecordsCheckBox = new QCheckBox("Delimit records",tMainOptions);
+    tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
 
-  connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
-      _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
+    QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
+    tMainOptionsLayout->addWidget(tBypassCheckBox);
+    tMainOptionsLayout->addWidget(tDelimitRecordsCheckBox);
+    tMainOptions->setLayout(tMainOptionsLayout);
 
-  /*
-   *
-   */
-  QWidget *tFormatGroup = new QWidget(this);
-  QRadioButton *tFormatNormalButton = new QRadioButton("As-is Formatting",tFormatGroup);
-  QRadioButton *tFormatLongnameButton = new QRadioButton("Longname Formatting",tFormatGroup);
-  QRadioButton *tFormatTableButton = new QRadioButton("Table Formatting",tFormatGroup);
-  QRadioButton *tFormatCustomButton = new QRadioButton("Custom Formatting",tFormatGroup);
+    connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
+        _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
 
-  QVBoxLayout *tFormatGroupLayout = new QVBoxLayout;
-  tFormatGroupLayout->addWidget(tFormatNormalButton);
-  tFormatGroupLayout->addWidget(tFormatLongnameButton);
-  tFormatGroupLayout->addWidget(tFormatTableButton);
-  tFormatGroupLayout->addWidget(tFormatCustomButton);
+    /*
+     *
+     */
+    QWidget *tFormatGroup = new QWidget(this);
+    QRadioButton *tFormatNormalButton = new QRadioButton("As-is Formatting",tFormatGroup);
+    QRadioButton *tFormatLongnameButton = new QRadioButton("Longname Formatting",tFormatGroup);
+    QRadioButton *tFormatTableButton = new QRadioButton("Table Formatting",tFormatGroup);
+    QRadioButton *tFormatCustomButton = new QRadioButton("Custom Formatting",tFormatGroup);
 
-  tFormatGroup->setLayout(tFormatGroupLayout);
+    QVBoxLayout *tFormatGroupLayout = new QVBoxLayout;
+    tFormatGroupLayout->addWidget(tFormatNormalButton);
+    tFormatGroupLayout->addWidget(tFormatLongnameButton);
+    tFormatGroupLayout->addWidget(tFormatTableButton);
+    tFormatGroupLayout->addWidget(tFormatCustomButton);
 
-  QHBoxLayout *tOptionsLayout = new QHBoxLayout;
-  tOptionsLayout->addWidget(tFormatGroup);
-  tOptionsLayout->addWidget(tMainOptions);
+    tFormatGroup->setLayout(tFormatGroupLayout);
 
-  tOptions->setLayout(tOptionsLayout);
+    QHBoxLayout *tOptionsLayout = new QHBoxLayout;
+    tOptionsLayout->addWidget(tFormatGroup);
+    tOptionsLayout->addWidget(tMainOptions);
+
+    tOptions->setLayout(tOptionsLayout);
+  }
 
   /*
    * Create structure tree view.
@@ -251,21 +256,28 @@ void MainWindow::setupView()
   _StructTree->expand(_StructTree->model()->index(0, 0, QModelIndex()));
 #endif
 
+#if USING_BOTTOM_PUSHBUTTON // no longer using, may use later
   /*
    * Pushbutton for setting filter.
    */
   QPushButton *tButton = new QPushButton("Set Filter", this);
 
   connect(tButton, SIGNAL(clicked(bool)), this, SLOT(onSetFilterClicked(bool)));
+#endif
 
   /*
    * Put widgets in the dialog using box layout.
    */
   QVBoxLayout *tWindowLayout = new QVBoxLayout;
   tWindowLayout->addWidget(_StructComboBox);
-  tWindowLayout->addWidget(tOptions);
+  if (tOptions)
+  {
+    tWindowLayout->addWidget(tOptions);
+  }
   tWindowLayout->addWidget(_StructTree);
+#if USING_BOTTOM_PUSHBUTTON // no longer using, may use later
   tWindowLayout->addWidget(tButton);
+#endif
 
   setLayout(tWindowLayout);
 }

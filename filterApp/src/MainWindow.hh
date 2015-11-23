@@ -16,7 +16,7 @@ class MainWindow: public QWidget
 public:
 
   MainWindow(int argc,char *argv[],QApplication &aApp,QWidget *aParent,
-      StreamReader *aStreamReader = 0);
+      bool aIsFilterMode = false,StreamReader *aStreamReader = 0);
 
   virtual ~MainWindow();
 
@@ -44,6 +44,7 @@ public slots:
 
 protected:
 
+  bool                _IsFilterMode;
   StreamReader       *_StreamReader;
 	std::string         _HeaderFile;
 	std::string         _InitialStruct;
