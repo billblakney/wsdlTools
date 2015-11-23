@@ -17,8 +17,12 @@ public:
   StreamReader(DataStructModel *aModel,RecordWriter *aWriter);
   virtual ~StreamReader();
   void setRecordWriter(RecordWriter *aWriter);
+
   bool inBypassMode();
   void setInBypassMode(bool aInBypassMode);
+
+  bool inDelimitRecordsMode();
+  void setDelimitRecordsMode(bool aDelimitRecordsMode);
 
 signals:
 
@@ -28,7 +32,9 @@ public slots:
 
   void onDataStructModelAvailable(void * aDataStructModel);
 
-  void onBypassCheckBoxToggle(bool aIsChecked);
+  void onBypassToggle(bool aIsChecked);
+
+  void onDelimitRecordsToggle(bool aIsChecked);
 
   void run();
 
@@ -40,6 +46,7 @@ protected:
   DataStructModel             *_DataStructModel;
   RecordProcessor             *_RecordProcessor;
   bool                         _InBypassMode;
+  bool                         _InDelimitRecordsMode;
 
   QMutex _Mutex;
 

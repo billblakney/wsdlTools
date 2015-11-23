@@ -10,7 +10,8 @@ ccl::Logger StreamReader::sLogger("StreamReader");
 StreamReader::StreamReader()
   : _DataStructModel(0),
     _RecordProcessor(0),
-    _InBypassMode(false)
+    _InBypassMode(false),
+    _InDelimitRecordsMode(true)
 {
   _RecordProcessor = new RecordProcessor(_StructLines);
 }
@@ -20,7 +21,8 @@ StreamReader::StreamReader()
 StreamReader::StreamReader(DataStructModel *aModel,RecordWriter *aWriter)
   : _DataStructModel(aModel),
     _RecordProcessor(0),
-    _InBypassMode(false)
+    _InBypassMode(false),
+    _InDelimitRecordsMode(true)
 {
   _RecordProcessor = new RecordProcessor(_StructLines);
 
@@ -52,6 +54,13 @@ void StreamReader::setRecordWriter(RecordWriter *aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
+{
+  setDataStructModel(static_cast<DataStructModel *>(aDataStructModel));
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 bool StreamReader::inBypassMode()
 {
   bool tInBypassMode;
@@ -69,11 +78,11 @@ void StreamReader::setInBypassMode(bool aInBypassMode)
 {
   if (aInBypassMode)
   {
-    std::cout << "Switching to BYPASS mode." << std::endl;
+    std::cout << "Entering BYPASS mode." << std::endl;
   }
   else
   {
-    std::cout << "Switching to NORMAL mode." << std::endl;
+    std::cout << "Leaving bypass mode." << std::endl;
   }
 
   _Mutex.lock();
@@ -83,16 +92,47 @@ void StreamReader::setInBypassMode(bool aInBypassMode)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
+void StreamReader::onBypassToggle(bool aIsChecked)
 {
-  setDataStructModel(static_cast<DataStructModel *>(aDataStructModel));
+  setInBypassMode(aIsChecked);
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StreamReader::onBypassCheckBoxToggle(bool aIsChecked)
+bool StreamReader::inDelimitRecordsMode()
 {
-  setInBypassMode(aIsChecked);
+  bool tDelimitRecordsMode;
+
+  _Mutex.lock();
+  tDelimitRecordsMode = _InDelimitRecordsMode;
+  _Mutex.unlock();
+
+  return tDelimitRecordsMode;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::setDelimitRecordsMode(bool aDelimitRecordsMode)
+{
+  if (aDelimitRecordsMode)
+  {
+    std::cout << "Enabling record delimiters." << std::endl;
+  }
+  else
+  {
+    std::cout << "Disabling record delimiters." << std::endl;
+  }
+
+  _Mutex.lock();
+  _InDelimitRecordsMode = aDelimitRecordsMode;
+  _Mutex.unlock();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::onDelimitRecordsToggle(bool aIsChecked)
+{
+  setDelimitRecordsMode(aIsChecked);
 }
 
 //-----------------------------------------------------------------------------
@@ -171,7 +211,6 @@ void StreamReader::waitUntilDataModelAvailable()
 void StreamReader::readAndProcessStructLines()
 {
   static std::string _prefix = "";
-  static bool _printStartAndEnd = true;
 
   SimpleLineMatcher tBeginMessageMatcher(".*===RECEIVED MESSAGE===.*");
   SimpleLineMatcher tEndMessageMatcher(".*===END MESSAGE===.*");
@@ -206,7 +245,7 @@ void StreamReader::readAndProcessStructLines()
       if (tBeginMessageMatcher.match(tLineBuffer) )
       {
         DEBUG(sLogger,"found start match");
-        if (_printStartAndEnd)
+        if (inDelimitRecordsMode())
         {
           std::cout << "=== start ===" << std::endl;
         }
@@ -264,7 +303,7 @@ void StreamReader::readAndProcessStructLines()
           std::cout << "ERROR: _RecordProcessor->process() returned false" << std::endl;
         }
         _StructLines.clear();
-        if (_printStartAndEnd)
+        if (inDelimitRecordsMode())
         {
           std::cout << "=== end ===" << std::endl;
         }

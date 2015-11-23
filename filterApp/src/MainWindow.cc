@@ -171,7 +171,16 @@ void MainWindow::setupView()
   QCheckBox *tBypassCheckBox = new QCheckBox("Bypass",this);
 
   connect(tBypassCheckBox,SIGNAL(toggled(bool)),
-      _StreamReader,SLOT(onBypassCheckBoxToggle(bool)));
+      _StreamReader,SLOT(onBypassToggle(bool)));
+
+  /*
+   * Create delimit records checkbox and connect it to the stream reader.
+   */
+  QCheckBox *tDelimitRecordsCheckBox = new QCheckBox("Delimit records",this);
+  tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
+
+  connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
+      _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
 
   /*
    * Create structure tree view.
@@ -215,6 +224,7 @@ void MainWindow::setupView()
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(_StructComboBox);
   layout->addWidget(tBypassCheckBox);
+  layout->addWidget(tDelimitRecordsCheckBox );
   layout->addWidget(_StructTree);
   layout->addWidget(_StructTree);
   layout->addWidget(tButton);
