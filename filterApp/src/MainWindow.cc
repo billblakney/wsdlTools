@@ -4,6 +4,8 @@
 #include <QAbstractItemModel>
 #include <QHeaderView>
 #include <QPushButton>
+#include <QRadioButton>
+#include <QHBoxLayout>
 #include <QVBoxLayout>
 #include "ComboBoxDelegate.hh"
 #include "MainWindow.hh"
@@ -166,9 +168,19 @@ void MainWindow::setupView()
       SLOT(onStructComboBoxActivated(int)));
 
   /*
+   *
+   */
+  QWidget *tOptions = new QWidget(this);
+
+  /*
+   * Create widget to hold miscellaneous options.
+   */
+  QWidget *tMainOptions = new QWidget(tOptions);
+
+  /*
    * Create bypass checkbox and connect it to the stream reader.
    */
-  QCheckBox *tBypassCheckBox = new QCheckBox("Bypass",this);
+  QCheckBox *tBypassCheckBox = new QCheckBox("Bypass",tMainOptions);
 
   connect(tBypassCheckBox,SIGNAL(toggled(bool)),
       _StreamReader,SLOT(onBypassToggle(bool)));
@@ -176,11 +188,39 @@ void MainWindow::setupView()
   /*
    * Create delimit records checkbox and connect it to the stream reader.
    */
-  QCheckBox *tDelimitRecordsCheckBox = new QCheckBox("Delimit records",this);
+  QCheckBox *tDelimitRecordsCheckBox = new QCheckBox("Delimit records",tMainOptions);
   tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
+
+  QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
+  tMainOptionsLayout->addWidget(tBypassCheckBox);
+  tMainOptionsLayout->addWidget(tDelimitRecordsCheckBox);
+  tMainOptions->setLayout(tMainOptionsLayout);
 
   connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
       _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
+
+  /*
+   *
+   */
+  QWidget *tFormatGroup = new QWidget(this);
+  QRadioButton *tFormatNormalButton = new QRadioButton("As-is Formatting",tFormatGroup);
+  QRadioButton *tFormatLongnameButton = new QRadioButton("Longname Formatting",tFormatGroup);
+  QRadioButton *tFormatTableButton = new QRadioButton("Table Formatting",tFormatGroup);
+  QRadioButton *tFormatCustomButton = new QRadioButton("Custom Formatting",tFormatGroup);
+
+  QVBoxLayout *tFormatGroupLayout = new QVBoxLayout;
+  tFormatGroupLayout->addWidget(tFormatNormalButton);
+  tFormatGroupLayout->addWidget(tFormatLongnameButton);
+  tFormatGroupLayout->addWidget(tFormatTableButton);
+  tFormatGroupLayout->addWidget(tFormatCustomButton);
+
+  tFormatGroup->setLayout(tFormatGroupLayout);
+
+  QHBoxLayout *tOptionsLayout = new QHBoxLayout;
+  tOptionsLayout->addWidget(tFormatGroup);
+  tOptionsLayout->addWidget(tMainOptions);
+
+  tOptions->setLayout(tOptionsLayout);
 
   /*
    * Create structure tree view.
@@ -221,15 +261,13 @@ void MainWindow::setupView()
   /*
    * Put widgets in the dialog using box layout.
    */
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(_StructComboBox);
-  layout->addWidget(tBypassCheckBox);
-  layout->addWidget(tDelimitRecordsCheckBox );
-  layout->addWidget(_StructTree);
-  layout->addWidget(_StructTree);
-  layout->addWidget(tButton);
+  QVBoxLayout *tWindowLayout = new QVBoxLayout;
+  tWindowLayout->addWidget(_StructComboBox);
+  tWindowLayout->addWidget(tOptions);
+  tWindowLayout->addWidget(_StructTree);
+  tWindowLayout->addWidget(tButton);
 
-  setLayout(layout);
+  setLayout(tWindowLayout);
 }
 
 //-------------------------------------------------------------------------------
