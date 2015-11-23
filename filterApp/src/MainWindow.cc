@@ -29,7 +29,6 @@ MainWindow::MainWindow(
     _HeaderFileWasParsed(false)
 {
   Q_UNUSED(aApp);
-  Q_UNUSED(argc);
 
   /*
    * Read the environment variables. Currently only one: CLIRCAR_H.
@@ -153,6 +152,11 @@ void MainWindow::setupView()
    * Parse the header file.
    */
   parseHeaderFile(); // ok if already called before
+
+  if (!_IsFilterMode && _InitialStruct.length() == 0)
+  {
+    _InitialStruct = _StructorBuilder->getStructNames().at(0);
+  }
 
   /*
    * Create structure dropdown list.
