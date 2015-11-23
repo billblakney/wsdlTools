@@ -33,6 +33,12 @@ void RecordProcessor::configure(
 //-----------------------------------------------------------------------------
 bool RecordProcessor::process()
 {
+  if (_LinesIn.size() < 1)
+  {
+    std::cerr << "ERROR: no lines to process for record" << std::endl;
+    return false;
+  }
+
   reset();
   std::string tDotString;
   bool tResult = process(_TopNode,tDotString);
@@ -375,27 +381,47 @@ bool RecordProcessor::process(FieldItem *aNode,std::string &aDotString)
 {
   if ( aNode->getData().getNodeType() == FieldItemData::eRoot )
   {
-    processRootNode(aNode,aDotString);
+    if (!processRootNode(aNode,aDotString))
+    {
+      std::cerr << "ERROR processing record (processRootNode)" << std::endl;
+      return false;
+    }
   }
   else if ( aNode->getData().getNodeType() == FieldItemData::eStruct)
   {
-    processStructNode(aNode,aDotString);
+    if (!processStructNode(aNode,aDotString))
+    {
+      std::cerr << "ERROR processing record (processStructNode)" << std::endl;
+      return false;
+    }
   }
   else if (aNode->getData().getNodeType() == FieldItemData::eStructArray)
   {
-    processStructArrayNode(aNode,aDotString);
+    if (!processStructArrayNode(aNode,aDotString))
+    {
+      std::cerr << "ERROR processing record (processStructArrayNode)" << std::endl;
+      return false;
+    }
   }
   else if (aNode->getData().getNodeType() == FieldItemData::ePrimitiveValue)
   {
-    processPrimitiveNode(aNode,aDotString);
+    if (!processPrimitiveNode(aNode,aDotString))
+    {
+      std::cerr << "ERROR processing record (processPrimitiveNode)" << std::endl;
+      return false;
+    }
   }
   else if (aNode->getData().getNodeType() == FieldItemData::ePrimitiveArray)
   {
-    processPrimitiveArrayNode(aNode,aDotString);
+    if (!processPrimitiveArrayNode(aNode,aDotString))
+    {
+      std::cerr << "ERROR processing record (processPrimitiveArrayNode)" << std::endl;
+      return false;
+    }
   }
   else
   {
-    ERROR(sLogger,"<process> unknown node type");
+    std::cerr << "ERROR processing record: unknown node type" << std::endl;
     return false;
   }
 
@@ -411,7 +437,16 @@ bool RecordProcessor::processRootNode(FieldItem *aNode,std::string &aDotString)
 {
   DEBUG(sLogger,"processing eRoot: " << aNode->getData().getName());
 
-  return processChildren(aNode,aDotString);
+  if (!isLineIterOk())
+    return false;
+
+  bool tResult = processChildren(aNode,aDotString);
+  if (tResult == false)
+  {
+    std::cerr << "ERROR: processing failed (processRootNode)" << std::endl;
+  }
+
+  return tResult;
 }
 
 //-----------------------------------------------------------------------------
@@ -426,6 +461,9 @@ bool RecordProcessor::processRootNode(FieldItem *aNode,std::string &aDotString)
 bool RecordProcessor::processStructNode(FieldItem *aNode,std::string &aDotString)
 {
   DEBUG(sLogger,"processing eStruct: " << aNode->getData().getMatch());
+
+  if (!isLineIterOk())
+    return false;
 
   std::string tDotString = aDotString;
 
@@ -473,6 +511,9 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
 {
   DEBUG(sLogger,"Looking for struct array with match: " << aNode->getData().getMatch());
 
+  if (!isLineIterOk())
+    return false;
+
   std::string tDotString = aDotString;
   appendToDotString(tDotString,aNode->getData().getName());
 
@@ -501,8 +542,12 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
    * And then test for a match with the array length specification, and
    * get the array length.
    */
+  if (!isLineIterOk())
+    return false;
+
   tLine = *_LineIter;
   _LineIter++;
+
 
   FieldItem *aFirstChildNode = aNode->child(0);
   std::string tSizeDotString = tDotString + "_size";
@@ -558,6 +603,9 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
 //-----------------------------------------------------------------------------
 bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,std::string &aDotString)
 {
+  if (!isLineIterOk())
+    return false;
+
   std::string tDotString = aDotString;
   appendToDotString(tDotString,aNode->getData().getName());
 
@@ -604,6 +652,9 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
   DEBUG(sLogger,"Looking for primitive array with match: "
       << aNode->getData().getMatch());
 
+  if (!isLineIterOk())
+    return false;
+
   std::string tDotString = aDotString;
   appendToDotString(tDotString,aNode->getData().getName());
 
@@ -632,6 +683,9 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
    * And then test for a match with the array length specification, and
    * get the array length.
    */
+  if (!isLineIterOk())
+    return false;
+
   tLine = *_LineIter;
   _LineIter++;
 
@@ -691,6 +745,9 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
 bool RecordProcessor::processPrimitiveArrayLine(
     FieldItem *aNode,std::string &aDotString,int aIdx)
 {
+  if (!isLineIterOk())
+    return false;
+
 //  std::string tDotString = aDotString;
 //  appendToDotString(tDotString,aNode->getData().getName());
 //  print("<dotstring>",tDotString);
@@ -742,6 +799,18 @@ bool RecordProcessor::processPrimitiveArrayLine(
   tRecordLine.resultLineExcluded = false;
   _RecordLines.push_back(tRecordLine);
 
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool RecordProcessor::isLineIterOk()
+{
+  if (_LineIter == _LinesIn.end())
+  {
+    std::cerr << "ERROR: not enough lines to process full record" << std::endl;
+    return false;
+  }
   return true;
 }
 

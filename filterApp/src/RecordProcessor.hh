@@ -63,6 +63,7 @@ protected:
   bool processChildren(FieldItem *aNode,std::string &aDotString,
       bool aSkipFirstChild = false);
 
+  bool isLineIterOk();
   bool testForMatch(std::string &aValue,std::string &aTest);
 
   void formatLines();
