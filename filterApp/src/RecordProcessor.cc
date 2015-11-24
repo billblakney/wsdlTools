@@ -9,8 +9,10 @@ ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-RecordProcessor::RecordProcessor()
-  : _LinesIn(0)
+RecordProcessor::RecordProcessor(FormatMode aFormatMode)
+  : _FormatMode(aFormatMode),
+    _TopNode(0),
+    _LinesIn(0)
 {
 }
 
@@ -26,6 +28,26 @@ void RecordProcessor::configure(
     FieldItem *aTopNode)
 {
   _TopNode = aTopNode;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void RecordProcessor::setFormatMode(FormatMode aFormatMode)
+{
+  _Mutex.lock();
+  _FormatMode = aFormatMode;
+  _Mutex.unlock();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+RecordProcessor::FormatMode RecordProcessor::getFormatMode()
+{
+  FormatMode tFormatMode;
+  _Mutex.lock();
+  tFormatMode = _FormatMode;
+  _Mutex.unlock();
+  return tFormatMode;
 }
 
 //-----------------------------------------------------------------------------
@@ -63,6 +85,8 @@ bool RecordProcessor::process(std::vector<std::string> *aLinesIn)
 //-----------------------------------------------------------------------------
 void RecordProcessor::formatLines()
 {
+  FormatMode tFormatMode = getFormatMode();
+
   std::vector<RecordLine>::iterator tIter;
   for (tIter = _RecordLines.begin(); tIter != _RecordLines.end(); tIter++)
   {
@@ -92,6 +116,11 @@ void RecordProcessor::formatLines()
 void RecordProcessor::applyFormat(RecordLine &aRecordLine,
     FieldItemData::Format aFormat)
 {
+  if (_FormatMode == eLongname)
+  {
+    aFormat = FieldItemData::eLongnameValue;
+  }
+
   switch (aFormat) {
     case FieldItemData::eValue:
       aRecordLine.line = aRecordLine.lineFieldValue;

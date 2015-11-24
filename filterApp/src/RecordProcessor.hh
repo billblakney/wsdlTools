@@ -1,6 +1,8 @@
 #ifndef _RECORDPROCESSOR_HH_
 #define _RECORDPROCESSOR_HH_
 
+#include <QMutex>
+#include <QWidget>
 #include "FieldItem.hh"
 #include "RecordLine.hh"
 #include "SimpleLineMatcher.hh"
@@ -21,11 +23,15 @@
  *      linesOut.clear();
  *    }
  */
-class RecordProcessor
+class RecordProcessor : public QObject
 {
+  Q_OBJECT;
+
 public:
 
-  RecordProcessor();
+  enum FormatMode {eAsIs, eLongname, eTable, eCustom};
+
+  RecordProcessor(FormatMode aFormatMode = eAsIs);
 
   virtual ~RecordProcessor();
 
@@ -37,13 +43,21 @@ public:
 
   std::vector<std::string> &getOutLines();
 
+  FormatMode getFormatMode();
+
+public slots:
+
+  void setFormatMode(FormatMode aFormatMode);
+
 protected:
 
-  FieldItem *_TopNode;
-
-  std::vector<RecordLine> _RecordLines;
-
   static ccl::Logger sLogger;
+
+  QMutex _Mutex;
+
+  FormatMode             _FormatMode;
+  FieldItem             *_TopNode;
+  std::vector<RecordLine> _RecordLines;
 
   std::vector<std::string>           *_LinesIn;
   std::vector<std::string>            _LinesOut;
