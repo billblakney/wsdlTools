@@ -25,13 +25,13 @@ class RecordProcessor
 {
 public:
 
-  RecordProcessor(std::vector<std::string> &aLinesIn);
+  RecordProcessor();
 
   virtual ~RecordProcessor();
 
   void configure(FieldItem *aTopNode);
 
-  bool process();
+  bool process(std::vector<std::string> *aLinesIn);
 
   bool passedFilterTests();
 
@@ -45,7 +45,7 @@ protected:
 
   static ccl::Logger sLogger;
 
-  std::vector<std::string>           &_LinesIn;
+  std::vector<std::string>           *_LinesIn;
   std::vector<std::string>            _LinesOut;
   std::vector<std::string>::iterator  _LineIter;
 

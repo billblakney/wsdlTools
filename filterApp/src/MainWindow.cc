@@ -284,6 +284,19 @@ void MainWindow::setupView()
 #endif
 
   setLayout(tWindowLayout);
+
+  if (!_IsFilterMode)
+  {
+    _StructTree->hideColumn(DataStructModel::eColFormat);
+    _StructTree->hideColumn(DataStructModel::eColMatchRegex);
+    _StructTree->hideColumn(DataStructModel::eColPostfix);
+    _StructTree->hideColumn(DataStructModel::eColTestRegex);
+    _StructTree->hideColumn(DataStructModel::eColTestScope);
+  }
+  else
+  {
+    // show all columns
+  }
 }
 
 //-------------------------------------------------------------------------------

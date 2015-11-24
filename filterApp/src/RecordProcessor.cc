@@ -9,8 +9,8 @@ ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-RecordProcessor::RecordProcessor(std::vector<std::string> &aLinesIn)
-  : _LinesIn(aLinesIn)
+RecordProcessor::RecordProcessor()
+  : _LinesIn(0)
 {
 }
 
@@ -31,9 +31,16 @@ void RecordProcessor::configure(
 //-----------------------------------------------------------------------------
 // TODO should check that was configured
 //-----------------------------------------------------------------------------
-bool RecordProcessor::process()
+bool RecordProcessor::process(std::vector<std::string> *aLinesIn)
 {
-  if (_LinesIn.size() < 1)
+  _LinesIn = aLinesIn;
+
+  if (_LinesIn == NULL)
+  {
+    std::cerr << "ERROR: no lines to process for record" << std::endl;
+    return false;
+  }
+  else if (_LinesIn->size() < 1)
   {
     std::cerr << "ERROR: no lines to process for record" << std::endl;
     return false;
@@ -371,7 +378,7 @@ std::vector<std::string> &RecordProcessor::getOutLines()
 void RecordProcessor::reset()
 {
   _RecordLines.clear();
-  _LineIter = _LinesIn.begin();
+  _LineIter = _LinesIn->begin();
   _LinesOut.clear();
 }
 
@@ -806,7 +813,7 @@ bool RecordProcessor::processPrimitiveArrayLine(
 //-----------------------------------------------------------------------------
 bool RecordProcessor::isLineIterOk()
 {
-  if (_LineIter == _LinesIn.end())
+  if (_LineIter == _LinesIn->end())
   {
     std::cerr << "ERROR: not enough lines to process full record" << std::endl;
     return false;

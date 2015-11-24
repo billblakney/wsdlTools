@@ -13,10 +13,14 @@ class StreamReader: public QThread
 {
   Q_OBJECT;
 public:
-  StreamReader();
-  StreamReader(DataStructModel *aModel,RecordWriter *aWriter);
+  StreamReader(RecordProcessor *aRecordProcessor);
+#if 0
+//  StreamReader(DataStructModel *aModel,RecordWriter *aWriter);
+#endif
   virtual ~StreamReader();
   void setRecordWriter(RecordWriter *aWriter);
+
+  RecordProcessor *getRecordProcessor();
 
   bool inBypassMode();
   void setInBypassMode(bool aInBypassMode);
@@ -41,10 +45,9 @@ public slots:
 protected:
   static ccl::Logger sLogger;
 
-  vector<std::string>          _StructLines;
+  RecordProcessor             *_RecordProcessor;
   std::vector<RecordWriter *>  _Writers;
   DataStructModel             *_DataStructModel;
-  RecordProcessor             *_RecordProcessor;
   bool                         _InBypassMode;
   bool                         _InDelimitRecordsMode;
 

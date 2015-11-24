@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <QApplication>
 #include "MainWindow.hh"
+#include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "Logger.hh"
 
@@ -35,10 +36,16 @@ void runBrowseMode(QApplication &app,int argc,char *argv[])
  *----------------------------------------------------------------------------*/
 void runStreamReaderMode(QApplication &app,int argc,char *argv[])
 {
+
+  /*
+   * Create the record processor.
+   */
+  RecordProcessor *tRecordProcessor = new RecordProcessor();
+
   /*
    * Create the stream reader.
    */
-  StreamReader *tStreamReader = new StreamReader();
+  StreamReader *tStreamReader = new StreamReader(tRecordProcessor);
 
   /*
    * Create the main window. It won't be launched until later though, after

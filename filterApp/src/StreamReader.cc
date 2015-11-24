@@ -7,15 +7,15 @@ ccl::Logger StreamReader::sLogger("StreamReader");
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-StreamReader::StreamReader()
-  : _DataStructModel(0),
-    _RecordProcessor(0),
+StreamReader::StreamReader(RecordProcessor *aRecordProcessor)
+  : _RecordProcessor(aRecordProcessor),
+    _DataStructModel(0),
     _InBypassMode(false),
     _InDelimitRecordsMode(true)
 {
-  _RecordProcessor = new RecordProcessor(_StructLines);
 }
 
+#if 0 //TODO use in future maybe
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader(DataStructModel *aModel,RecordWriter *aWriter)
@@ -24,17 +24,23 @@ StreamReader::StreamReader(DataStructModel *aModel,RecordWriter *aWriter)
     _InBypassMode(false),
     _InDelimitRecordsMode(true)
 {
-  _RecordProcessor = new RecordProcessor(_StructLines);
-
   _Mutex.lock();
   setRecordWriter(aWriter);
   _Mutex.unlock();
 }
+#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StreamReader::~StreamReader()
 {
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+RecordProcessor *StreamReader::getRecordProcessor()
+{
+  return _RecordProcessor;
 }
 
 //-----------------------------------------------------------------------------
@@ -139,6 +145,12 @@ void StreamReader::onDelimitRecordsToggle(bool aIsChecked)
 //-----------------------------------------------------------------------------
 void StreamReader::run()
 {
+  if (_RecordProcessor == NULL)
+  {
+    std::cerr << "ERROR: no record processor was set" << std::endl;
+    exit(0); //TODO change when have proper way to exit
+  }
+
   /*
    * Read the input to find the structure name that is being used.
    */
@@ -153,14 +165,17 @@ void StreamReader::run()
    * structure type that will be processed.
    * TODO signal to main window directly possible/better?
    */
+sleep(1);
   emit structNameAvailable(QString(tStructName.c_str()));
 
+sleep(1);
   /*
    * Wait until the main window has set the data struct model before
    * continuing.
    */
   waitUntilDataModelAvailable();
   std::cout << "continuing with reading the input..." << std::endl;
+sleep(1);
 
   /*
    * Read and process the incoming struct lines.
@@ -224,6 +239,7 @@ void StreamReader::readAndProcessStructLines()
   bool tFoundStart = false;
   bool tFoundFirstField = false;
 
+  std::vector<std::string> tStructLines;
   std::string tLineBuffer;
 
   while (std::getline(std::cin,tLineBuffer))
@@ -273,7 +289,7 @@ void StreamReader::readAndProcessStructLines()
           }
         }
         DEBUG(sLogger,"pushing back struct line");
-        _StructLines.push_back(tLineBuffer);
+        tStructLines.push_back(tLineBuffer);
       }
       else
       {
@@ -281,7 +297,7 @@ void StreamReader::readAndProcessStructLines()
 
         std::vector<std::string> tOutLines;
 
-        if (_RecordProcessor->process())
+        if (_RecordProcessor->process(&tStructLines))
         {
           if (_RecordProcessor->passedFilterTests())
           {
@@ -302,7 +318,7 @@ void StreamReader::readAndProcessStructLines()
         {
           std::cout << "ERROR: _RecordProcessor->process() returned false" << std::endl;
         }
-        _StructLines.clear();
+        tStructLines.clear();
         if (inDelimitRecordsMode())
         {
           std::cout << "=== end ===" << std::endl;
