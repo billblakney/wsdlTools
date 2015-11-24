@@ -238,6 +238,8 @@ void MainWindow::setupView()
   setTreeViewStruct(_InitialStruct);
   _StructTree->header()->resizeSection(0, 225);
 
+  _StructTree->setEditTriggers(QAbstractItemView::AllEditTriggers);
+
   ComboBoxDelegate *tTestScopeDelegate =
       new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
   _StructTree->setItemDelegateForColumn(
