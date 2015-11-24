@@ -51,7 +51,8 @@ void runStreamReaderMode(QApplication &app,int argc,char *argv[])
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(argc,argv,app,0,true,tStreamReader);
+  MainWindow *tMainWindow = new MainWindow(argc,argv,app,0,true,tStreamReader,
+      tRecordProcessor);
   //  window->setGeometry(1920 + 530,135,625,900);
   tMainWindow->setGeometry(1920      ,135,900,900);
 

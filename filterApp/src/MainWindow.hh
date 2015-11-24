@@ -3,9 +3,11 @@
 
 #include <string>
 #include <QComboBox>
+#include <QRadioButton>
 #include <QStringList>
 #include <QWidget>
 #include "DataStructModel.hh"
+#include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "StructorBuilder.hh"
 #include "StructTreeView.hh"
@@ -16,7 +18,8 @@ class MainWindow: public QWidget
 public:
 
   MainWindow(int argc,char *argv[],QApplication &aApp,QWidget *aParent,
-      bool aIsFilterMode = false,StreamReader *aStreamReader = 0);
+      bool aIsFilterMode = false,StreamReader *aStreamReader = 0,
+      RecordProcessor *aRecordProcessor = 0);
 
   virtual ~MainWindow();
 
@@ -34,6 +37,8 @@ signals:
 
   void dataStructModelAvailable(void *aModel);
 
+  void formatOptionSelected(int aFormatOption);
+
 public slots:
 
   void onStructNameAvailable(QString aStructName);
@@ -42,10 +47,13 @@ public slots:
 
   void onSetFilterClicked(bool);
 
+  void onFormatOptionSelection(bool /*aIsChecked*/); //TODO make protected?
+
 protected:
 
   bool                _IsFilterMode;
   StreamReader       *_StreamReader;
+  RecordProcessor    *_RecordProcessor;
 	std::string         _HeaderFile;
 	std::string         _InitialStruct;
 	StructorBuilder    *_StructorBuilder;
@@ -53,6 +61,11 @@ protected:
 	QComboBox          *_StructComboBox;
 	StructTreeView     *_StructTree;
   bool               _HeaderFileWasParsed;
+
+  QRadioButton       *_FormatAsIsButton;
+  QRadioButton       *_FormatLongnameButton;
+  QRadioButton       *_FormatTableButton;
+  QRadioButton       *_FormatCustomButton;
 
   void readEnvironmentVariables();
 

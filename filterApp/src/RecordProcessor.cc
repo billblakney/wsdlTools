@@ -32,10 +32,11 @@ void RecordProcessor::configure(
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void RecordProcessor::setFormatMode(FormatMode aFormatMode)
+void RecordProcessor::setFormatMode(int aFormatMode)
 {
   _Mutex.lock();
-  _FormatMode = aFormatMode;
+  _FormatMode = static_cast<FormatMode>(aFormatMode);
+  std::cout << "+++++++++++ set format mode: " << _FormatMode << std::endl;
   _Mutex.unlock();
 }
 
@@ -85,16 +86,40 @@ bool RecordProcessor::process(std::vector<std::string> *aLinesIn)
 //-----------------------------------------------------------------------------
 void RecordProcessor::formatLines()
 {
-  FormatMode tFormatMode = getFormatMode();
+//  FormatMode tFormatMode = getFormatMode();
 
   std::vector<RecordLine>::iterator tIter;
   for (tIter = _RecordLines.begin(); tIter != _RecordLines.end(); tIter++)
   {
     if (tIter->nodeIsChecked && !tIter->resultLineExcluded)
     {
-      if (tIter->nodeFormat != FieldItemData::eAsIs)
+      FieldItemData::Format tFieldFormat = FieldItemData::eAsIs;
+
+      switch (getFormatMode()) {
+        case eAsIs:
+//std::cout << "eAsIs =======================" << std::endl;
+          tFieldFormat = FieldItemData::eAsIs;
+          break;
+        case eLongname:
+          tFieldFormat = FieldItemData::eLongnameValue;
+//std::cout << "eLongname ================tFieldFormat=======" << std::endl;
+          break;
+        case eTable:
+          tFieldFormat = FieldItemData::eValue;
+//std::cout << "eValue =======================" << std::endl;
+          break;
+        case eCustom:
+          tFieldFormat = tIter->nodeFormat;
+//std::cout << "eCustom =======================" << std::endl;
+          break;
+        default:
+          tFieldFormat = FieldItemData::eAsIs;
+          break;
+      }
+
+      if (tFieldFormat != FieldItemData::eAsIs)
       {
-        applyFormat(*tIter,tIter->nodeFormat);
+        applyFormat(*tIter,tFieldFormat);
       }
       /*
        * Add the postfix, i.e. line-ending.
@@ -116,11 +141,6 @@ void RecordProcessor::formatLines()
 void RecordProcessor::applyFormat(RecordLine &aRecordLine,
     FieldItemData::Format aFormat)
 {
-  if (_FormatMode == eLongname)
-  {
-    aFormat = FieldItemData::eLongnameValue;
-  }
-
   switch (aFormat) {
     case FieldItemData::eValue:
       aRecordLine.line = aRecordLine.lineFieldValue;

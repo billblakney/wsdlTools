@@ -4,7 +4,6 @@
 #include <QAbstractItemModel>
 #include <QHeaderView>
 #include <QPushButton>
-#include <QRadioButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include "ComboBoxDelegate.hh"
@@ -18,15 +17,21 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
     int argc, char *argv[],QApplication &aApp,QWidget *aParent,
-    bool aIsFilterMode,StreamReader *aStreamReader)
+    bool aIsFilterMode,StreamReader *aStreamReader,
+    RecordProcessor *aRecordProcessor)
   : QWidget(aParent),
     _IsFilterMode(aIsFilterMode),
     _StreamReader(aStreamReader),
+    _RecordProcessor(aRecordProcessor),
     _StructorBuilder(0),
     _DataStructModel(0),
     _StructComboBox(0),
     _StructTree(0),
-    _HeaderFileWasParsed(false)
+    _HeaderFileWasParsed(false),
+    _FormatAsIsButton(0),
+    _FormatLongnameButton(0),
+    _FormatTableButton(0),
+    _FormatCustomButton(0)
 {
   Q_UNUSED(aApp);
 
@@ -146,6 +151,23 @@ void MainWindow::parseHeaderFile()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::onFormatOptionSelection(bool aIsChecked)
+{
+  if (!aIsChecked) // only need to process the toggle on, not the one off
+    return;
+
+  if (_FormatAsIsButton->isChecked())
+    emit formatOptionSelected((int)RecordProcessor::eAsIs);
+  else if (_FormatLongnameButton->isChecked())
+    emit formatOptionSelected((int)RecordProcessor::eLongname);
+  else if (_FormatTableButton->isChecked())
+    emit formatOptionSelected((int)RecordProcessor::eTable);
+  else if (_FormatCustomButton->isChecked())
+    emit formatOptionSelected((int)RecordProcessor::eCustom);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::setupView()
 {
   /*
@@ -196,31 +218,48 @@ void MainWindow::setupView()
     /*
      * Create delimit records checkbox and connect it to the stream reader.
      */
-    QCheckBox *tDelimitRecordsCheckBox = new QCheckBox("Delimit records",tMainOptions);
+    QCheckBox *tDelimitRecordsCheckBox =
+        new QCheckBox("Delimit records",tMainOptions);
     tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
+
+    connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
+        _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
 
     QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
     tMainOptionsLayout->addWidget(tBypassCheckBox);
     tMainOptionsLayout->addWidget(tDelimitRecordsCheckBox);
     tMainOptions->setLayout(tMainOptionsLayout);
 
-    connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
-        _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
-
     /*
      *
      */
     QWidget *tFormatGroup = new QWidget(this);
-    QRadioButton *tFormatNormalButton = new QRadioButton("As-is Formatting",tFormatGroup);
-    QRadioButton *tFormatLongnameButton = new QRadioButton("Longname Formatting",tFormatGroup);
-    QRadioButton *tFormatTableButton = new QRadioButton("Table Formatting",tFormatGroup);
-    QRadioButton *tFormatCustomButton = new QRadioButton("Custom Formatting",tFormatGroup);
+    _FormatAsIsButton =
+        new QRadioButton("As-is Formatting",tFormatGroup);
+    _FormatLongnameButton =
+        new QRadioButton("Longname Formatting",tFormatGroup);
+    _FormatTableButton =
+        new QRadioButton("Table Formatting",tFormatGroup);
+    _FormatCustomButton =
+        new QRadioButton("Custom Formatting",tFormatGroup);
+
+    connect(_FormatAsIsButton,SIGNAL(toggled(bool)),
+        this,SLOT(onFormatOptionSelection(bool)));
+    connect(_FormatLongnameButton,SIGNAL(toggled(bool)),
+        this,SLOT(onFormatOptionSelection(bool)));
+    connect(_FormatTableButton,SIGNAL(toggled(bool)),
+        this,SLOT(onFormatOptionSelection(bool)));
+    connect(_FormatCustomButton,SIGNAL(toggled(bool)),
+        this,SLOT(onFormatOptionSelection(bool)));
+
+    connect(this,SIGNAL(formatOptionSelected(int)),
+        _RecordProcessor,SLOT(setFormatMode(int)));
 
     QVBoxLayout *tFormatGroupLayout = new QVBoxLayout;
-    tFormatGroupLayout->addWidget(tFormatNormalButton);
-    tFormatGroupLayout->addWidget(tFormatLongnameButton);
-    tFormatGroupLayout->addWidget(tFormatTableButton);
-    tFormatGroupLayout->addWidget(tFormatCustomButton);
+    tFormatGroupLayout->addWidget(_FormatAsIsButton);
+    tFormatGroupLayout->addWidget(_FormatLongnameButton);
+    tFormatGroupLayout->addWidget(_FormatTableButton);
+    tFormatGroupLayout->addWidget(_FormatCustomButton);
 
     tFormatGroup->setLayout(tFormatGroupLayout);
 
