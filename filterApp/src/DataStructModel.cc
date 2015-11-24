@@ -24,7 +24,8 @@ DataStructModel::DataStructModel(
   setupPostfixes();
 
   // root item
-  FieldItemData tRootData(FieldItemData::eRoot,"root",aStruct->_Name,aStruct->_Name);
+  FieldItemData tRootData(FieldItemData::eRoot,"root",aStruct->_Name,
+      aStruct->_Name);
   _RootItem = new FieldItem(tRootData);
 
   // top node item
@@ -121,7 +122,7 @@ static Field _lastLengthField; //TODO
 void DataStructModel::buildTree(
     FieldItem *aParentItem,Structure *aStruct,int aLevel)
 {
-  boost::regex array_size_regex("^([a-zA-Z]+)_size$");
+  boost::regex array_size_regex("^([_a-zA-Z]+)_size$");
 
   if (aLevel == 0)
   {
@@ -147,16 +148,19 @@ void DataStructModel::buildTree(
       DEBUG(sLogger,blanks[aLevel] << "array size entry: "
           << tIter->_Type << ":" << tIter->_Name);
 
-#if 1
+      /*
+       * The array length field occurs before the actual array field.
+       * So save it off, so that the array node can create a child node
+       * for it.
+       */
       if (aParentItem->getData().getNodeType() == FieldItemData::eStructArray)
       {
         _lastLengthField = *tIter;
       }
       else if (aParentItem->getData().getNodeType() == FieldItemData::ePrimitiveArray)
       {
-//        buildPrimitiveArrayLengthNode(*tIter,aParentItem,aLevel);
+        _lastLengthField = *tIter;
       }
-#endif
     }
     else if (tIter->_IsPointer)
     {

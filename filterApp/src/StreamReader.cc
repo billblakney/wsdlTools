@@ -231,6 +231,7 @@ void StreamReader::readAndProcessStructLines()
   SimpleLineMatcher tEndMessageMatcher(".*===END MESSAGE===.*");
 
   std::string tFirstFieldMatch = _DataStructModel->getFirstFieldMatch();
+  DEBUG(sLogger,"match to start record: " << tFirstFieldMatch);
 
   SimpleLineMatcher tFirstFieldMatcher(tFirstFieldMatch);
 
