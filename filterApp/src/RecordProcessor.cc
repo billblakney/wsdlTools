@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <iterator>
 #include <sstream>
 #include <boost/regex.hpp>
 #include <boost/tokenizer.hpp>
@@ -36,7 +38,6 @@ void RecordProcessor::setFormatMode(int aFormatMode)
 {
   _Mutex.lock();
   _FormatMode = static_cast<FormatMode>(aFormatMode);
-  std::cout << "+++++++++++ set format mode: " << _FormatMode << std::endl;
   _Mutex.unlock();
 }
 
@@ -89,31 +90,29 @@ void RecordProcessor::formatLines()
 //  FormatMode tFormatMode = getFormatMode();
 
   std::vector<RecordLine>::iterator tIter;
+  std::vector<RecordLine>::iterator tLastProcessedIter = _RecordLines.end();
   for (tIter = _RecordLines.begin(); tIter != _RecordLines.end(); tIter++)
   {
     if (tIter->nodeIsChecked && !tIter->resultLineExcluded)
     {
+      tLastProcessedIter = tIter;
       FieldItemData::Format tFieldFormat = FieldItemData::eAsIs;
+      std::string tPostfix = "\\n";
 
       switch (getFormatMode()) {
-        case eAsIs:
-//std::cout << "eAsIs =======================" << std::endl;
-          tFieldFormat = FieldItemData::eAsIs;
-          break;
         case eLongname:
           tFieldFormat = FieldItemData::eLongnameValue;
-//std::cout << "eLongname ================tFieldFormat=======" << std::endl;
           break;
         case eTable:
           tFieldFormat = FieldItemData::eValue;
-//std::cout << "eValue =======================" << std::endl;
+          tPostfix = "\\t";
           break;
         case eCustom:
           tFieldFormat = tIter->nodeFormat;
-//std::cout << "eCustom =======================" << std::endl;
+          tPostfix = tIter->nodePostfix;
           break;
+        case eAsIs:
         default:
-          tFieldFormat = FieldItemData::eAsIs;
           break;
       }
 
@@ -126,12 +125,23 @@ void RecordProcessor::formatLines()
        */
       boost::regex matchAll("(.*)");
       std::string tFormat("$1");
-      tFormat += tIter->nodePostfix;
+      tFormat += tPostfix;
       tIter->line = boost::regex_replace(tIter->line,matchAll,tFormat,
           boost::format_first_only | boost::format_all);
     }
   }
-
+  /*
+   * Always want the last line to end with a new-line character.
+   */
+  if (tLastProcessedIter != _RecordLines.end())
+  {
+    std::string::reverse_iterator tLastCharIter =
+        tLastProcessedIter->line.rbegin();
+    if (*tLastCharIter != '\n')
+    {
+      *tLastCharIter = '\n';
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
