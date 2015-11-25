@@ -3,6 +3,7 @@
 
 #include <string>
 #include <QComboBox>
+#include <QGroupBox>
 #include <QRadioButton>
 #include <QStringList>
 #include <QWidget>
@@ -70,6 +71,10 @@ protected:
   void readEnvironmentVariables();
 
   void processCommandLine(int argc,char *argv[]);
+
+  QGroupBox *createFormatModeGroup(QWidget *aParent);
+
+  QGroupBox *createCustomFormatGroup(QWidget *aParent);
 
 	QStringList convertToQStringList(std::vector<std::string> aStrings);
 

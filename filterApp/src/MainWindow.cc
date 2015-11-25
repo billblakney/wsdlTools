@@ -34,6 +34,35 @@ MainWindow::MainWindow(
     _FormatCustomButton(0)
 {
   Q_UNUSED(aApp);
+#if 0
+
+
+  QGroupBox {
+      border: 1px solid gray;
+      border-radius: 9px;
+      margin-top: 0.5em;
+  }
+
+  QGroupBox::title {
+      subcontrol-origin: margin;
+      left: 10px;
+      padding: 0 3px 0 3px;
+  }
+
+
+#endif
+
+  setStyleSheet(
+      "QGroupBox { "
+      "border: 1px solid black; "
+      "margin-top: 0.5em "
+      "}"
+      "QGroupBox:title { "
+      "subcontrol-origin: margin; "
+      "left: 10px; "
+      "padding: 0 3px 0 3px"
+      "}"
+      );
 
   /*
    * Read the environment variables. Currently only one: CLIRCAR_H.
@@ -207,6 +236,10 @@ void MainWindow::setupView()
      */
     QWidget *tMainOptions = new QWidget(tOptions);
 
+    QGroupBox *tFormatModeWidget = createFormatModeGroup(tOptions);
+
+    QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tOptions);
+
     /*
      * Create bypass checkbox and connect it to the stream reader.
      */
@@ -230,41 +263,10 @@ void MainWindow::setupView()
     tMainOptionsLayout->addWidget(tDelimitRecordsCheckBox);
     tMainOptions->setLayout(tMainOptionsLayout);
 
-    /*
-     *
-     */
-    QWidget *tFormatGroup = new QWidget(this);
-    _FormatAsIsButton =
-        new QRadioButton("As-is Formatting",tFormatGroup);
-    _FormatLongnameButton =
-        new QRadioButton("Longname Formatting",tFormatGroup);
-    _FormatTableButton =
-        new QRadioButton("Table Formatting",tFormatGroup);
-    _FormatCustomButton =
-        new QRadioButton("Custom Formatting",tFormatGroup);
-
-    connect(_FormatAsIsButton,SIGNAL(toggled(bool)),
-        this,SLOT(onFormatOptionSelection(bool)));
-    connect(_FormatLongnameButton,SIGNAL(toggled(bool)),
-        this,SLOT(onFormatOptionSelection(bool)));
-    connect(_FormatTableButton,SIGNAL(toggled(bool)),
-        this,SLOT(onFormatOptionSelection(bool)));
-    connect(_FormatCustomButton,SIGNAL(toggled(bool)),
-        this,SLOT(onFormatOptionSelection(bool)));
-
-    connect(this,SIGNAL(formatOptionSelected(int)),
-        _RecordProcessor,SLOT(setFormatMode(int)));
-
-    QVBoxLayout *tFormatGroupLayout = new QVBoxLayout;
-    tFormatGroupLayout->addWidget(_FormatAsIsButton);
-    tFormatGroupLayout->addWidget(_FormatLongnameButton);
-    tFormatGroupLayout->addWidget(_FormatTableButton);
-    tFormatGroupLayout->addWidget(_FormatCustomButton);
-
-    tFormatGroup->setLayout(tFormatGroupLayout);
 
     QHBoxLayout *tOptionsLayout = new QHBoxLayout;
-    tOptionsLayout->addWidget(tFormatGroup);
+    tOptionsLayout->addWidget(tFormatModeWidget);
+    tOptionsLayout->addWidget(tCustomFormatGroup);
     tOptionsLayout->addWidget(tMainOptions);
 
     tOptions->setLayout(tOptionsLayout);
@@ -338,6 +340,85 @@ void MainWindow::setupView()
   {
     // show all columns
   }
+}
+
+//-----------------------------------------------------------------------------
+// Creates the format mode widget.
+//-----------------------------------------------------------------------------
+QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
+{
+    QGroupBox *tGroup = new QGroupBox("Format Mode",aParent);
+    tGroup->setFlat(true);
+
+    _FormatAsIsButton =
+        new QRadioButton("As-is Formatting",tGroup);
+    _FormatLongnameButton =
+        new QRadioButton("Longname Formatting",tGroup);
+    _FormatTableButton =
+        new QRadioButton("Table Formatting",tGroup);
+    _FormatCustomButton =
+        new QRadioButton("Custom Formatting",tGroup);
+
+    connect(_FormatAsIsButton,SIGNAL(toggled(bool)),
+        this,SLOT(onFormatOptionSelection(bool)));
+    connect(_FormatLongnameButton,SIGNAL(toggled(bool)),
+        this,SLOT(onFormatOptionSelection(bool)));
+    connect(_FormatTableButton,SIGNAL(toggled(bool)),
+        this,SLOT(onFormatOptionSelection(bool)));
+    connect(_FormatCustomButton,SIGNAL(toggled(bool)),
+        this,SLOT(onFormatOptionSelection(bool)));
+
+    connect(this,SIGNAL(formatOptionSelected(int)),
+        _RecordProcessor,SLOT(setFormatMode(int)));
+
+    QVBoxLayout *tGroupLayout = new QVBoxLayout;
+    tGroupLayout->addWidget(_FormatAsIsButton);
+    tGroupLayout->addWidget(_FormatLongnameButton);
+    tGroupLayout->addWidget(_FormatTableButton);
+    tGroupLayout->addWidget(_FormatCustomButton);
+
+    tGroup->setLayout(tGroupLayout);
+    return tGroup;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
+{
+    QGroupBox *tGroup = new QGroupBox("Custom Format Utilities",aParent);
+    tGroup->setFlat(true);
+
+    QPushButton *tAsIsButton =
+        new QPushButton("Apply \"As-is\" settings",tGroup);
+    QPushButton *tLongnameButton =
+        new QPushButton("Apply \"Longname\" settings",tGroup);
+    QPushButton *tTableButton =
+        new QPushButton("Apply \"Table\" settings",tGroup);
+
+    QCheckBox *tAsIsCheckBox = new QCheckBox("Checked fields only");
+    QCheckBox *tLongnameCheckBox = new QCheckBox("Checked fields only");
+    QCheckBox *tTableCheckBox = new QCheckBox("Checked fields only");
+
+    QGridLayout *tGrid = new QGridLayout(aParent);
+    tGrid->addWidget(tAsIsButton,0,0);
+    tGrid->addWidget(tLongnameButton,1,0);
+    tGrid->addWidget(tTableButton,2,0);
+    tGrid->addWidget(tAsIsCheckBox,0,1);
+    tGrid->addWidget(tLongnameCheckBox,1,1);
+    tGrid->addWidget(tTableCheckBox,2,1);
+
+    tGroup->setLayout(tGrid);
+
+#if 0
+    QVBoxLayout *tGroupLayout = new QVBoxLayout;
+    tGroupLayout->addWidget(tAsIsButton);
+    tGroupLayout->addWidget(tLongnameButton);
+    tGroupLayout->addWidget(tTableButton);
+
+    tGroup->setLayout(tGroupLayout);
+#endif
+
+    return tGroup;
 }
 
 //-------------------------------------------------------------------------------
