@@ -8,4 +8,3 @@ StructTreeView::StructTreeView(QWidget *aParent)
 StructTreeView::~StructTreeView()
 {
 }
-

@@ -40,9 +40,17 @@ signals:
 
   void formatOptionSelected(int aFormatOption);
 
+  void applyFormatMode(int aFormatMode,bool aCheckedOnly);
+
 public slots:
 
   void onStructNameAvailable(QString aStructName);
+
+  void onModelUpdate();
+
+  void onAsIsPushbuttonClicked(bool);
+  void onLongnamePushbuttonClicked(bool);
+  void onTablePushbuttonClicked(bool);
 
   void onStructComboBoxActivated(int index);
 
@@ -67,6 +75,10 @@ protected:
   QRadioButton       *_FormatLongnameButton;
   QRadioButton       *_FormatTableButton;
   QRadioButton       *_FormatCustomButton;
+
+  QCheckBox *_AsIsCheckBox;
+  QCheckBox *_LongnameCheckBox;
+  QCheckBox *_TableCheckBox;
 
   void readEnvironmentVariables();
 

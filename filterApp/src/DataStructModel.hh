@@ -7,11 +7,14 @@
 #include <QVariant>
 #include "FieldItem.hh"
 #include "Logger.hh"
+#include "RecordProcessor.hh"
 #include "Structure.hh"
 #include "StructorBuilder.hh"
 
 class DataStructModel : public QAbstractItemModel
 {
+  Q_OBJECT;
+
 public:
 
   enum ColumnId {
@@ -135,6 +138,14 @@ public:
 
   int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
+signals:
+
+  void modelUpdated();
+
+public slots:
+
+  void applyFormatMode(int aFormatMode,bool aCheckedOnly);
+
 protected:
 
   static ccl::Logger sLogger;
@@ -162,6 +173,9 @@ protected:
   uint getTestScopeIndex(std::string &aTestScope) const;
 
   void setupModelData() {}
+
+  void applyFormatMode(QVariant aFormat,QVariant aPostfix,bool aCheckedOnly,
+    FieldItem *aFieldItem);
 
   void setChildrenCheckStates(
       const QModelIndex &aParentIndex,Qt::CheckState aCheckState);

@@ -31,26 +31,12 @@ MainWindow::MainWindow(
     _FormatAsIsButton(0),
     _FormatLongnameButton(0),
     _FormatTableButton(0),
-    _FormatCustomButton(0)
+    _FormatCustomButton(0),
+    _AsIsCheckBox(0),
+    _LongnameCheckBox(0),
+    _TableCheckBox(0)
 {
   Q_UNUSED(aApp);
-#if 0
-
-
-  QGroupBox {
-      border: 1px solid gray;
-      border-radius: 9px;
-      margin-top: 0.5em;
-  }
-
-  QGroupBox::title {
-      subcontrol-origin: margin;
-      left: 10px;
-      padding: 0 3px 0 3px;
-  }
-
-
-#endif
 
   setStyleSheet(
       "QGroupBox { "
@@ -110,6 +96,17 @@ void MainWindow::setTreeViewStruct(std::string aStructName)
   _StructTree->resizeColumnToContents(0);
   _StructTree->resizeColumnToContents(1);
 #endif
+
+  connect(_DataStructModel, SIGNAL(modelUpdated()),
+      this,SLOT(onModelUpdate()));
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onModelUpdate()
+{
+//  _StructTree->viewport()->repaint();
+  _StructTree->viewport()->update();
 }
 
 //-------------------------------------------------------------------------------
@@ -224,6 +221,46 @@ void MainWindow::setupView()
       SLOT(onStructComboBoxActivated(int)));
 
   /*
+   * Create structure tree view.
+   */
+  _StructTree = new StructTreeView(this);
+  setTreeViewStruct(_InitialStruct);
+  _StructTree->header()->resizeSection(0, 225);
+
+  _StructTree->setEditTriggers(QAbstractItemView::AllEditTriggers);
+
+  ComboBoxDelegate *tTestScopeDelegate =
+      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
+  _StructTree->setItemDelegateForColumn(
+      DataStructModel::eColTestScope,tTestScopeDelegate);
+
+  ComboBoxDelegate *tFormatDelegate =
+      new ComboBoxDelegate(_DataStructModel->getFormats(),this);
+  _StructTree->setItemDelegateForColumn(
+      DataStructModel::eColFormat,tFormatDelegate);
+
+  ComboBoxDelegate *tPostfixDelegate =
+      new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
+  _StructTree->setItemDelegateForColumn(
+      DataStructModel::eColPostfix,tPostfixDelegate);
+
+// TODO works form 4.8 on
+#ifdef EXPAND_ALL
+  _StructTree->expandAll();
+#else
+  _StructTree->expand(_StructTree->model()->index(0, 0, QModelIndex()));
+#endif
+
+#if USING_BOTTOM_PUSHBUTTON // no longer using, may use later
+  /*
+   * Pushbutton for setting filter.
+   */
+  QPushButton *tButton = new QPushButton("Set Filter", this);
+
+  connect(tButton, SIGNAL(clicked(bool)), this, SLOT(onSetFilterClicked(bool)));
+#endif
+
+  /*
    * The options will only be populated when in filter mode.
    */
   QWidget *tOptions = new QWidget(this);
@@ -273,46 +310,6 @@ void MainWindow::setupView()
   }
 
   /*
-   * Create structure tree view.
-   */
-  _StructTree = new StructTreeView(this);
-  setTreeViewStruct(_InitialStruct);
-  _StructTree->header()->resizeSection(0, 225);
-
-  _StructTree->setEditTriggers(QAbstractItemView::AllEditTriggers);
-
-  ComboBoxDelegate *tTestScopeDelegate =
-      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
-  _StructTree->setItemDelegateForColumn(
-      DataStructModel::eColTestScope,tTestScopeDelegate);
-
-  ComboBoxDelegate *tFormatDelegate =
-      new ComboBoxDelegate(_DataStructModel->getFormats(),this);
-  _StructTree->setItemDelegateForColumn(
-      DataStructModel::eColFormat,tFormatDelegate);
-
-  ComboBoxDelegate *tPostfixDelegate =
-      new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
-  _StructTree->setItemDelegateForColumn(
-      DataStructModel::eColPostfix,tPostfixDelegate);
-
-// TODO works form 4.8 on
-#ifdef EXPAND_ALL
-  _StructTree->expandAll();
-#else
-  _StructTree->expand(_StructTree->model()->index(0, 0, QModelIndex()));
-#endif
-
-#if USING_BOTTOM_PUSHBUTTON // no longer using, may use later
-  /*
-   * Pushbutton for setting filter.
-   */
-  QPushButton *tButton = new QPushButton("Set Filter", this);
-
-  connect(tButton, SIGNAL(clicked(bool)), this, SLOT(onSetFilterClicked(bool)));
-#endif
-
-  /*
    * Put widgets in the dialog using box layout.
    */
   QVBoxLayout *tWindowLayout = new QVBoxLayout;
@@ -359,6 +356,8 @@ QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
     _FormatCustomButton =
         new QRadioButton("Custom Formatting",tGroup);
 
+    _FormatAsIsButton->setChecked(true);
+
     connect(_FormatAsIsButton,SIGNAL(toggled(bool)),
         this,SLOT(onFormatOptionSelection(bool)));
     connect(_FormatLongnameButton,SIGNAL(toggled(bool)),
@@ -382,6 +381,8 @@ QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
 }
 
 //-------------------------------------------------------------------------------
+// Note that tree view must be created before this is called. Otherwise,
+// _DataStructMode will be null, and so the connections won't be made.
 //-------------------------------------------------------------------------------
 QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
 {
@@ -395,17 +396,27 @@ QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
     QPushButton *tTableButton =
         new QPushButton("Apply \"Table\" settings",tGroup);
 
-    QCheckBox *tAsIsCheckBox = new QCheckBox("Checked fields only");
-    QCheckBox *tLongnameCheckBox = new QCheckBox("Checked fields only");
-    QCheckBox *tTableCheckBox = new QCheckBox("Checked fields only");
+    _AsIsCheckBox = new QCheckBox("Checked fields only");
+    _LongnameCheckBox = new QCheckBox("Checked fields only");
+    _TableCheckBox = new QCheckBox("Checked fields only");
+
+    connect(tAsIsButton,SIGNAL(clicked(bool)),
+      this,SLOT(onAsIsPushbuttonClicked(bool)));
+    connect(tLongnameButton,SIGNAL(clicked(bool)),
+      this,SLOT(onLongnamePushbuttonClicked(bool)));
+    connect(tTableButton,SIGNAL(clicked(bool)),
+      this,SLOT(onTablePushbuttonClicked(bool)));
+
+    connect(this,SIGNAL(applyFormatMode(int,bool)),
+      _DataStructModel,SLOT(applyFormatMode(int,bool)));
 
     QGridLayout *tGrid = new QGridLayout(aParent);
     tGrid->addWidget(tAsIsButton,0,0);
     tGrid->addWidget(tLongnameButton,1,0);
     tGrid->addWidget(tTableButton,2,0);
-    tGrid->addWidget(tAsIsCheckBox,0,1);
-    tGrid->addWidget(tLongnameCheckBox,1,1);
-    tGrid->addWidget(tTableCheckBox,2,1);
+    tGrid->addWidget(_AsIsCheckBox,0,1);
+    tGrid->addWidget(_LongnameCheckBox,1,1);
+    tGrid->addWidget(_TableCheckBox,2,1);
 
     tGroup->setLayout(tGrid);
 
@@ -419,6 +430,33 @@ QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
 #endif
 
     return tGroup;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onAsIsPushbuttonClicked(bool)
+{
+  int tAsIsInt = (int)RecordProcessor::eAsIs;
+  bool tChecked = (_AsIsCheckBox->isChecked() ? true: false);
+  emit applyFormatMode(tAsIsInt,tChecked);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onLongnamePushbuttonClicked(bool)
+{
+  int tLongnameInt = (int)RecordProcessor::eLongname;
+  bool tChecked = (_LongnameCheckBox->isChecked() ? true: false);
+  emit applyFormatMode(tLongnameInt,tChecked);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onTablePushbuttonClicked(bool)
+{
+  int tTableInt = (int)RecordProcessor::eTable;
+  bool tChecked = (_TableCheckBox->isChecked() ? true: false);
+  emit applyFormatMode(tTableInt,tChecked);
 }
 
 //-------------------------------------------------------------------------------

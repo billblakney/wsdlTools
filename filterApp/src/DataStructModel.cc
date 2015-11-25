@@ -930,6 +930,55 @@ uint DataStructModel::getPostfixIndex(std::string &aPostfix) const
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
+void DataStructModel::applyFormatMode(int aFormatMode,bool aCheckedOnly)
+{
+  RecordProcessor::FormatMode tFormatMode =
+      static_cast<RecordProcessor::FormatMode>(aFormatMode);
+
+  if (tFormatMode == RecordProcessor::eAsIs)
+  {
+    QVariant tFormat(FieldItemData::eAsIs);
+    QVariant tPostfix("\\n");
+    applyFormatMode(tFormat,tPostfix,aCheckedOnly,_TopNodeItem);
+  }
+  else if (tFormatMode == RecordProcessor::eLongname)
+  {
+    QVariant tFormat(FieldItemData::eLongnameValue);
+    QVariant tPostfix("\\n");
+    applyFormatMode(tFormat,tPostfix,aCheckedOnly,_TopNodeItem);
+  }
+  else if (tFormatMode == RecordProcessor::eTable)
+  {
+    QVariant tFormat(FieldItemData::eValue);
+    QVariant tPostfix("\\t");
+    applyFormatMode(tFormat,tPostfix,aCheckedOnly,_TopNodeItem);
+  }
+  else
+  {
+    std::cerr << "ERROR: unknown format mode" << std::endl;
+  }
+  emit modelUpdated();
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void DataStructModel::applyFormatMode(QVariant aFormat,QVariant aPostfix,
+    bool aCheckedOnly,FieldItem *aFieldItem)
+{
+  if ((aCheckedOnly==false) || aFieldItem->getData().isChecked())
+  {
+    aFieldItem->setFieldFormat(aFormat);
+    aFieldItem->setFieldPostfix(aPostfix);
+  }
+
+  for (int tIdx = 0; tIdx < aFieldItem->childCount(); tIdx++)
+  {
+    applyFormatMode(aFormat,aPostfix,aCheckedOnly,aFieldItem->child(tIdx));
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 void DataStructModel::setChildrenCheckStates(
     const QModelIndex &aParentIndex,Qt::CheckState aNewState)
 {
