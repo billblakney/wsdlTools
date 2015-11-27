@@ -46,6 +46,8 @@ public:
 
   void setCheckState(Qt::CheckState aCheckState);
 
+  void setTestCheckState(Qt::CheckState aCheckState);
+
   void setFieldMatch(const QVariant value);
 
   void setFieldTest(const QVariant value);

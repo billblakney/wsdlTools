@@ -626,11 +626,14 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
       }
       return item->data(index.column());
       break;
-    }
-    case Qt::CheckStateRole:
+    } case Qt::CheckStateRole:
       if (index.column() == eColFieldName)
       {
         return static_cast<int>(item->getData().getCheckState());
+      }
+      else if (index.column() == eColTestRegex)
+      {
+        return static_cast<int>(item->getData().getTestCheckState());
       }
       break;
     case Qt::FontRole:
@@ -656,7 +659,9 @@ bool DataStructModel::setData(
 //  int aRow = index.row();
   int aCol = index.column();
 
-  if( role == Qt::CheckStateRole && aCol == eColFieldName)
+  if( role == Qt::CheckStateRole &&
+      (aCol == eColFieldName ||
+      aCol == eColTestRegex))
   {
     FieldItem *item = static_cast<FieldItem*>(index.internalPointer());
 
@@ -671,17 +676,25 @@ bool DataStructModel::setData(
       tNewState = Qt::Unchecked;
     }
 
-    item->setCheckState(tNewState);
-    emit dataChanged(index,index);
-
-    if (item->childCount() > 0)
+    if (aCol == eColFieldName)
     {
-      setChildrenCheckStates(index,tNewState);
-    }
+      item->setCheckState(tNewState);
+      emit dataChanged(index,index);
+
+      if (item->childCount() > 0)
+      {
+        setChildrenCheckStates(index,tNewState);
+      }
 
 #ifdef UPDATE_PARENT_CHECK_STATES
-    updateParentCheckState(index,tNewState);
+      updateParentCheckState(index,tNewState);
 #endif
+    }
+    else if (aCol == eColTestRegex)
+    {
+      item->setTestCheckState(tNewState);
+      emit dataChanged(index,index);
+    }
   }
   else if (role == Qt::EditRole)
   {
@@ -728,7 +741,8 @@ Qt::ItemFlags DataStructModel::flags(const QModelIndex &index) const
 
   Qt::ItemFlags tFlags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
-  if (index.column() == eColFieldName)
+  if (index.column() == eColFieldName ||
+      index.column() == eColTestRegex)
   {
     tFlags |= Qt::ItemIsUserCheckable;
   }

@@ -99,6 +99,13 @@ void FieldItem::setCheckState(Qt::CheckState aCheckState)
 }
 
 //-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void FieldItem::setTestCheckState(Qt::CheckState aCheckState)
+{
+  _FieldItemData.setTestCheckState(aCheckState);
+}
+
+//-------------------------------------------------------------------------------
 // TODO can probably remove - only test needs to be editable
 //-------------------------------------------------------------------------------
 void FieldItem::setFieldMatch(const QVariant aValue)

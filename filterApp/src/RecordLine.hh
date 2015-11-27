@@ -9,6 +9,7 @@ class RecordLine
 public:
 
   std::string nodeKey;
+  bool        nodeTestChecked;
   std::string nodeTestRegex;
   std::string nodeTestScope;
   FieldItemData::Format nodeFormat;

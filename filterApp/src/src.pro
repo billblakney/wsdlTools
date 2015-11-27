@@ -50,18 +50,15 @@ HEADERS += \
            DataStructModel.hh \
            FieldItem.hh \
            FieldItemData.hh \
-           LineConsumer.hh \
            LineMatcher.hh \
            MainWindow.hh \
            RecordLine.hh \
            RecordProcessor.hh \
            RecordWriter.hh \
-           SimpleLineConsumer.hh \
            SimpleRecordWriter.hh \
            SimpleLineMatcher.hh \
            StreamReader.hh \
            StructTreeView.hh \
-           TreeItem.hh \
            TreeProcessor.hh \
 
 SOURCES += \
@@ -70,18 +67,15 @@ SOURCES += \
            DataStructModel.cc \
            FieldItem.cc \
            FieldItemData.cc \
-           LineConsumer.cc \
            LineMatcher.cc \
            MainWindow.cc \
            RecordLine.cc \
            RecordProcessor.cc \
            RecordWriter.cc \
-           SimpleLineConsumer.cc \
            SimpleRecordWriter.cc \
            SimpleLineMatcher.cc \
            StreamReader.cc \
            StructTreeView.cc \
-           TreeItem.cc \
            TreeProcessor.cc \
 
 # not really the right test, but...

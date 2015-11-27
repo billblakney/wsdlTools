@@ -50,6 +50,7 @@ RecordLine::~RecordLine()
 void RecordLine::setNodeFields(FieldItemData &aFieldItemData)
 {
   nodeKey = aFieldItemData.getKey();
+  nodeTestChecked = aFieldItemData.isTestChecked();
   nodeTestRegex = aFieldItemData.getTest();
   nodeTestScope = aFieldItemData.getTestScope();
   nodeFormat = aFieldItemData.getFormat();
@@ -60,6 +61,7 @@ void RecordLine::setNodeFields(FieldItemData &aFieldItemData)
 void RecordLine::initNodeFields()
 {
   nodeKey = "";
+  nodeTestChecked = false;
   nodeTestRegex = "";
   nodeTestScope = "";
   nodeFormat = FieldItemData::eAsIs;

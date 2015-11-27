@@ -45,11 +45,13 @@ public:
       std::string aTestScope = "root",
       Format      aFormat = eAsIs,
       std::string aPostfix = "\\n",
-      Qt::CheckState aCheckState = Qt::Unchecked);
+      Qt::CheckState aCheckState = Qt::Unchecked,
+      Qt::CheckState aTestCheckState = Qt::Unchecked);
 
   virtual ~FieldItemData();
 
   bool isChecked();
+  bool isTestChecked();
 
   FieldItemData::NodeType getNodeType();
   std::string& getKey();
@@ -61,6 +63,7 @@ public:
   Format&      getFormat();
   std::string& getPostfix();
   Qt::CheckState getCheckState();
+  Qt::CheckState getTestCheckState();
 
   void setNodeType(NodeType nodeType);
   void setKey(const std::string& key);
@@ -72,6 +75,7 @@ public:
   void setFormat(const Format& format);
   void setPostfix(const std::string& postfix);
   void setCheckState(Qt::CheckState checkState);
+  void setTestCheckState(Qt::CheckState checkState);
 
 protected:
 
@@ -87,6 +91,7 @@ protected:
   Format             _Format;
   std::string        _Postfix;
   Qt::CheckState     _CheckState;
+  Qt::CheckState     _TestCheckState;
 };
 
 #endif /* FIELDITEMDATA_HH_ */

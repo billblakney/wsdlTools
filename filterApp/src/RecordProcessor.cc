@@ -176,7 +176,7 @@ void RecordProcessor::applyTestResults()
     /*
      * If no test was specified for this line, go to the next line.
      */
-    if (tIter->nodeTestRegex.length() < 1)
+    if (!tIter->nodeTestChecked || tIter->nodeTestRegex.length() < 1)
       continue;
 
     /*
@@ -629,10 +629,11 @@ bool RecordProcessor::processStructArrayNode(FieldItem *aNode,std::string &aDotS
     return false;
   }
 
-  bool tTestResult = true;
-
   std::string tFieldValue = _Matcher.getWhat();
-  if (!testForMatch(tFieldValue,aFirstChildNode->getData().getTest()))
+
+  bool tTestResult = true;
+  if (aFirstChildNode->getData().isTestChecked() &&
+      !testForMatch(tFieldValue,aFirstChildNode->getData().getTest()))
   {
     DEBUG(sLogger,"test FAILED for " << aFirstChildNode->getData().getName());
     tTestResult = false;
@@ -691,10 +692,11 @@ bool RecordProcessor::processPrimitiveNode(FieldItem *aNode,std::string &aDotStr
     return false;
   }
 
-  bool tTestResult = true;
-
   std::string tFieldValue = _Matcher.getWhat();
-  if (!testForMatch(tFieldValue,aNode->getData().getTest()))
+
+  bool tTestResult = true;
+  if (aNode->getData().isTestChecked() &&
+      !testForMatch(tFieldValue,aNode->getData().getTest()))
   {
     DEBUG(sLogger,"test FAILED for " << aNode->getData().getName());
     tTestResult = false;
@@ -770,10 +772,11 @@ bool RecordProcessor::processPrimitiveArrayNode(FieldItem *aNode,std::string &aD
     return false;
   }
 
-  bool tTestResult = true;
-
   std::string tFieldValue = _Matcher.getWhat();
-  if (!testForMatch(tFieldValue,aFirstChildNode->getData().getTest()))
+
+  bool tTestResult = true;
+  if (aFirstChildNode->getData().isTestChecked() &&
+      !testForMatch(tFieldValue,aFirstChildNode->getData().getTest()))
   {
     DEBUG(sLogger,"test FAILED for " << aFirstChildNode->getData().getName());
     tTestResult = false;
@@ -839,10 +842,11 @@ bool RecordProcessor::processPrimitiveArrayLine(
     return false;
   }
 
-  bool tTestResult = true;
-
   std::string tFieldValue = _Matcher.getWhat();
-  if (!testForMatch(tFieldValue,aNode->getData().getTest()))
+
+  bool tTestResult = true;
+  if (aNode->getData().isTestChecked() &&
+      !testForMatch(tFieldValue,aNode->getData().getTest()))
   {
     DEBUG(sLogger,"test FAILED");
     tTestResult = false;

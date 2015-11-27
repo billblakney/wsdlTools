@@ -15,7 +15,8 @@ FieldItemData::FieldItemData()
     _TestScope(""),
     _Format(eAsIs),
     _Postfix(""),
-    _CheckState(Qt::Unchecked)
+    _CheckState(Qt::Unchecked),
+    _TestCheckState(Qt::Unchecked)
 {
 }
 
@@ -31,7 +32,8 @@ FieldItemData::FieldItemData(
       std::string aTestScope,
       Format      aFormat,
       std::string aPostfix,
-      Qt::CheckState aCheckState)
+      Qt::CheckState aCheckState,
+      Qt::CheckState aTestCheckState)
   : _NodeType(aNodeType),
     _Key(aKey),
     _Name(aName),
@@ -41,7 +43,8 @@ FieldItemData::FieldItemData(
     _TestScope(aTestScope),
     _Format(aFormat),
     _Postfix(aPostfix),
-    _CheckState(aCheckState)
+    _CheckState(aCheckState),
+    _TestCheckState(aCheckState)
   {
 
   }
@@ -57,6 +60,13 @@ FieldItemData::~FieldItemData()
 bool FieldItemData::isChecked()
 {
   return ( (_CheckState == Qt::Checked) ? true: false);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+bool FieldItemData::isTestChecked()
+{
+  return ( (_TestCheckState == Qt::Checked) ? true: false);
 }
 
 //-------------------------------------------------------------------------------
@@ -112,6 +122,11 @@ Qt::CheckState FieldItemData::getCheckState()
   return _CheckState;
 }
 
+Qt::CheckState FieldItemData::getTestCheckState()
+{
+  return _TestCheckState;
+}
+
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 
@@ -163,4 +178,9 @@ void FieldItemData::setPostfix(const std::string& postfix)
 void FieldItemData::setCheckState(Qt::CheckState checkState)
 {
   _CheckState = checkState;
+}
+
+void FieldItemData::setTestCheckState(Qt::CheckState checkState)
+{
+  _TestCheckState = checkState;
 }
