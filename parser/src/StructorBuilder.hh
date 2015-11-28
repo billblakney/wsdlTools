@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 
+#include "Enum.hh"
 #include "Field.hh"
 #include "Structure.hh"
 
@@ -26,6 +27,10 @@ public:
 
 	void onMatch(const char *aRuleName);
 
+	void onEnumValue(std::string *aValue);
+
+	void onEnum(std::string *aName);
+
 	void onField(string *aName,string *aType,int aIsPointer);
 
 	void onStruct(std::string *aStructName);
@@ -42,9 +47,13 @@ public:
 
 	void printSummary();
 
+	std::map<std::string,Enum *> _Enums;
+
 	std::map<std::string,Structure *> _Structs;
 
 private:
+
+	vector<std::string>  _EnumValues;
 
 	vector<Field>  _Fields;
 };

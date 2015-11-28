@@ -60,7 +60,7 @@ member: NAME NAME SEMICOLON
            {sb->onField($1,$3,1);}
 
 enum_decl: TYPEDEF ENUM NAME LBRACE enum_list RBRACE NAME SEMICOLON
-   {sb->onMatch("enum_decl");}
+   {sb->onEnum($7);}
 
 enum_list: last_enum_item
    {sb->onMatch("last_enum_item 1");}
@@ -75,7 +75,7 @@ inner_enum_items: inner_enum_item
    {sb->onMatch("inner_enum_item 2");}
 
 inner_enum_item: NAME EQUALS INT COMMA
-   {sb->onMatch("inner_enum_item");}
+   {sb->onEnumValue($1);}
 
 last_enum_item: NAME EQUALS INT
    {sb->onMatch("last_enum_item");}

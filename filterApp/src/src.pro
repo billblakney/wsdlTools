@@ -59,6 +59,7 @@ HEADERS += \
            SimpleLineMatcher.hh \
            StreamReader.hh \
            StructTreeView.hh \
+           TestRegexDelegate.hh \
            TreeProcessor.hh \
 
 SOURCES += \
@@ -76,6 +77,7 @@ SOURCES += \
            SimpleLineMatcher.cc \
            StreamReader.cc \
            StructTreeView.cc \
+           TestRegexDelegate.cc \
            TreeProcessor.cc \
 
 # not really the right test, but...

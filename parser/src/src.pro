@@ -28,8 +28,8 @@ LIBS = -L$(BOOST_DIR)/lib -lboost_regex
 #LIBS += -L/usr/lib/x86_64-linux-gnu -lboost_regex
  
 # Input
-HEADERS += Field.hh StructorBuilder.hh Structure.hh
-SOURCES += main.cc Field.cc StructorBuilder.cc Structure.cc
+HEADERS += Field.hh StructorBuilder.hh Structure.hh Enum.hh
+SOURCES += main.cc Field.cc StructorBuilder.cc Structure.cc Enum.cc
 
 # Flex/bison specifics
  

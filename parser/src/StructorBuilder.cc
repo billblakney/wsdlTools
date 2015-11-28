@@ -51,11 +51,37 @@ void StructorBuilder::onMatch(const char *aRuleName)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void StructorBuilder::onEnumValue(std::string *aValue)
+{
+//   static int _debug = 0;
+std::cout << "enum value: " << *aValue << std::endl;
+   _EnumValues.push_back(*aValue);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void StructorBuilder::onField(string *aName,string *aType,int aIsPointer)
 {
 //   static int _debug = 0;
    Field tField(*aName,*aType,aIsPointer);
    pushField(tField);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StructorBuilder::onEnum(std::string *aName)
+{
+   static int _debug = 1;
+
+   Enum *tEnum = new Enum(*aName);
+
+   tEnum->addValues(_EnumValues);
+   _EnumValues.clear();
+
+   if( _debug )
+      printf("enum: %s\n",tEnum->toString().c_str());
+
+   _Enums[*aName] = tEnum;
 }
 
 //-----------------------------------------------------------------------------
