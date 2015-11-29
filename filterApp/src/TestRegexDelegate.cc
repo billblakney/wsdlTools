@@ -90,8 +90,27 @@ void TestRegexDelegate::setModelData(
   Enum *tEnum = _DataStructModel->getEnum(index);
   if (tEnum)
   {
+    /*
+     * Update the model with the selection.
+     */
     QComboBox *tComboBox = static_cast<QComboBox*>(editor);
     model->setData(index, tComboBox->currentText(), Qt::EditRole);
+    /*
+     * If the user created a custom entry, add that to the enum so that it
+     * will be displayed in the combobox the next time a combobox is opened
+     * on this enum. Note that this will add non-real-enum values to the
+     * enum. That's ok since we don't use those enums for anything else.
+     * But if we ever do need to get just the list of original enums somewhere
+     * in this application, we'll have to revisit this design.
+     * Design Assumption: The combobox is using the insert policy of insert at
+     * end.
+     */
+    size_t tCount = tComboBox->count();
+    if (tCount > tEnum->_Values.size())
+    {
+      std::string tLastString = tComboBox->itemText(tCount-1).toStdString();
+      tEnum->_Values.push_back(tLastString);
+    }
   }
   else
   {
