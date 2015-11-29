@@ -37,6 +37,8 @@ public:
 
 	bool isPrimitive(std::string aType);
 
+	Enum *getEnum(std::string aType);
+
 	std::vector<std::string> getStructNames();
 
 	Structure *getStructure(std::string aType);

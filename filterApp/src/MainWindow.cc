@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include "ComboBoxDelegate.hh"
+#include "TestRegexDelegate.hh"
 #include "MainWindow.hh"
 
 using namespace std;
@@ -228,6 +229,11 @@ void MainWindow::setupView()
   _StructTree->header()->resizeSection(0, 225);
 
   _StructTree->setEditTriggers(QAbstractItemView::AllEditTriggers);
+
+  TestRegexDelegate *tTestRegexDelegate =
+      new TestRegexDelegate (_DataStructModel,this);
+  _StructTree->setItemDelegateForColumn(
+      DataStructModel::eColTestRegex,tTestRegexDelegate);
 
   ComboBoxDelegate *tTestScopeDelegate =
       new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);

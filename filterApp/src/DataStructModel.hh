@@ -5,6 +5,7 @@
 #include <QFont>
 #include <QModelIndex>
 #include <QVariant>
+
 #include "FieldItem.hh"
 #include "Logger.hh"
 #include "RecordProcessor.hh"
@@ -57,6 +58,10 @@ public:
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
   std::vector<std::string> getPostfixes();
+
+  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  Enum *getEnum(const QModelIndex &aIndex) const;
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
@@ -162,6 +167,8 @@ protected:
   std::vector<std::string> _TestScopes;
   std::vector<std::string> _Formats;
   std::vector<std::string> _Postfixes;
+
+  uint getEnumIndex(Enum *aEnum,std::string aValue) const;
 
   uint getStringVectorIndex(const std::vector<std::string> &aStringVector,
       const std::string &aString) const;

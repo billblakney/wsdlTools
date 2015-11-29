@@ -70,6 +70,22 @@ std::vector<std::string> DataStructModel::getPostfixes()
   return _Postfixes;
 }
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+Enum *DataStructModel::getEnum(const QModelIndex &aIndex) const
+{
+  Enum *tEnum = NULL;
+
+  FieldItem *tItem = static_cast<FieldItem*>(aIndex.internalPointer());
+  if (tItem->getData().getNodeType() == FieldItemData::ePrimitiveValue)
+  {
+    std::string tType = tItem->getData().getType();
+    tEnum = _StructBuilder->getEnum(tType);
+  }
+
+  return tEnum;
+}
+
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 void DataStructModel::printTestNodes()
@@ -610,6 +626,7 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
     }
     case Qt::EditRole:
     {
+      Enum *tEnum = NULL;
       if (index.column() == eColTestScope)
       {
         std::string tTestScope = item->data(eColTestScope).toString().toStdString();
@@ -623,6 +640,11 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
         uint tPostfixIndex = getPostfixIndex(tPostfix);
 
         return tPostfixIndex;
+      }
+      else if (index.column() == eColTestRegex && (tEnum = getEnum(index)))
+      {
+        uint tTestRegexIndex = getEnumIndex(tEnum,item->getData().getTest());
+        return tTestRegexIndex;
       }
       return item->data(index.column());
       break;
@@ -889,6 +911,22 @@ int DataStructModel::columnCount(const QModelIndex &parent) const
   {
     return _RootItem->columnCount();
   }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+uint DataStructModel::getEnumIndex(Enum *aEnum,std::string aValue) const
+{
+  uint tEnumIdx = 0;
+  for (size_t tIdx = 0; tIdx < aEnum->_Values.size(); tIdx++)
+  {
+    if (!aValue.compare(aEnum->_Values.at(tIdx)))
+    {
+      tEnumIdx = tIdx;
+      break;
+    }
+  }
+  return tEnumIdx;
 }
 
 //-------------------------------------------------------------------------------

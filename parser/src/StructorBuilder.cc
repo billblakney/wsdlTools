@@ -118,6 +118,21 @@ bool StructorBuilder::isPrimitive(std::string aType)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+Enum *StructorBuilder::getEnum(std::string aType)
+{
+  map<std::string,Enum *>::iterator tIter;
+  tIter = _Enums.find(aType);
+
+  if( tIter == _Enums.end() )
+  {
+    return NULL;
+  }
+
+  return tIter->second;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 std::vector<std::string> StructorBuilder::getStructNames()
 {
   std::vector<std::string> tNames;

@@ -1,3 +1,16 @@
+/**
+ * Active Emissions mode
+ */
+typedef enum AE_MODE_T {
+  AE_MODE_UNKNOWN=0,
+  AE_MODE_CW=1,
+  AE_MODE_PRN=2,
+  AE_MODE_FM=3,
+  AE_MODE_MULTIPING=4,
+  AE_MODE_MULTITONE=5
+} AE_MODE_T;
+
+
 typedef struct {
    int city;
    int state;
@@ -19,7 +32,7 @@ typedef struct {
 
 typedef struct {
    int firstName;
-   int lastName;
+   AE_MODE_T lastName;
    ADDRESS_T address;
    int grades_size;
    GRADE_T *grades;
