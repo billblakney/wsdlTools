@@ -226,7 +226,11 @@ void MainWindow::setupView()
    */
   _StructTree = new StructTreeView(this);
   setTreeViewStruct(_InitialStruct);
-  _StructTree->header()->resizeSection(0, 225);
+  _StructTree->header()->resizeSection(DataStructModel::eColFieldName,225);
+  _StructTree->header()->resizeSection(DataStructModel::eColTestRegex,225);
+  _StructTree->header()->resizeSection(DataStructModel::eColTestScope,175);
+  _StructTree->header()->resizeSection(DataStructModel::eColFormat,100);
+  _StructTree->header()->resizeSection(DataStructModel::eColPostfix,75);
 
   _StructTree->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
@@ -316,6 +320,14 @@ void MainWindow::setupView()
   }
 
   /*
+   * Create bypass checkbox and connect it to the stream reader.
+   */
+  QCheckBox *tPropagateCheckBox = new QCheckBox("Propagate check on field name node to children",this);
+
+  connect(tPropagateCheckBox,SIGNAL(toggled(bool)),
+      _DataStructModel,SLOT(onPropogateToggled(bool)));
+
+  /*
    * Put widgets in the dialog using box layout.
    */
   QVBoxLayout *tWindowLayout = new QVBoxLayout;
@@ -323,6 +335,7 @@ void MainWindow::setupView()
   if (tOptions)
   {
     tWindowLayout->addWidget(tOptions);
+    tWindowLayout->addWidget(tPropagateCheckBox);
   }
   tWindowLayout->addWidget(_StructTree);
 #if USING_BOTTOM_PUSHBUTTON // no longer using, may use later
@@ -330,6 +343,10 @@ void MainWindow::setupView()
 #endif
 
   setLayout(tWindowLayout);
+
+  // always hide these debug columns
+  _StructTree->hideColumn(DataStructModel::eColFieldKey);
+  _StructTree->hideColumn(DataStructModel::eColMatchRegex);
 
   if (!_IsFilterMode)
   {
@@ -341,7 +358,6 @@ void MainWindow::setupView()
   }
   else
   {
-    // show all columns
   }
 }
 

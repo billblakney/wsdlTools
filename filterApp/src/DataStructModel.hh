@@ -151,6 +151,8 @@ public slots:
 
   void applyFormatMode(int aFormatMode,bool aCheckedOnly);
 
+  void onPropogateToggled(bool aPropogateToChildren);
+
 protected:
 
   static ccl::Logger sLogger;
@@ -162,6 +164,7 @@ protected:
   // root and top nodes
   FieldItem *_RootItem;
   FieldItem *_TopNodeItem;
+  bool       _PropogateFieldChecks;
 
   // test nodes
   std::vector<std::string> _TestScopes;

@@ -16,7 +16,8 @@ DataStructModel::DataStructModel(
     Structure *aStruct,StructorBuilder *aStructBuilder)
   : _StructBuilder(aStructBuilder),
     _RootItem(0),
-    _TopNodeItem(0)
+    _TopNodeItem(0),
+    _PropogateFieldChecks(false)
 {
   kArrayFont.setItalic(true);
 
@@ -703,7 +704,7 @@ bool DataStructModel::setData(
       item->setCheckState(tNewState);
       emit dataChanged(index,index);
 
-      if (item->childCount() > 0)
+      if (_PropogateFieldChecks && item->childCount() > 0)
       {
         setChildrenCheckStates(index,tNewState);
       }
@@ -1010,6 +1011,13 @@ void DataStructModel::applyFormatMode(int aFormatMode,bool aCheckedOnly)
     std::cerr << "ERROR: unknown format mode" << std::endl;
   }
   emit modelUpdated();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void DataStructModel::onPropogateToggled(bool aPropogateToChildren)
+{
+  _PropogateFieldChecks = aPropogateToChildren;
 }
 
 //-------------------------------------------------------------------------------
