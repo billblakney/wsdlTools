@@ -80,8 +80,3 @@ SOURCES += \
            TestRegexDelegate.cc \
            TreeProcessor.cc \
 
-# not really the right test, but...
-greaterThan(QT_MAJOR_VERSION, 4) {
-    HEADERS += Logger.hh
-    SOURCES += Logger.cc
-}
