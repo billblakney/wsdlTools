@@ -729,7 +729,9 @@ bool DataStructModel::setData(
     }
     else if (aCol == eColTestRegex)
     {
-      item->setFieldTest(value);
+      std::string tValue = value.toString().toStdString();
+      transformTestRegex(tValue);
+      item->setFieldTest(tValue.c_str());
       emit dataChanged(index,index);
     }
     else if (aCol == eColTestScope)
@@ -751,6 +753,37 @@ bool DataStructModel::setData(
     }
   }
   return true;
+}
+
+//-------------------------------------------------------------------------------
+// Replace any '*' not preceeded by '.', with a ".*".
+// This prevents a crash on some invalid regex expressions, and also
+// provides the convenience of setting a search string like "*something*".
+// Since we never expect a literal * to be part of a field value, this should
+// be ok.
+//-------------------------------------------------------------------------------
+void DataStructModel::transformTestRegex(std::string &aValue)
+{
+  std::cout << "BEFORE: <" << aValue << ">" << std::endl;
+
+  /*
+   * Search and replace leading '*'.
+   */
+  boost::regex matchFirst("^\\*");
+  std::string tFirstFormat(".*");
+  aValue = boost::regex_replace(aValue,matchFirst,tFirstFormat,
+      boost::format_first_only | boost::format_all);
+
+  /*
+   * Search and replace other '*' not preceeded by a '.'.
+   */
+  boost::regex matchTheRest("([^\\.])\\*");
+  std::string tTheRestFormat("$1.*");
+  aValue = boost::regex_replace(aValue,matchTheRest,tTheRestFormat,
+      //          boost::format_first_only | boost::format_all);
+      boost::format_all);
+
+  std::cout << "AFTER: <" << aValue << ">" << std::endl;
 }
 
 //-------------------------------------------------------------------------------

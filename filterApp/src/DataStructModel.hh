@@ -171,6 +171,8 @@ protected:
   std::vector<std::string> _Formats;
   std::vector<std::string> _Postfixes;
 
+  void transformTestRegex(std::string &aValue);
+
   uint getEnumIndex(Enum *aEnum,std::string aValue) const;
 
   uint getStringVectorIndex(const std::vector<std::string> &aStringVector,
