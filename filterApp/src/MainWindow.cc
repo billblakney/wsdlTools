@@ -439,18 +439,18 @@ QGroupBox *MainWindow::createOutputModeGroup(QWidget *aParent)
 
     _OutputNormalButton =
         new QRadioButton("Normal",tGroup);
-    _OutputBypassButton =
-        new QRadioButton("Bypass",tGroup);
     _OutputFreezeDropButton =
         new QRadioButton("Freeze - drop incoming",tGroup);
+    _OutputBypassButton =
+        new QRadioButton("Bypass",tGroup);
 
     _OutputNormalButton->setChecked(true);
 
     _OutputModeButtonGroup = new QButtonGroup(this);
 
     _OutputModeButtonGroup->addButton(_OutputNormalButton);
-    _OutputModeButtonGroup->addButton(_OutputBypassButton);
     _OutputModeButtonGroup->addButton(_OutputFreezeDropButton);
+    _OutputModeButtonGroup->addButton(_OutputBypassButton);
 
     connect(_OutputModeButtonGroup,SIGNAL(buttonClicked(QAbstractButton*)),
         this,SLOT(onOutputModeButtonClicked(QAbstractButton*)));
@@ -460,8 +460,8 @@ QGroupBox *MainWindow::createOutputModeGroup(QWidget *aParent)
 
     QVBoxLayout *tGroupLayout = new QVBoxLayout;
     tGroupLayout->addWidget(_OutputNormalButton);
-    tGroupLayout->addWidget(_OutputBypassButton);
     tGroupLayout->addWidget(_OutputFreezeDropButton);
+    tGroupLayout->addWidget(_OutputBypassButton);
 
     tGroup->setLayout(tGroupLayout);
     return tGroup;
