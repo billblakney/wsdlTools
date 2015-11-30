@@ -10,7 +10,7 @@ ccl::Logger StreamReader::sLogger("StreamReader");
 StreamReader::StreamReader(RecordProcessor *aRecordProcessor)
   : _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
-    _InBypassMode(false),
+    _OutputMode(eNormal),
     _InDelimitRecordsMode(true)
 {
 }
@@ -67,40 +67,45 @@ void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool StreamReader::inBypassMode()
+StreamReader::OutputMode StreamReader::getOutputMode()
 {
-  bool tInBypassMode;
+  OutputMode tOutputMode = eNormal;
 
   _Mutex.lock();
-  tInBypassMode = _InBypassMode;
+  tOutputMode = _OutputMode;
   _Mutex.unlock();
 
-  return tInBypassMode;
+  return tOutputMode;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StreamReader::setInBypassMode(bool aInBypassMode)
+void StreamReader::setOutputMode(OutputMode aOutputMode)
 {
-  if (aInBypassMode)
+  if (aOutputMode == eNormal)
   {
-    std::cout << "Entering BYPASS mode." << std::endl;
+    std::cout << "Setting output mode to NORMAL." << std::endl;
   }
-  else
+  else if (aOutputMode == eBypass)
   {
-    std::cout << "Leaving bypass mode." << std::endl;
+    std::cout << "Setting output mode to BYPASS." << std::endl;
+  }
+  else if (aOutputMode == eFreezeDrop)
+  {
+    std::cout << "Setting output mode to FREEZE-DROP." << std::endl;
   }
 
   _Mutex.lock();
-  _InBypassMode = aInBypassMode;
+  _OutputMode = aOutputMode;
   _Mutex.unlock();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StreamReader::onBypassToggle(bool aIsChecked)
+void StreamReader::onOutputModeSelected(int aOutputMode)
 {
-  setInBypassMode(aIsChecked);
+  OutputMode tMode = static_cast<OutputMode>(aOutputMode);
+  setOutputMode(tMode);
 }
 
 //-----------------------------------------------------------------------------
@@ -248,9 +253,16 @@ void StreamReader::readAndProcessStructLines()
     /*
      * If in bypass mode, just echo lines.
      */
-    if (inBypassMode() == true)
+    if (getOutputMode() == eBypass)
     {
       std::cout << tLineBuffer << std::endl;
+      continue;
+    }
+    /*
+     * If in freeze-drop mode, just drop lines.
+     */
+    else if (getOutputMode() == eFreezeDrop)
+    {
       continue;
     }
 

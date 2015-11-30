@@ -40,6 +40,8 @@ signals:
 
   void formatOptionSelected(int aFormatOption);
 
+  void outputModeSelected(int aOutputMode);
+
   void applyFormatMode(int aFormatMode,bool aCheckedOnly);
 
 public slots:
@@ -57,6 +59,8 @@ public slots:
   void onSetFilterClicked(bool);
 
   void onFormatOptionSelection(bool /*aIsChecked*/); //TODO make protected?
+
+  void onOutputModeButtonClicked(QAbstractButton *aButton);
 
 protected:
 
@@ -76,6 +80,11 @@ protected:
   QRadioButton       *_FormatTableButton;
   QRadioButton       *_FormatCustomButton;
 
+  QButtonGroup       *_OutputModeButtonGroup;
+  QRadioButton       *_OutputNormalButton;
+  QRadioButton       *_OutputBypassButton;
+  QRadioButton       *_OutputFreezeDropButton;
+
   QCheckBox *_AsIsCheckBox;
   QCheckBox *_LongnameCheckBox;
   QCheckBox *_TableCheckBox;
@@ -85,6 +94,8 @@ protected:
   void processCommandLine(int argc,char *argv[]);
 
   QGroupBox *createFormatModeGroup(QWidget *aParent);
+
+  QGroupBox *createOutputModeGroup(QWidget *aParent);
 
   QGroupBox *createCustomFormatGroup(QWidget *aParent);
 

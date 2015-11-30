@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <QAbstractItemModel>
+#include <QButtonGroup>
 #include <QHeaderView>
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -33,6 +34,9 @@ MainWindow::MainWindow(
     _FormatLongnameButton(0),
     _FormatTableButton(0),
     _FormatCustomButton(0),
+    _OutputNormalButton(0),
+    _OutputBypassButton(0),
+    _OutputFreezeDropButton(0),
     _AsIsCheckBox(0),
     _LongnameCheckBox(0),
     _TableCheckBox(0)
@@ -184,13 +188,42 @@ void MainWindow::onFormatOptionSelection(bool aIsChecked)
     return;
 
   if (_FormatAsIsButton->isChecked())
+  {
     emit formatOptionSelected((int)RecordProcessor::eAsIs);
+  }
   else if (_FormatLongnameButton->isChecked())
+  {
     emit formatOptionSelected((int)RecordProcessor::eLongname);
+  }
   else if (_FormatTableButton->isChecked())
+  {
     emit formatOptionSelected((int)RecordProcessor::eTable);
+  }
   else if (_FormatCustomButton->isChecked())
+  {
     emit formatOptionSelected((int)RecordProcessor::eCustom);
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
+{
+  if (aButton == _OutputNormalButton)
+  {
+    std::cout << "Normal clicked" << std::endl;
+    emit outputModeSelected((int)StreamReader::eNormal);
+  }
+  else if (aButton == _OutputBypassButton)
+  {
+    std::cout << "Bypass clicked" << std::endl;
+    emit outputModeSelected((int)StreamReader::eBypass);
+  }
+  else if (aButton == _OutputFreezeDropButton)
+  {
+    std::cout << "Freeze clicked" << std::endl;
+    emit outputModeSelected((int)StreamReader::eFreezeDrop);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -287,13 +320,7 @@ void MainWindow::setupView()
 
     QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tOptions);
 
-    /*
-     * Create bypass checkbox and connect it to the stream reader.
-     */
-    QCheckBox *tBypassCheckBox = new QCheckBox("Bypass",tMainOptions);
-
-    connect(tBypassCheckBox,SIGNAL(toggled(bool)),
-        _StreamReader,SLOT(onBypassToggle(bool)));
+    QGroupBox *tOutputModeGroup = createOutputModeGroup(tOptions);
 
     /*
      * Create delimit records checkbox and connect it to the stream reader.
@@ -306,7 +333,8 @@ void MainWindow::setupView()
         _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
 
     QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
-    tMainOptionsLayout->addWidget(tBypassCheckBox);
+    tMainOptionsLayout->addWidget(tOutputModeGroup);
+//    tMainOptionsLayout->addWidget(tBypassCheckBox);//TODO replace
     tMainOptionsLayout->addWidget(tDelimitRecordsCheckBox);
     tMainOptions->setLayout(tMainOptionsLayout);
 
@@ -397,6 +425,43 @@ QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
     tGroupLayout->addWidget(_FormatLongnameButton);
     tGroupLayout->addWidget(_FormatTableButton);
     tGroupLayout->addWidget(_FormatCustomButton);
+
+    tGroup->setLayout(tGroupLayout);
+    return tGroup;
+}
+
+//-----------------------------------------------------------------------------
+// Creates the output mode widget.
+QGroupBox *MainWindow::createOutputModeGroup(QWidget *aParent)
+{
+    QGroupBox *tGroup = new QGroupBox("Output Mode",aParent);
+    tGroup->setFlat(true);
+
+    _OutputNormalButton =
+        new QRadioButton("Normal",tGroup);
+    _OutputBypassButton =
+        new QRadioButton("Bypass",tGroup);
+    _OutputFreezeDropButton =
+        new QRadioButton("Freeze - drop incoming",tGroup);
+
+    _OutputNormalButton->setChecked(true);
+
+    _OutputModeButtonGroup = new QButtonGroup(this);
+
+    _OutputModeButtonGroup->addButton(_OutputNormalButton);
+    _OutputModeButtonGroup->addButton(_OutputBypassButton);
+    _OutputModeButtonGroup->addButton(_OutputFreezeDropButton);
+
+    connect(_OutputModeButtonGroup,SIGNAL(buttonClicked(QAbstractButton*)),
+        this,SLOT(onOutputModeButtonClicked(QAbstractButton*)));
+
+    connect(this,SIGNAL(outputModeSelected(int)),
+        _StreamReader,SLOT(onOutputModeSelected(int)));
+
+    QVBoxLayout *tGroupLayout = new QVBoxLayout;
+    tGroupLayout->addWidget(_OutputNormalButton);
+    tGroupLayout->addWidget(_OutputBypassButton);
+    tGroupLayout->addWidget(_OutputFreezeDropButton);
 
     tGroup->setLayout(tGroupLayout);
     return tGroup;

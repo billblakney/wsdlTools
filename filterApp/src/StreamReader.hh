@@ -13,6 +13,9 @@ class StreamReader: public QThread
 {
   Q_OBJECT;
 public:
+
+  enum OutputMode {eNormal, eBypass, eFreezeDrop};
+
   StreamReader(RecordProcessor *aRecordProcessor);
 #if 0
 //  StreamReader(DataStructModel *aModel,RecordWriter *aWriter);
@@ -22,8 +25,8 @@ public:
 
   RecordProcessor *getRecordProcessor();
 
-  bool inBypassMode();
-  void setInBypassMode(bool aInBypassMode);
+  OutputMode getOutputMode();
+  void setOutputMode(OutputMode aOutputMode);
 
   bool inDelimitRecordsMode();
   void setDelimitRecordsMode(bool aDelimitRecordsMode);
@@ -36,9 +39,10 @@ public slots:
 
   void onDataStructModelAvailable(void * aDataStructModel);
 
-  void onBypassToggle(bool aIsChecked);
+  void onOutputModeSelected(int aOutputMode);
 
   void onDelimitRecordsToggle(bool aIsChecked);
+
 
   void run();
 
@@ -48,7 +52,7 @@ protected:
   RecordProcessor             *_RecordProcessor;
   std::vector<RecordWriter *>  _Writers;
   DataStructModel             *_DataStructModel;
-  bool                         _InBypassMode;
+  OutputMode                   _OutputMode;
   bool                         _InDelimitRecordsMode;
 
   QMutex _Mutex;
