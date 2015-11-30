@@ -12,20 +12,11 @@ CONFIG       += debug_and_release
 DEPENDPATH += .
 
 INCLUDES  = $(BOOST_INC)
-#INCLUDES = -I/opt/boost/include
-# next line needed?
-#INCLUDEPATH += .
 
 QMAKE_CXX = g++
 QMAKE_CC = g++
 
-#redhat
-#TODO rm? CFLAGS = -m32 -g $(INCLUDES) -fPIC
 LIBS = -L$(BOOST_DIR)/lib -lboost_regex
-#ubuntu
-# To avoid missing 'fileno', need to use gnu+11 instead of c+11
-#CFLAGS = -g -std=gnu++11 -fPIC $(INCLUDES)
-#LIBS += -L/usr/lib/x86_64-linux-gnu -lboost_regex
  
 # Input
 HEADERS += Field.hh StructorBuilder.hh Structure.hh Enum.hh

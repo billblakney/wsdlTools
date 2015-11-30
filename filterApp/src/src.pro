@@ -9,12 +9,13 @@ QMAKE_CLEAN  = $(BIN_DIR)/app_iec_wsdlFilter
 QMAKE_CLEAN  += debug/* release/*
 CONFIG       += debug_and_release
 DEPENDPATH += .
-QT = core gui
+QT += xml
 
 INCLUDEPATH += \
-               /usr/include/QtXml \
-               /opt/protobuf-2.4.1/include \
-               /opt/boost/include \
+               $(PROTOBUF_DIR)/include \
+               $(CCL_LOGGER_INC) \
+               $(LOG4CXX_INC) \
+               $(BOOST_INC) \
                ../../parser/src \
 
 INCLUDEPATH += .
@@ -27,22 +28,11 @@ DEFINES += USE_LOG4CXX
 include( $(AXB_PROJECT_PRI) )
 
 #LIBS += -L$${LIB_DIR} \
-
 LIBS += \
-        -L$(LIB_DIR) \
         -lIecHeaderParser \
-        -L/opt/boost/lib -lboost_program_options \
-        -L/usr/lib/x86_64-linux-gnu -lboost_regex \
-
-equals(QT_MAJOR_VERSION, 4) {
-    LIBS += -L${LIB_DIR} -lIecCommonLogger
-}
-greaterThan(QT_MAJOR_VERSION, 4) {
-    LIBS += -llog4cxx
-}
-
-INCLUDEPATH += ../structor
-INCLUDEPATH += /opt/log4cxx-0.10.0/include
+        -L$(LIB_DIR) -lIecCommonLogger \
+        -L$(BOOST_LIB) -lboost_program_options -lboost_regex \
+        -L$(LOG4CXX_LIB)
 
 # Input
 HEADERS += \
@@ -60,7 +50,6 @@ HEADERS += \
            StreamReader.hh \
            StructTreeView.hh \
            TestRegexDelegate.hh \
-           TreeProcessor.hh \
 
 SOURCES += \
            main.cc \
@@ -78,5 +67,4 @@ SOURCES += \
            StreamReader.cc \
            StructTreeView.cc \
            TestRegexDelegate.cc \
-           TreeProcessor.cc \
 

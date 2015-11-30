@@ -6,7 +6,6 @@
 #include "FieldItem.hh"
 #include "RecordLine.hh"
 #include "SimpleLineMatcher.hh"
-#include "TreeProcessor.hh"
 #include "Logger.hh"
 
 /*
