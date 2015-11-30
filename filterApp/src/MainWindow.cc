@@ -6,6 +6,7 @@
 #include <QHeaderView>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QVBoxLayout>
 #include "ComboBoxDelegate.hh"
 #include "TestRegexDelegate.hh"
@@ -37,6 +38,7 @@ MainWindow::MainWindow(
     _OutputNormalButton(0),
     _OutputBypassButton(0),
     _OutputFreezeDropButton(0),
+    _OutputFreezeQueueButton(0),
     _AsIsCheckBox(0),
     _LongnameCheckBox(0),
     _TableCheckBox(0)
@@ -334,7 +336,6 @@ void MainWindow::setupView()
 
     QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
     tMainOptionsLayout->addWidget(tOutputModeGroup);
-//    tMainOptionsLayout->addWidget(tBypassCheckBox);//TODO replace
     tMainOptionsLayout->addWidget(tDelimitRecordsCheckBox);
     tMainOptions->setLayout(tMainOptionsLayout);
 
@@ -441,8 +442,12 @@ QGroupBox *MainWindow::createOutputModeGroup(QWidget *aParent)
         new QRadioButton("Normal",tGroup);
     _OutputFreezeDropButton =
         new QRadioButton("Freeze - drop incoming",tGroup);
+    _OutputFreezeQueueButton =
+        new QRadioButton("Freeze - queue incoming",tGroup);
     _OutputBypassButton =
         new QRadioButton("Bypass",tGroup);
+
+    _OutputFreezeQueueButton->setEnabled(false);
 
     _OutputNormalButton->setChecked(true);
 
@@ -450,6 +455,7 @@ QGroupBox *MainWindow::createOutputModeGroup(QWidget *aParent)
 
     _OutputModeButtonGroup->addButton(_OutputNormalButton);
     _OutputModeButtonGroup->addButton(_OutputFreezeDropButton);
+    _OutputModeButtonGroup->addButton(_OutputFreezeQueueButton);
     _OutputModeButtonGroup->addButton(_OutputBypassButton);
 
     connect(_OutputModeButtonGroup,SIGNAL(buttonClicked(QAbstractButton*)),
@@ -458,9 +464,26 @@ QGroupBox *MainWindow::createOutputModeGroup(QWidget *aParent)
     connect(this,SIGNAL(outputModeSelected(int)),
         _StreamReader,SLOT(onOutputModeSelected(int)));
 
+#define USE_FREEZE_QUEUE
+#ifdef USE_FREEZE_QUEUE
+    QWidget *tFreezeQueuePanel = new QWidget(this);
+    tFreezeQueuePanel->setContentsMargins(0,0,0,0);
+    QPushButton *tNext = new QPushButton("Next",tFreezeQueuePanel);
+    tNext->setMaximumSize(30,20);
+    QLabel *tQueueCount = new QLabel("Queued: ",tFreezeQueuePanel);
+    QHBoxLayout *tFreezeQueueLayout = new QHBoxLayout;
+    tFreezeQueueLayout->addWidget(tNext);
+    tFreezeQueueLayout->addWidget(tQueueCount);
+    tFreezeQueuePanel->setLayout(tFreezeQueueLayout);
+#endif
+
     QVBoxLayout *tGroupLayout = new QVBoxLayout;
     tGroupLayout->addWidget(_OutputNormalButton);
     tGroupLayout->addWidget(_OutputFreezeDropButton);
+    tGroupLayout->addWidget(_OutputFreezeQueueButton);
+#ifdef USE_FREEZE_QUEUE
+    tGroupLayout->addWidget(tFreezeQueuePanel);
+#endif
     tGroupLayout->addWidget(_OutputBypassButton);
 
     tGroup->setLayout(tGroupLayout);

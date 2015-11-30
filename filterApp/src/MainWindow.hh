@@ -84,6 +84,7 @@ protected:
   QRadioButton       *_OutputNormalButton;
   QRadioButton       *_OutputBypassButton;
   QRadioButton       *_OutputFreezeDropButton;
+  QRadioButton       *_OutputFreezeQueueButton;
 
   QCheckBox *_AsIsCheckBox;
   QCheckBox *_LongnameCheckBox;
