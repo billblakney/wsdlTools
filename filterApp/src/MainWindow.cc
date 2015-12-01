@@ -474,9 +474,14 @@ QGroupBox *MainWindow::createOutputModeGroup(QWidget *aParent)
 #ifdef USE_FREEZE_QUEUE
     QWidget *tFreezeQueuePanel = new QWidget(this);
     tFreezeQueuePanel->setContentsMargins(0,0,0,0);
+
     QPushButton *tNext = new QPushButton("Next",tFreezeQueuePanel);
     tNext->setMaximumSize(30,20);
+    tNext->setEnabled(false);
+
     QLabel *tQueueCount = new QLabel("Queued: ",tFreezeQueuePanel);
+    tQueueCount->setEnabled(false);
+
     QHBoxLayout *tFreezeQueueLayout = new QHBoxLayout;
     tFreezeQueueLayout->addWidget(tNext);
     tFreezeQueueLayout->addWidget(tQueueCount);

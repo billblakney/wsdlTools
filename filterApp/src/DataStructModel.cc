@@ -1001,6 +1001,7 @@ void DataStructModel::setupPostfixes()
 {
   _Postfixes.push_back("\\n");
   _Postfixes.push_back("\\t");
+  _Postfixes.push_back(" ");
 }
 
 //-------------------------------------------------------------------------------
