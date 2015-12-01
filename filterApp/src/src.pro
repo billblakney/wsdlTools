@@ -29,10 +29,10 @@ include( $(AXB_PROJECT_PRI) )
 
 #LIBS += -L$${LIB_DIR} \
 LIBS += \
-        -lIecHeaderParser \
         -L$(LIB_DIR) -lIecCommonLogger \
         -L$(BOOST_LIB) -lboost_program_options -lboost_regex \
-        -L$(LOG4CXX_LIB)
+        -L$(LOG4CXX_LIB) \
+        -lIecHeaderParser \
 
 # Input
 HEADERS += \
