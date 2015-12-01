@@ -764,8 +764,6 @@ bool DataStructModel::setData(
 //-------------------------------------------------------------------------------
 void DataStructModel::transformTestRegex(std::string &aValue)
 {
-  std::cout << "BEFORE: <" << aValue << ">" << std::endl;
-
   /*
    * Search and replace leading '*'.
    */
@@ -782,8 +780,6 @@ void DataStructModel::transformTestRegex(std::string &aValue)
   aValue = boost::regex_replace(aValue,matchTheRest,tTheRestFormat,
       //          boost::format_first_only | boost::format_all);
       boost::format_all);
-
-  std::cout << "AFTER: <" << aValue << ">" << std::endl;
 }
 
 //-------------------------------------------------------------------------------

@@ -316,34 +316,29 @@ void MainWindow::setupView()
     /*
      * Create widget to hold miscellaneous options.
      */
-    QWidget *tMainOptions = new QWidget(tOptions);
+//    QWidget *tMainOptions = new QWidget(tOptions);
 
     QGroupBox *tFormatModeWidget = createFormatModeGroup(tOptions);
+    tFormatModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tOptions);
+    tCustomFormatGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     QGroupBox *tOutputModeGroup = createOutputModeGroup(tOptions);
+    tOutputModeGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-    /*
-     * Create delimit records checkbox and connect it to the stream reader.
-     */
-    QCheckBox *tDelimitRecordsCheckBox =
-        new QCheckBox("Delimit records",tMainOptions);
-    tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
-
-    connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
-        _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
-
-    QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
-    tMainOptionsLayout->addWidget(tOutputModeGroup);
-    tMainOptionsLayout->addWidget(tDelimitRecordsCheckBox);
-    tMainOptions->setLayout(tMainOptionsLayout);
+//    QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
+//    tMainOptionsLayout->addWidget(tOutputModeGroup);
+//    tMainOptions->setLayout(tMainOptionsLayout);
 
 
     QHBoxLayout *tOptionsLayout = new QHBoxLayout;
     tOptionsLayout->addWidget(tFormatModeWidget);
     tOptionsLayout->addWidget(tCustomFormatGroup);
-    tOptionsLayout->addWidget(tMainOptions);
+    tOptionsLayout->addWidget(tOutputModeGroup);
+    tOptionsLayout->setAlignment(tFormatModeWidget,Qt::AlignTop);
+    tOptionsLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
+    tOptionsLayout->setAlignment(tOutputModeGroup,Qt::AlignTop);
 
     tOptions->setLayout(tOptionsLayout);
   }
@@ -421,11 +416,22 @@ QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
     connect(this,SIGNAL(formatOptionSelected(int)),
         _RecordProcessor,SLOT(setFormatMode(int)));
 
+    /*
+     * Create delimit records checkbox and connect it to the stream reader.
+     */
+    QCheckBox *tDelimitRecordsCheckBox =
+        new QCheckBox("Delimit records",tGroup);
+    tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
+
+    connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
+        _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
+
     QVBoxLayout *tGroupLayout = new QVBoxLayout;
     tGroupLayout->addWidget(_FormatAsIsButton);
     tGroupLayout->addWidget(_FormatLongnameButton);
     tGroupLayout->addWidget(_FormatTableButton);
     tGroupLayout->addWidget(_FormatCustomButton);
+    tGroupLayout->addWidget(tDelimitRecordsCheckBox);
 
     tGroup->setLayout(tGroupLayout);
     return tGroup;
@@ -479,12 +485,12 @@ QGroupBox *MainWindow::createOutputModeGroup(QWidget *aParent)
 
     QVBoxLayout *tGroupLayout = new QVBoxLayout;
     tGroupLayout->addWidget(_OutputNormalButton);
+    tGroupLayout->addWidget(_OutputBypassButton);
     tGroupLayout->addWidget(_OutputFreezeDropButton);
     tGroupLayout->addWidget(_OutputFreezeQueueButton);
 #ifdef USE_FREEZE_QUEUE
     tGroupLayout->addWidget(tFreezeQueuePanel);
 #endif
-    tGroupLayout->addWidget(_OutputBypassButton);
 
     tGroup->setLayout(tGroupLayout);
     return tGroup;
