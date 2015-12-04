@@ -4,7 +4,7 @@
 using namespace std;
 
 extern int yylex();
-extern void yyerror(char *);
+extern void yyerror(const char *);
 
 #include "StructorBuilder.hh"
 #include "Structure.hh"

@@ -5,7 +5,7 @@
 using namespace std;
 
 #include "y.tab.h"
-void yyerror(char *);
+void yyerror(const char *);
 int yyparse(void);
 
 StructorBuilder *sb;
@@ -20,6 +20,7 @@ void pLex(const char *aToken)
 %}
 
 %x IN_COMMENT
+%option nounput
 
 
 %%
@@ -47,7 +48,7 @@ void.*(.*);             {pLex("void fn");}
 
 %%
 
-void yyerror(char */*str*/) {printf("ERROR: Could not parse!\n");}
+void yyerror(const char */*str*/) {printf("ERROR: Could not parse!\n");}
 /* TODO what does yywrap do? return 1 seems to work, but never checked why */
 int yywrap(void) {return 1;}
 

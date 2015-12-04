@@ -44,7 +44,7 @@ FieldItemData::FieldItemData(
     _Format(aFormat),
     _Postfix(aPostfix),
     _CheckState(aCheckState),
-    _TestCheckState(aCheckState)
+    _TestCheckState(aTestCheckState)
   {
 
   }
