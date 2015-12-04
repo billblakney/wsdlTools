@@ -17,7 +17,7 @@ INCLUDES  = $(BOOST_INC)
 QMAKE_CXX = g++
 QMAKE_CC = g++
 
-QMAKE_POST_LINK = copyClirCarH.sh
+QMAKE_POST_LINK = cp $(CLIRCAR_H) $(AXB_PROJECT_TOP)/config
 
 LIBS = -L$(BOOST_DIR)/lib -lboost_regex
  
