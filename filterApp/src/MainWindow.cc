@@ -26,6 +26,7 @@ MainWindow::MainWindow(
     _IsFilterMode(aIsFilterMode),
     _StreamReader(aStreamReader),
     _RecordProcessor(aRecordProcessor),
+    _HeaderFile("/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H"),
     _StructorBuilder(0),
     _DataStructModel(0),
     _StructComboBox(0),
