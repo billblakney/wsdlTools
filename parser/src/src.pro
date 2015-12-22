@@ -6,18 +6,17 @@
 TEMPLATE = lib
 TARGET = IecHeaderParser
 DESTDIR       = $(LIB_DIR)
-QMAKE_CLEAN   = (LIB_DIR)/libIecHeaderParser*
+QMAKE_CLEAN   = $(LIB_DIR)/libIecHeaderParser*
 QMAKE_CLEAN  += debug/* release/*
-QMAKE_CLEAN  += $(CLIRCAR_H)
 CONFIG       += debug_and_release
 DEPENDPATH += .
 
-INCLUDES  = $(BOOST_INC)
+INCLUDEPATH  += $(BOOST_INC)
 
 QMAKE_CXX = g++
 QMAKE_CC = g++
 
-QMAKE_POST_LINK = cp $(CLIRCAR_H) $(AXB_PROJECT_TOP)/config
+QMAKE_POST_LINK = cp -f $(CLIRCAR_H) $(AXB_PROJECT_TOP)/config
 
 LIBS = -L$(BOOST_DIR)/lib -lboost_regex
  
