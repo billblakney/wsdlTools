@@ -227,6 +227,14 @@ void StreamReader::waitUntilDataModelAvailable()
 }
 
 //-----------------------------------------------------------------------------
+// This method processes the incoming stream of records. Each record has the
+// following format:
+//
+// <start-of-record delimiter line>
+// <header lines (only for some structure types)>
+// <first structure line>
+// <subsequent structure lines>
+// <end-of-record delimiter line>
 //-----------------------------------------------------------------------------
 void StreamReader::readAndProcessStructLines()
 {
@@ -267,7 +275,15 @@ void StreamReader::readAndProcessStructLines()
     }
 
     /*
-     * Not in bypass mode, so do normal processing.
+     * Not in bypass or freeze-drop mode, so do normal processing.
+     *
+     * At this point, we'll be in one of two modes: looking for the
+     * start-of-record delimiter, or processing the other types of lines.
+     *
+     * If we are looking for the start-of-record delimiter, the just check the
+     * line against the start-of-record delimiter. If it matches, then set the
+     * corresponding flag. Otherwise, do nothing with this line. In either case
+     * that's it for this line.
      */
     if (!tFoundStart)
     {
@@ -285,26 +301,20 @@ void StreamReader::readAndProcessStructLines()
         DEBUG(sLogger,"didn't find start match");
       }
     }
+    /*
+     * Else we are processing record lines, which could be any of the following
+     * types:
+     *   <header lines (only for some structure types)>
+     *   <first structure line>
+     *   <subsequent structure lines>
+     *   <end-of-record delimiter line>
+     */
     else
     {
-      if (!tEndMessageMatcher.match(tLineBuffer) )
-      {
-        if (!tFoundFirstField)
-        {
-          if (tFirstFieldMatcher.match(tLineBuffer))
-          {
-            tFoundFirstField = true;
-          }
-          else
-          {
-            DEBUG(sLogger,"discarding: " << tLineBuffer);
-            continue;
-          }
-        }
-        DEBUG(sLogger,"pushing back struct line");
-        tStructLines.push_back(tLineBuffer);
-      }
-      else
+      /*
+       * If the line is an end-of-record delimiter line, process the record.
+       */
+      if (tEndMessageMatcher.match(tLineBuffer) )
       {
         DEBUG(sLogger,"reached end of structure");
 
@@ -329,7 +339,8 @@ void StreamReader::readAndProcessStructLines()
         }
         else
         {
-          std::cout << "ERROR: _RecordProcessor->process() returned false" << std::endl;
+          std::cout << "ERROR: _RecordProcessor->process() returned false"
+              << std::endl;
         }
         tStructLines.clear();
         if (inDelimitRecordsMode())
@@ -338,6 +349,36 @@ void StreamReader::readAndProcessStructLines()
         }
         tFoundStart = false;
         tFoundFirstField = false;
+      }
+      /*
+       * Else we are still processing lines in a record.
+       */
+      else
+      {
+        /*
+         * If we haven't found the first structure line, the test against the
+         * start-of-structure pattern.
+         */
+        if (!tFoundFirstField)
+        {
+          if (tFirstFieldMatcher.match(tLineBuffer))
+          {
+            tFoundFirstField = true;
+          }
+          else
+          {
+            DEBUG(sLogger,"discarding: " << tLineBuffer);
+          }
+        }
+        /*
+         * If we've already found the start-of-structure line, then the current
+         * line is a structure line. Save it off to the list of structure lines.
+         */
+        if (tFoundFirstField)
+        {
+          DEBUG(sLogger,"pushing back struct line");
+          tStructLines.push_back(tLineBuffer);
+        }
       }
     }
   }
