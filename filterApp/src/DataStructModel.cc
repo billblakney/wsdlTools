@@ -704,7 +704,8 @@ bool DataStructModel::setData(
       item->setCheckState(tNewState);
       emit dataChanged(index,index);
 
-      if (_PropogateFieldChecks && item->childCount() > 0)
+      if ((_PropogateFieldChecks || item == _TopNodeItem)
+          && item->childCount() > 0)
       {
         setChildrenCheckStates(index,tNewState);
       }
