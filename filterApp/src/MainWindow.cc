@@ -237,8 +237,13 @@ void MainWindow::setupView()
   /*
    * Parse the header file.
    */
-  parseHeaderFile(); // ok if already called before
+  parseHeaderFile(); // no harm done if already called before
 
+  /*
+   * When running in the browsing mode, if the initial structure for display
+   * has not already been set (e.g. via command-line argument), then set it
+   * to some initial value.
+   */
   if (!_IsFilterMode && _InitialStruct.length() == 0)
   {
     _InitialStruct = _StructorBuilder->getStructNames().at(0);
@@ -247,16 +252,7 @@ void MainWindow::setupView()
   /*
    * Create structure dropdown list.
    */
-  std::vector<std::string> tStructNames = _StructorBuilder->getStructNames();
-  _StructComboBox = new QComboBox(this);
-  _StructComboBox->addItems(convertToQStringList(tStructNames));
-
-  QString tSelectionStr(_InitialStruct.c_str());
-  int tSelection = _StructComboBox->findText(tSelectionStr);
-  _StructComboBox->setCurrentIndex(tSelection);
-
-  connect(_StructComboBox, SIGNAL(activated(int)), this,
-      SLOT(onStructComboBoxActivated(int)));
+  _StructComboBox = createStructComboBox(this);
 
   /*
    * Create structure tree view.
@@ -355,6 +351,25 @@ void MainWindow::setupView()
   else
   {
   }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QComboBox *MainWindow::createStructComboBox(QWidget *aParent)
+{
+  std::vector<std::string> tStructNames = _StructorBuilder->getStructNames();
+
+  QComboBox *tComboBox = new QComboBox(this);
+  tComboBox->addItems(convertToQStringList(tStructNames));
+
+  QString tSelectionStr(_InitialStruct.c_str());
+  int tSelection = tComboBox->findText(tSelectionStr);
+  tComboBox->setCurrentIndex(tSelection);
+
+  connect(tComboBox, SIGNAL(activated(int)), this,
+      SLOT(onStructComboBoxActivated(int)));
+
+  return tComboBox;
 }
 
 //-----------------------------------------------------------------------------

@@ -95,6 +95,8 @@ protected:
 
   void processCommandLine(int argc,char *argv[]);
 
+  QComboBox *createStructComboBox(QWidget *aParent);
+
   QWidget *createOptionsWidget(QWidget *aParent);
 
   QGroupBox *createFormatModeGroup(QWidget *aParent);
@@ -102,6 +104,8 @@ protected:
   QGroupBox *createOutputModeGroup(QWidget *aParent);
 
   QGroupBox *createCustomFormatGroup(QWidget *aParent);
+
+  StructTreeView *createTreeView(QWidget *aParent);
 
 	QStringList convertToQStringList(std::vector<std::string> aStrings);
 
