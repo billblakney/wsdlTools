@@ -8,6 +8,8 @@
 
 static bool _BrowseMode = false;
 
+static std::string _InitialStruct;
+
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 void processCommandLine(int argc,char *argv[])
@@ -17,6 +19,18 @@ void processCommandLine(int argc,char *argv[])
     if (!strcmp(argv[tIdx],"-b"))
     {
       _BrowseMode = true;
+    }
+    if (!strcmp(argv[tIdx],"-s"))
+    {
+      if (++tIdx < argc)
+      {
+        _InitialStruct = argv[tIdx];
+      }
+      else
+      {
+        std::cerr << "ERROR: missing struct name after -s\n";
+        exit(0);
+      }
     }
   }
 }
@@ -28,7 +42,7 @@ void runBrowseMode(QApplication &app,int argc,char *argv[])
   MainWindow *window = new MainWindow(argc,argv,app,0);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
-  window->setupView();
+  window->setupView(_InitialStruct);
   window->show();
 }
 

@@ -26,7 +26,7 @@ public:
 
   void parseHeaderFile();
 
-	void setupView();
+	void setupView(std::string aStructName);
 
 	void setInitialStructName(std::string aStructName); //TODO
 
@@ -68,7 +68,7 @@ protected:
   StreamReader       *_StreamReader;
   RecordProcessor    *_RecordProcessor;
 	std::string         _HeaderFile;
-	std::string         _InitialStruct;
+	std::string         _StructName;
 	StructorBuilder    *_StructorBuilder;
 	DataStructModel    *_DataStructModel;
 	QComboBox          *_StructComboBox;

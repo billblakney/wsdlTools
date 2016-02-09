@@ -124,7 +124,7 @@ void MainWindow::onModelUpdate()
 //-------------------------------------------------------------------------------
 void MainWindow::setInitialStructName(std::string aStructName)
 {
-  _InitialStruct = aStructName;
+  _StructName = aStructName;
 }
 
 /*------------------------------------------------------------------------------
@@ -152,18 +152,6 @@ void MainWindow::processCommandLine(int argc,char *argv[])
       else
       {
         std::cerr << "ERROR: missing header name after -f\n";
-        exit(0);
-      }
-    }
-    if (!strcmp(argv[tIdx],"-s"))
-    {
-      if (++tIdx < argc)
-      {
-        _InitialStruct = argv[tIdx];
-      }
-      else
-      {
-        std::cerr << "ERROR: missing struct name after -s\n";
         exit(0);
       }
     }
@@ -234,7 +222,7 @@ void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
 // Set up the main GUI window.
 // This method ...
 //-----------------------------------------------------------------------------
-void MainWindow::setupView()
+void MainWindow::setupView(std::string aStructName)
 {
   /*
    * Parse the header file.
@@ -242,13 +230,19 @@ void MainWindow::setupView()
   parseHeaderFile(); // no harm done if already called before
 
   /*
-   * When running in the browsing mode, if the initial structure for display
+   * Set the name of the structure to be used for the tree view.
+   * When running in the filter mode, aStructName should always have a value.
+   * But when running in browse mode, if the initial structure for display
    * has not already been set (e.g. via command-line argument), then set it
    * to some initial value.
    */
-  if (!_IsFilterMode && _InitialStruct.length() == 0)
+  if (aStructName.length() == 0)
   {
-    _InitialStruct = _StructorBuilder->getStructNames().at(0);
+    _StructName = _StructorBuilder->getStructNames().at(0);
+  }
+  else
+  {
+    _StructName = aStructName;
   }
 
   /*
@@ -264,7 +258,7 @@ void MainWindow::setupView()
    */
 //  _StructTree = createTreeView(this);
   _StructTree = new StructTreeView(this);
-  setTreeViewStruct(_InitialStruct);
+  setTreeViewStruct(_StructName);
   _StructTree->header()->resizeSection(DataStructModel::eColFieldName,225);
   _StructTree->header()->resizeSection(DataStructModel::eColTestRegex,225);
   _StructTree->header()->resizeSection(DataStructModel::eColTestScope,175);
@@ -405,7 +399,7 @@ QComboBox *MainWindow::createStructComboBox(QWidget *aParent)
   QComboBox *tComboBox = new QComboBox(this);
   tComboBox->addItems(convertToQStringList(tStructNames));
 
-  QString tSelectionStr(_InitialStruct.c_str());
+  QString tSelectionStr(_StructName.c_str());
   int tSelection = tComboBox->findText(tSelectionStr);
   tComboBox->setCurrentIndex(tSelection);
 
@@ -670,7 +664,7 @@ void MainWindow::onStructNameAvailable(QString aStructName)
    * the window.
    */
   setInitialStructName(aStructName.toStdString());
-  setupView();
+  setupView(_StructName);
 
   /*
    * Give the stream reader the data struct model so that it can start
