@@ -73,13 +73,23 @@ MainWindow::~MainWindow()
 //-------------------------------------------------------------------------------
 void MainWindow::setTreeViewStruct(std::string aStructName)
 {
+  setTreeViewStruct(_StructTree,aStructName);
+}
+
+//-------------------------------------------------------------------------------
+// Create a struct data model for the specified struct name and load it in the
+// tree.
+//-------------------------------------------------------------------------------
+void MainWindow::setTreeViewStruct(
+    StructTreeView *aStructTreeView,std::string aStructName)
+{
   Structure *tStructure = _StructorBuilder->getStructure(aStructName);
   if (!tStructure)
   {
     std::cerr << "ERROR: couldn't find struct " << aStructName << std::endl;
   }
   _DataStructModel = new DataStructModel(tStructure, _StructorBuilder);
-  _StructTree->setModel(_DataStructModel);
+  aStructTreeView->setModel(_DataStructModel);
 #if 0 //  seems to have no effect
   _StructTree->resizeColumnToContents(0);
   _StructTree->resizeColumnToContents(1);
@@ -198,44 +208,44 @@ void MainWindow::setupView(std::string aStructName)
    * other methods used below rely on _DataStructModel being set before they
    * are called.
    */
-//  _StructTree = createTreeView(this);
-  _StructTree = new StructTreeView(this);
-  setTreeViewStruct(_StructName);
-  _StructTree->header()->resizeSection(DataStructModel::eColFieldName,225);
-  _StructTree->header()->resizeSection(DataStructModel::eColTestRegex,225);
-  _StructTree->header()->resizeSection(DataStructModel::eColTestScope,175);
-  _StructTree->header()->resizeSection(DataStructModel::eColFormat,100);
-  _StructTree->header()->resizeSection(DataStructModel::eColPostfix,75);
-
-  _StructTree->setEditTriggers(QAbstractItemView::AllEditTriggers);
-
-  TestRegexDelegate *tTestRegexDelegate =
-      new TestRegexDelegate (_DataStructModel,this);
-  _StructTree->setItemDelegateForColumn(
-      DataStructModel::eColTestRegex,tTestRegexDelegate);
-
-  ComboBoxDelegate *tTestScopeDelegate =
-      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
-  _StructTree->setItemDelegateForColumn(
-      DataStructModel::eColTestScope,tTestScopeDelegate);
-
-  ComboBoxDelegate *tFormatDelegate =
-      new ComboBoxDelegate(_DataStructModel->getFormats(),this);
-  _StructTree->setItemDelegateForColumn(
-      DataStructModel::eColFormat,tFormatDelegate);
-
-  ComboBoxDelegate *tPostfixDelegate =
-      new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
-  _StructTree->setItemDelegateForColumn(
-      DataStructModel::eColPostfix,tPostfixDelegate);
-
-// TODO works form 4.8 on
-#ifdef EXPAND_ALL
-  _StructTree->expandAll();
-#else
-  _StructTree->expand(_StructTree->model()->index(0, 0, QModelIndex()));
-#endif
-
+  _StructTree = createTreeView(this);
+//  _StructTree = new StructTreeView(this);
+//  setTreeViewStruct(_StructName);
+//  _StructTree->header()->resizeSection(DataStructModel::eColFieldName,225);
+//  _StructTree->header()->resizeSection(DataStructModel::eColTestRegex,225);
+//  _StructTree->header()->resizeSection(DataStructModel::eColTestScope,175);
+//  _StructTree->header()->resizeSection(DataStructModel::eColFormat,100);
+//  _StructTree->header()->resizeSection(DataStructModel::eColPostfix,75);
+//
+//  _StructTree->setEditTriggers(QAbstractItemView::AllEditTriggers);
+//
+//  TestRegexDelegate *tTestRegexDelegate =
+//      new TestRegexDelegate (_DataStructModel,this);
+//  _StructTree->setItemDelegateForColumn(
+//      DataStructModel::eColTestRegex,tTestRegexDelegate);
+//
+//  ComboBoxDelegate *tTestScopeDelegate =
+//      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
+//  _StructTree->setItemDelegateForColumn(
+//      DataStructModel::eColTestScope,tTestScopeDelegate);
+//
+//  ComboBoxDelegate *tFormatDelegate =
+//      new ComboBoxDelegate(_DataStructModel->getFormats(),this);
+//  _StructTree->setItemDelegateForColumn(
+//      DataStructModel::eColFormat,tFormatDelegate);
+//
+//  ComboBoxDelegate *tPostfixDelegate =
+//      new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
+//  _StructTree->setItemDelegateForColumn(
+//      DataStructModel::eColPostfix,tPostfixDelegate);
+//
+//// TODO works form 4.8 on
+//#ifdef EXPAND_ALL
+//  _StructTree->expandAll();
+//#else
+//  _StructTree->expand(_StructTree->model()->index(0, 0, QModelIndex()));
+//#endif
+//
 //  return tTreeView;
 
   /*
@@ -294,6 +304,7 @@ StructTreeView *MainWindow::createTreeView(QWidget *aParent)
 {
 
   StructTreeView *tTreeView = new StructTreeView(aParent);
+  setTreeViewStruct(tTreeView,_StructName);
   tTreeView->header()->resizeSection(DataStructModel::eColFieldName,225);
   tTreeView->header()->resizeSection(DataStructModel::eColTestRegex,225);
   tTreeView->header()->resizeSection(DataStructModel::eColTestScope,175);
@@ -326,7 +337,7 @@ StructTreeView *MainWindow::createTreeView(QWidget *aParent)
 #ifdef EXPAND_ALL
   tTreeView->expandAll();
 #else
-  tTreeView->expand(_StructTree->model()->index(0, 0, QModelIndex()));
+  tTreeView->expand(tTreeView->model()->index(0, 0, QModelIndex()));
 #endif
 
   return tTreeView;

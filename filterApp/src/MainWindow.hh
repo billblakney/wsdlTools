@@ -106,6 +106,9 @@ protected:
 	QStringList convertToQStringList(std::vector<std::string> aStrings);
 
 	std::string getMatchString();
+
+	void setTreeViewStruct(
+	    StructTreeView *aStructTreeView,std::string aStructName);
 };
 
 #endif /* MAINWINDOW_HH_ */
