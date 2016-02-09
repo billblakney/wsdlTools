@@ -36,7 +36,6 @@ void runBrowseMode(QApplication &app,int argc,char *argv[])
  *----------------------------------------------------------------------------*/
 void runStreamReaderMode(QApplication &app,int argc,char *argv[])
 {
-
   /*
    * Create the record processor.
    */

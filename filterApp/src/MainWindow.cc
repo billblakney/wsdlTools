@@ -231,6 +231,8 @@ void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
 }
 
 //-----------------------------------------------------------------------------
+// Set up the main GUI window.
+// This method ...
 //-----------------------------------------------------------------------------
 void MainWindow::setupView()
 {
@@ -657,6 +659,9 @@ QStringList MainWindow::convertToQStringList(std::vector<std::string> aStrings)
 }
 
 //-------------------------------------------------------------------------------
+// Slot used in stream reader mode to trigger the main display.
+// The stream reader calls this once it has determined what data structure is
+// being it is going to process.
 //-------------------------------------------------------------------------------
 void MainWindow::onStructNameAvailable(QString aStructName)
 {
