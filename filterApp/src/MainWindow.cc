@@ -30,6 +30,7 @@ MainWindow::MainWindow(
     _StructorBuilder(0),
     _DataStructModel(0),
     _StructComboBox(0),
+    _OptionsWidget(0),
     _StructTree(0),
     _HeaderFileWasParsed(false),
     _FormatAsIsButton(0),
@@ -309,39 +310,9 @@ void MainWindow::setupView()
   /*
    * The options will only be populated when in filter mode.
    */
-  QWidget *tOptions = new QWidget(this);
-
   if (_IsFilterMode)
   {
-
-    /*
-     * Create widget to hold miscellaneous options.
-     */
-//    QWidget *tMainOptions = new QWidget(tOptions);
-
-    QGroupBox *tFormatModeWidget = createFormatModeGroup(tOptions);
-    tFormatModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-    QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tOptions);
-    tCustomFormatGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-    QGroupBox *tOutputModeGroup = createOutputModeGroup(tOptions);
-    tOutputModeGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-//    QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
-//    tMainOptionsLayout->addWidget(tOutputModeGroup);
-//    tMainOptions->setLayout(tMainOptionsLayout);
-
-
-    QHBoxLayout *tOptionsLayout = new QHBoxLayout;
-    tOptionsLayout->addWidget(tFormatModeWidget);
-    tOptionsLayout->addWidget(tCustomFormatGroup);
-    tOptionsLayout->addWidget(tOutputModeGroup);
-    tOptionsLayout->setAlignment(tFormatModeWidget,Qt::AlignTop);
-    tOptionsLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
-    tOptionsLayout->setAlignment(tOutputModeGroup,Qt::AlignTop);
-
-    tOptions->setLayout(tOptionsLayout);
+    _OptionsWidget = createOptionsWidget(this);
   }
 
   /*
@@ -357,9 +328,9 @@ void MainWindow::setupView()
    */
   QVBoxLayout *tWindowLayout = new QVBoxLayout;
   tWindowLayout->addWidget(_StructComboBox);
-  if (tOptions)
+  if (_OptionsWidget)
   {
-    tWindowLayout->addWidget(tOptions);
+    tWindowLayout->addWidget(_OptionsWidget);
     tWindowLayout->addWidget(tPropagateCheckBox);
   }
   tWindowLayout->addWidget(_StructTree);
@@ -384,6 +355,40 @@ void MainWindow::setupView()
   else
   {
   }
+}
+
+//-----------------------------------------------------------------------------
+// Creates the options widget.
+//-----------------------------------------------------------------------------
+QWidget *MainWindow::createOptionsWidget(QWidget *aParent)
+{
+    QWidget *tOptions = new QWidget(aParent);
+
+    QGroupBox *tFormatModeWidget = createFormatModeGroup(tOptions);
+    tFormatModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+
+    QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tOptions);
+    tCustomFormatGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+
+    QGroupBox *tOutputModeGroup = createOutputModeGroup(tOptions);
+    tOutputModeGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+
+//    QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
+//    tMainOptionsLayout->addWidget(tOutputModeGroup);
+//    tMainOptions->setLayout(tMainOptionsLayout);
+
+
+    QHBoxLayout *tOptionsLayout = new QHBoxLayout;
+    tOptionsLayout->addWidget(tFormatModeWidget);
+    tOptionsLayout->addWidget(tCustomFormatGroup);
+    tOptionsLayout->addWidget(tOutputModeGroup);
+    tOptionsLayout->setAlignment(tFormatModeWidget,Qt::AlignTop);
+    tOptionsLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
+    tOptionsLayout->setAlignment(tOutputModeGroup,Qt::AlignTop);
+
+    tOptions->setLayout(tOptionsLayout);
+
+    return tOptions;
 }
 
 //-----------------------------------------------------------------------------

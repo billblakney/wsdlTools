@@ -72,6 +72,7 @@ protected:
 	StructorBuilder    *_StructorBuilder;
 	DataStructModel    *_DataStructModel;
 	QComboBox          *_StructComboBox;
+	QWidget            *_OptionsWidget;
 	StructTreeView     *_StructTree;
   bool               _HeaderFileWasParsed;
 
@@ -93,6 +94,8 @@ protected:
   void readEnvironmentVariables();
 
   void processCommandLine(int argc,char *argv[]);
+
+  QWidget *createOptionsWidget(QWidget *aParent);
 
   QGroupBox *createFormatModeGroup(QWidget *aParent);
 
