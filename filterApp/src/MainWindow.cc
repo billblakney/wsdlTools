@@ -349,14 +349,14 @@ QComboBox *MainWindow::createStructComboBox(QWidget *aParent)
 {
   std::vector<std::string> tStructNames = _StructorBuilder->getStructNames();
 
-  QComboBox *tComboBox = new QComboBox(this);
+  QComboBox *tComboBox = new QComboBox(aParent);
   tComboBox->addItems(convertToQStringList(tStructNames));
 
   QString tSelectionStr(_StructName.c_str());
   int tSelection = tComboBox->findText(tSelectionStr);
   tComboBox->setCurrentIndex(tSelection);
 
-  connect(tComboBox, SIGNAL(activated(int)), this,
+  connect(tComboBox, SIGNAL(activated(int)), aParent,
       SLOT(onStructComboBoxActivated(int)));
 
   return tComboBox;
