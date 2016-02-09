@@ -256,7 +256,11 @@ void MainWindow::setupView()
 
   /*
    * Create structure tree view.
+   * Need to create the tree view here since it creates _DataStructModel, and
+   * other methods used below rely on _DataStructModel being set before they
+   * are called.
    */
+//  _StructTree = createTreeView(this);
   _StructTree = new StructTreeView(this);
   setTreeViewStruct(_InitialStruct);
   _StructTree->header()->resizeSection(DataStructModel::eColFieldName,225);
@@ -294,14 +298,7 @@ void MainWindow::setupView()
   _StructTree->expand(_StructTree->model()->index(0, 0, QModelIndex()));
 #endif
 
-#if USING_BOTTOM_PUSHBUTTON // no longer using, may use later
-  /*
-   * Pushbutton for setting filter.
-   */
-  QPushButton *tButton = new QPushButton("Set Filter", this);
-
-  connect(tButton, SIGNAL(clicked(bool)), this, SLOT(onSetFilterClicked(bool)));
-#endif
+//  return tTreeView;
 
   /*
    * The options will only be populated when in filter mode.
@@ -351,6 +348,50 @@ void MainWindow::setupView()
   else
   {
   }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+StructTreeView *MainWindow::createTreeView(QWidget *aParent)
+{
+
+  StructTreeView *tTreeView = new StructTreeView(aParent);
+  tTreeView->header()->resizeSection(DataStructModel::eColFieldName,225);
+  tTreeView->header()->resizeSection(DataStructModel::eColTestRegex,225);
+  tTreeView->header()->resizeSection(DataStructModel::eColTestScope,175);
+  tTreeView->header()->resizeSection(DataStructModel::eColFormat,100);
+  tTreeView->header()->resizeSection(DataStructModel::eColPostfix,75);
+
+  tTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+
+  TestRegexDelegate *tTestRegexDelegate =
+      new TestRegexDelegate (_DataStructModel,this);
+  tTreeView->setItemDelegateForColumn(
+      DataStructModel::eColTestRegex,tTestRegexDelegate);
+
+  ComboBoxDelegate *tTestScopeDelegate =
+      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
+  tTreeView->setItemDelegateForColumn(
+      DataStructModel::eColTestScope,tTestScopeDelegate);
+
+  ComboBoxDelegate *tFormatDelegate =
+      new ComboBoxDelegate(_DataStructModel->getFormats(),this);
+  tTreeView->setItemDelegateForColumn(
+      DataStructModel::eColFormat,tFormatDelegate);
+
+  ComboBoxDelegate *tPostfixDelegate =
+      new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
+  tTreeView->setItemDelegateForColumn(
+      DataStructModel::eColPostfix,tPostfixDelegate);
+
+// TODO works form 4.8 on
+#ifdef EXPAND_ALL
+  tTreeView->expandAll();
+#else
+  tTreeView->expand(_StructTree->model()->index(0, 0, QModelIndex()));
+#endif
+
+  return tTreeView;
 }
 
 //-----------------------------------------------------------------------------
