@@ -49,6 +49,7 @@ public slots:
 protected:
   static ccl::Logger sLogger;
 
+  int                          _RecordCount;
   RecordProcessor             *_RecordProcessor;
   std::vector<RecordWriter *>  _Writers;
   DataStructModel             *_DataStructModel;

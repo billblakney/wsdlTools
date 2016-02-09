@@ -8,7 +8,8 @@ ccl::Logger StreamReader::sLogger("StreamReader");
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader(RecordProcessor *aRecordProcessor)
-  : _RecordProcessor(aRecordProcessor),
+  : _RecordCount(0),
+    _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
     _OutputMode(eNormal),
     _InDelimitRecordsMode(true)
@@ -243,6 +244,11 @@ void StreamReader::readAndProcessStructLines()
   SimpleLineMatcher tBeginMessageMatcher(".*===RECEIVED MESSAGE===.*");
   SimpleLineMatcher tEndMessageMatcher(".*===END MESSAGE===.*");
 
+  _RecordCount = 0;
+  static const char *kStartHeader =
+      "==================================================";
+  static const char *kEndDelimiter   = "---------- %d ----------";
+
   std::string tFirstFieldMatch = _DataStructModel->getFirstFieldMatch();
   DEBUG(sLogger,"match to start record: " << tFirstFieldMatch);
 
@@ -255,6 +261,8 @@ void StreamReader::readAndProcessStructLines()
 
   std::vector<std::string> tStructLines;
   std::string tLineBuffer;
+
+  std::cout << kStartHeader << std::endl;
 
   while (std::getline(std::cin,tLineBuffer))
   {
@@ -292,7 +300,7 @@ void StreamReader::readAndProcessStructLines()
         DEBUG(sLogger,"found start match");
         if (inDelimitRecordsMode())
         {
-          std::cout << "=== start ===" << std::endl;
+//          std::cout << "=== start ===" << std::endl;
         }
         tFoundStart = true;
       }
@@ -345,7 +353,9 @@ void StreamReader::readAndProcessStructLines()
         tStructLines.clear();
         if (inDelimitRecordsMode())
         {
-          std::cout << "=== end ===" << std::endl;
+          char tBuff[81];
+          sprintf(tBuff,kEndDelimiter,_RecordCount);
+          std::cout << tBuff << std::endl;
         }
         tFoundStart = false;
         tFoundFirstField = false;
@@ -364,6 +374,7 @@ void StreamReader::readAndProcessStructLines()
           if (tFirstFieldMatcher.match(tLineBuffer))
           {
             tFoundFirstField = true;
+            _RecordCount++;
           }
           else
           {
