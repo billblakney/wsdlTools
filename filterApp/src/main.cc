@@ -6,9 +6,15 @@
 #include "StreamReader.hh"
 #include "Logger.hh"
 
+extern StructorBuilder *lex_main(char *aHeaderFile);
+
 static bool _BrowseMode = false;
 
 static std::string _InitialStruct;
+
+std::string _HeaderFile("/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H");
+
+StructorBuilder *_StructorBuilder(0);
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
@@ -32,14 +38,46 @@ void processCommandLine(int argc,char *argv[])
         exit(0);
       }
     }
+    if (!strcmp(argv[tIdx],"-f"))
+    {
+      if (++tIdx < argc)
+      {
+        _HeaderFile = argv[tIdx];
+      }
+      else
+      {
+        std::cerr << "ERROR: missing header name after -f\n";
+        exit(0);
+      }
+    }
   }
+}
+
+/*------------------------------------------------------------------------------
+ *----------------------------------------------------------------------------*/
+void readEnvironmentVariables()
+{
+  if(getenv("CLIRCAR_H"))
+  {
+    _HeaderFile = getenv("CLIRCAR_H");
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void parseHeaderFile()
+{
+  std::cout << "parsing header file " << _HeaderFile << std::endl;
+  _StructorBuilder = lex_main((char *) _HeaderFile.c_str());
+  //   _StructorBuilder->printSummary();
+  //   _StructorBuilder->postProcess();
 }
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
 void runBrowseMode(QApplication &app,int argc,char *argv[])
 {
-  MainWindow *window = new MainWindow(argc,argv,app,0);
+  MainWindow *window = new MainWindow(argc,argv,app,0,_StructorBuilder);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
   window->setupView(_InitialStruct);
@@ -64,17 +102,10 @@ void runStreamReaderMode(QApplication &app,int argc,char *argv[])
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(argc,argv,app,0,true,tStreamReader,
-      tRecordProcessor);
+  MainWindow *tMainWindow = new MainWindow(argc,argv,app,0,_StructorBuilder,
+      true,tStreamReader,tRecordProcessor);
   //  window->setGeometry(1920 + 530,135,625,900);
   tMainWindow->setGeometry(1920      ,135,900,900);
-
-  /*
-   * Do as much work as possible before starting the stream reader, so that
-   * the main window will be as ready to go as possible before the stream
-   * reader starts feeding it lines to process.
-   */
-  tMainWindow->parseHeaderFile();
 
   /*
    * Setup connection to let the main window know when the reader has found
@@ -106,7 +137,31 @@ int main(int argc, char *argv[])
 
   QApplication app(argc, argv);
 
+
+  /*
+   * Read the environment variables.
+   * Currently only one: CLIRCAR_H. It may optionally be set by command-line
+   * instead.
+   */
+  readEnvironmentVariables();
+
   processCommandLine(argc,argv);
+
+  /*
+   * Must have a header file specified.
+   */
+  if (!_HeaderFile.length())
+  {
+    std::cerr << "ERROR: CLIRCAR_H env var is not set!\n";
+    exit(1);
+  }
+  std::cerr << "using header file " << _HeaderFile << std::endl;
+
+  /*
+   * Parse the header file to get _StructBuilder.
+   */
+  parseHeaderFile();
+
 
   if (_BrowseMode)
   {

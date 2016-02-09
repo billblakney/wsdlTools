@@ -14,25 +14,21 @@
 
 using namespace std;
 
-extern StructorBuilder *lex_main(char *aHeaderFile);
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
     int argc, char *argv[],QApplication &aApp,QWidget *aParent,
-    bool aIsFilterMode,StreamReader *aStreamReader,
-    RecordProcessor *aRecordProcessor)
+    StructorBuilder *aStructorBuilder,bool aIsFilterMode,
+    StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
   : QWidget(aParent),
+    _StructorBuilder(aStructorBuilder),
     _IsFilterMode(aIsFilterMode),
     _StreamReader(aStreamReader),
     _RecordProcessor(aRecordProcessor),
-    _HeaderFile("/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H"),
-    _StructorBuilder(0),
     _DataStructModel(0),
     _StructComboBox(0),
     _OptionsWidget(0),
     _StructTree(0),
-    _HeaderFileWasParsed(false),
     _FormatAsIsButton(0),
     _FormatLongnameButton(0),
     _FormatTableButton(0),
@@ -60,26 +56,9 @@ MainWindow::MainWindow(
       );
 
   /*
-   * Read the environment variables. Currently only one: CLIRCAR_H.
-   * It may optionally be set by command-line instead.
-   */
-  readEnvironmentVariables();
-
-  /*
    * Process command line arguments.
    */
   processCommandLine(argc,argv);
-
-  /*
-   * Must have a header file specified.
-   */
-  if (!_HeaderFile.length())
-  {
-    std::cerr << "ERROR: CLIRCAR_H env var is not set!\n";
-    exit(1);
-  }
-  std::cerr << "using header file " << _HeaderFile << std::endl;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -129,47 +108,15 @@ void MainWindow::setInitialStructName(std::string aStructName)
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void MainWindow::readEnvironmentVariables()
-{
-  if(getenv("CLIRCAR_H"))
-  {
-    _HeaderFile = getenv("CLIRCAR_H");
-  }
-}
-
-/*------------------------------------------------------------------------------
- *----------------------------------------------------------------------------*/
 void MainWindow::processCommandLine(int argc,char *argv[])
 {
+  Q_UNUSED(argc);
+  Q_UNUSED(argv);
+#if 0
   for (int tIdx = 0; tIdx < argc; tIdx++)
   {
-    if (!strcmp(argv[tIdx],"-f"))
-    {
-      if (++tIdx < argc)
-      {
-        _HeaderFile = argv[tIdx];
-      }
-      else
-      {
-        std::cerr << "ERROR: missing header name after -f\n";
-        exit(0);
-      }
-    }
   }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::parseHeaderFile()
-{
-  if (!_HeaderFileWasParsed)
-  {
-    std::cout << "parsing header file " << _HeaderFile << std::endl;
-    _StructorBuilder = lex_main((char *) _HeaderFile.c_str());
-    //   _StructorBuilder->printSummary();
-    //   _StructorBuilder->postProcess();
-    _HeaderFileWasParsed = true;
-  }
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -224,11 +171,6 @@ void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
 //-----------------------------------------------------------------------------
 void MainWindow::setupView(std::string aStructName)
 {
-  /*
-   * Parse the header file.
-   */
-  parseHeaderFile(); // no harm done if already called before
-
   /*
    * Set the name of the structure to be used for the tree view.
    * When running in the filter mode, aStructName should always have a value.

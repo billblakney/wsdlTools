@@ -19,12 +19,10 @@ class MainWindow: public QWidget
 public:
 
   MainWindow(int argc,char *argv[],QApplication &aApp,QWidget *aParent,
-      bool aIsFilterMode = false,StreamReader *aStreamReader = 0,
-      RecordProcessor *aRecordProcessor = 0);
+      StructorBuilder *_StructorBuilder,bool aIsFilterMode = false,
+      StreamReader *aStreamReader = 0,RecordProcessor *aRecordProcessor = 0);
 
   virtual ~MainWindow();
-
-  void parseHeaderFile();
 
 	void setupView(std::string aStructName);
 
@@ -64,17 +62,15 @@ public slots:
 
 protected:
 
+	StructorBuilder    *_StructorBuilder;
   bool                _IsFilterMode;
   StreamReader       *_StreamReader;
   RecordProcessor    *_RecordProcessor;
-	std::string         _HeaderFile;
 	std::string         _StructName;
-	StructorBuilder    *_StructorBuilder;
 	DataStructModel    *_DataStructModel;
 	QComboBox          *_StructComboBox;
 	QWidget            *_OptionsWidget;
 	StructTreeView     *_StructTree;
-  bool               _HeaderFileWasParsed;
 
   QRadioButton       *_FormatAsIsButton;
   QRadioButton       *_FormatLongnameButton;
