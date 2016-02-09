@@ -29,6 +29,7 @@ MainWindow::MainWindow(
     _StructComboBox(0),
     _OptionsWidget(0),
     _StructTree(0),
+    _PropagateCheckBox(0),
     _FormatAsIsButton(0),
     _FormatLongnameButton(0),
     _FormatTableButton(0),
@@ -177,7 +178,12 @@ void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
 
 //-----------------------------------------------------------------------------
 // Set up the main GUI window.
-// This method ...
+// In filter mode, the call to the slot onStructNameAvailable provides the
+// struct name and triggers the call to this method. In browse mode, this
+// method is called after the MainWindow is instantiated. If the struct name
+// is empty in that case (e.g. because no struct name was specified via the
+// command-line, then this method will set it to one of the structs in the
+// structor builder.
 //-----------------------------------------------------------------------------
 void MainWindow::setupView(std::string aStructName)
 {
@@ -209,44 +215,6 @@ void MainWindow::setupView(std::string aStructName)
    * are called.
    */
   _StructTree = createTreeView(this);
-//  _StructTree = new StructTreeView(this);
-//  setTreeViewStruct(_StructName);
-//  _StructTree->header()->resizeSection(DataStructModel::eColFieldName,225);
-//  _StructTree->header()->resizeSection(DataStructModel::eColTestRegex,225);
-//  _StructTree->header()->resizeSection(DataStructModel::eColTestScope,175);
-//  _StructTree->header()->resizeSection(DataStructModel::eColFormat,100);
-//  _StructTree->header()->resizeSection(DataStructModel::eColPostfix,75);
-//
-//  _StructTree->setEditTriggers(QAbstractItemView::AllEditTriggers);
-//
-//  TestRegexDelegate *tTestRegexDelegate =
-//      new TestRegexDelegate (_DataStructModel,this);
-//  _StructTree->setItemDelegateForColumn(
-//      DataStructModel::eColTestRegex,tTestRegexDelegate);
-//
-//  ComboBoxDelegate *tTestScopeDelegate =
-//      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
-//  _StructTree->setItemDelegateForColumn(
-//      DataStructModel::eColTestScope,tTestScopeDelegate);
-//
-//  ComboBoxDelegate *tFormatDelegate =
-//      new ComboBoxDelegate(_DataStructModel->getFormats(),this);
-//  _StructTree->setItemDelegateForColumn(
-//      DataStructModel::eColFormat,tFormatDelegate);
-//
-//  ComboBoxDelegate *tPostfixDelegate =
-//      new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
-//  _StructTree->setItemDelegateForColumn(
-//      DataStructModel::eColPostfix,tPostfixDelegate);
-//
-//// TODO works form 4.8 on
-//#ifdef EXPAND_ALL
-//  _StructTree->expandAll();
-//#else
-//  _StructTree->expand(_StructTree->model()->index(0, 0, QModelIndex()));
-//#endif
-//
-//  return tTreeView;
 
   /*
    * The options will only be populated when in filter mode.
@@ -254,15 +222,16 @@ void MainWindow::setupView(std::string aStructName)
   if (_IsFilterMode)
   {
     _OptionsWidget = createOptionsWidget(this);
+
+    /*
+     * Create bypass checkbox and connect it to the stream reader.
+     */
+    _PropagateCheckBox = new QCheckBox(
+        "Propagate check on field name node to children",this);
+
+    connect(_PropagateCheckBox,SIGNAL(toggled(bool)),
+        _DataStructModel,SLOT(onPropogateToggled(bool)));
   }
-
-  /*
-   * Create bypass checkbox and connect it to the stream reader.
-   */
-  QCheckBox *tPropagateCheckBox = new QCheckBox("Propagate check on field name node to children",this);
-
-  connect(tPropagateCheckBox,SIGNAL(toggled(bool)),
-      _DataStructModel,SLOT(onPropogateToggled(bool)));
 
   /*
    * Put widgets in the dialog using box layout.
@@ -272,12 +241,9 @@ void MainWindow::setupView(std::string aStructName)
   if (_OptionsWidget)
   {
     tWindowLayout->addWidget(_OptionsWidget);
-    tWindowLayout->addWidget(tPropagateCheckBox);
+    tWindowLayout->addWidget(_PropagateCheckBox);
   }
   tWindowLayout->addWidget(_StructTree);
-#if USING_BOTTOM_PUSHBUTTON // no longer using, may use later
-  tWindowLayout->addWidget(tButton);
-#endif
 
   setLayout(tWindowLayout);
 

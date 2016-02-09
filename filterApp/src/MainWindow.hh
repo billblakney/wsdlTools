@@ -71,6 +71,7 @@ protected:
 	QComboBox          *_StructComboBox;
 	QWidget            *_OptionsWidget;
 	StructTreeView     *_StructTree;
+	QCheckBox          *_PropagateCheckBox;
 
   QRadioButton       *_FormatAsIsButton;
   QRadioButton       *_FormatLongnameButton;
