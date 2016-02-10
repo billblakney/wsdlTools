@@ -216,12 +216,16 @@ void MainWindow::setupView(std::string aStructName)
    */
   _StructTree = createTreeView(this);
 
+  QTabWidget *tTabWidget = NULL;
   /*
    * The options will only be populated when in filter mode.
    */
   if (_IsFilterMode)
   {
-    _OptionsWidget = createOptionsWidget(this);
+    tTabWidget = new QTabWidget(0);
+    _OptionsWidget = createOptionsWidget(0);
+    tTabWidget->addTab(_OptionsWidget,QString("Configure"));
+    tTabWidget->addTab(new QLabel("WOW"),QString("Wow"));
 
     /*
      * Create bypass checkbox and connect it to the stream reader.
@@ -238,9 +242,15 @@ void MainWindow::setupView(std::string aStructName)
    */
   QVBoxLayout *tWindowLayout = new QVBoxLayout;
   tWindowLayout->addWidget(_StructComboBox);
-  if (_OptionsWidget)
+//TODO rm
+//  if (_OptionsWidget)
+//  {
+//    tWindowLayout->addWidget(_OptionsWidget);
+//    tWindowLayout->addWidget(_PropagateCheckBox);
+//  }
+  if (tTabWidget)
   {
-    tWindowLayout->addWidget(_OptionsWidget);
+    tWindowLayout->addWidget(tTabWidget);
     tWindowLayout->addWidget(_PropagateCheckBox);
   }
   tWindowLayout->addWidget(_StructTree);
