@@ -36,6 +36,8 @@ signals:
 
   void dataStructModelAvailable(void *aModel);
 
+  void delimitOptionSelected(int aDelimitOption);
+
   void formatOptionSelected(int aFormatOption);
 
   void outputModeSelected(int aOutputMode);
@@ -56,6 +58,8 @@ public slots:
 
   void onSetFilterClicked(bool);
 
+  void onDelimitOptionSelection(bool /*aIsChecked*/); //TODO make protected?
+
   void onFormatOptionSelection(bool /*aIsChecked*/); //TODO make protected?
 
   void onOutputModeButtonClicked(QAbstractButton *aButton);
@@ -73,6 +77,10 @@ protected:
 	QWidget            *_OperateWidget;
 	StructTreeView     *_StructTree;
 	QCheckBox          *_PropagateCheckBox;
+
+  QRadioButton       *_DelimitAllButton;
+  QRadioButton       *_DelimitOutputButton;
+  QRadioButton       *_DelimitNoneButton;
 
   QRadioButton       *_FormatAsIsButton;
   QRadioButton       *_FormatLongnameButton;
@@ -100,6 +108,8 @@ protected:
   QWidget *createConfigureWidget(QWidget *aParent);
 
   QWidget *createOperateWidget(QWidget *aParent);
+
+  QGroupBox *createDelimitModeGroup(QWidget *aParent);
 
   QGroupBox *createFormatModeGroup(QWidget *aParent);
 

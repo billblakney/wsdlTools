@@ -105,7 +105,8 @@ void runStreamReaderMode(QApplication &app,int argc,char *argv[])
   MainWindow *tMainWindow = new MainWindow(argc,argv,app,0,_StructorBuilder,
       true,tStreamReader,tRecordProcessor);
   //  window->setGeometry(1920 + 530,135,625,900);
-  tMainWindow->setGeometry(1920      ,135,900,900);
+//  tMainWindow->setGeometry(1920      ,135,900,900);
+  tMainWindow->setGeometry(1920      ,135,650,700);
 
   /*
    * Setup connection to let the main window know when the reader has found

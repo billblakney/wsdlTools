@@ -14,6 +14,8 @@ class StreamReader: public QThread
   Q_OBJECT;
 public:
 
+  enum DelimitMode {eAllRecords, eOutputRecords, eNoRecords};
+
   enum OutputMode {eNormal, eBypass, eFreezeDrop};
 
   StreamReader(RecordProcessor *aRecordProcessor);
@@ -29,7 +31,7 @@ public:
   void setOutputMode(OutputMode aOutputMode);
 
   bool inDelimitRecordsMode();
-  void setDelimitRecordsMode(bool aDelimitRecordsMode);
+  void setDelimitMode(DelimitMode aDelimitRecordsMode);
 
 signals:
 
@@ -41,7 +43,7 @@ public slots:
 
   void onOutputModeSelected(int aOutputMode);
 
-  void onDelimitRecordsToggle(bool aIsChecked);
+  void setDelimitMode(int aDelimitMode);
 
 
   void run();
@@ -53,6 +55,7 @@ protected:
   RecordProcessor             *_RecordProcessor;
   std::vector<RecordWriter *>  _Writers;
   DataStructModel             *_DataStructModel;
+  DelimitMode                  _DelimitMode;
   OutputMode                   _OutputMode;
   bool                         _InDelimitRecordsMode;
 

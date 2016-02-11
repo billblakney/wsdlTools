@@ -11,6 +11,7 @@ StreamReader::StreamReader(RecordProcessor *aRecordProcessor)
   : _RecordCount(0),
     _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
+    _DelimitMode(eOutputRecords),
     _OutputMode(eNormal),
     _InDelimitRecordsMode(true)
 {
@@ -124,27 +125,24 @@ bool StreamReader::inDelimitRecordsMode()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StreamReader::setDelimitRecordsMode(bool aDelimitRecordsMode)
+void StreamReader::setDelimitMode(int aDelimitMode)
 {
-  if (aDelimitRecordsMode)
+  if (aDelimitMode == eAllRecords)
   {
-    std::cout << "Enabling record delimiters." << std::endl;
+    std::cout << "Delimiting all records." << std::endl;
   }
-  else
+  else if (aDelimitMode == eOutputRecords)
   {
-    std::cout << "Disabling record delimiters." << std::endl;
+    std::cout << "Delimiting output records only." << std::endl;
+  }
+  else if (aDelimitMode == eNoRecords)
+  {
+    std::cout << "Disabling record delimiting." << std::endl;
   }
 
   _Mutex.lock();
-  _InDelimitRecordsMode = aDelimitRecordsMode;
+  _DelimitMode = static_cast<DelimitMode>(aDelimitMode);
   _Mutex.unlock();
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void StreamReader::onDelimitRecordsToggle(bool aIsChecked)
-{
-  setDelimitRecordsMode(aIsChecked);
 }
 
 //-----------------------------------------------------------------------------
@@ -298,10 +296,6 @@ void StreamReader::readAndProcessStructLines()
       if (tBeginMessageMatcher.match(tLineBuffer) )
       {
         DEBUG(sLogger,"found start match");
-        if (inDelimitRecordsMode())
-        {
-//          std::cout << "=== start ===" << std::endl;
-        }
         tFoundStart = true;
       }
       else
@@ -326,6 +320,7 @@ void StreamReader::readAndProcessStructLines()
       {
         DEBUG(sLogger,"reached end of structure");
 
+        bool tWasOutput = false;
         std::vector<std::string> tOutLines;
 
         if (_RecordProcessor->process(&tStructLines))
@@ -339,6 +334,7 @@ void StreamReader::readAndProcessStructLines()
             {
               std::cout << _prefix << *tIter; //TODO
             }
+            tWasOutput = true;
           }
           else
           {
@@ -351,7 +347,9 @@ void StreamReader::readAndProcessStructLines()
               << std::endl;
         }
         tStructLines.clear();
-        if (inDelimitRecordsMode())
+
+        if (_DelimitMode == eAllRecords ||
+            (_DelimitMode == eOutputRecords && tWasOutput))
         {
           char tBuff[81];
           sprintf(tBuff,kEndDelimiter,_RecordCount);

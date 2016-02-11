@@ -132,6 +132,27 @@ void MainWindow::processCommandLine(int argc,char *argv[])
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::onDelimitOptionSelection(bool aIsChecked)
+{
+  if (!aIsChecked) // only need to process the toggle on, not the one off
+    return;
+
+  if (_DelimitAllButton->isChecked())
+  {
+    emit delimitOptionSelected((int)StreamReader::eAllRecords);
+  }
+  else if (_DelimitOutputButton->isChecked())
+  {
+    emit delimitOptionSelected((int)StreamReader::eOutputRecords);
+  }
+  else if (_DelimitNoneButton->isChecked())
+  {
+    emit delimitOptionSelected((int)StreamReader::eNoRecords);
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::onFormatOptionSelection(bool aIsChecked)
 {
   if (!aIsChecked) // only need to process the toggle on, not the one off
@@ -223,7 +244,10 @@ void MainWindow::setupView(std::string aStructName)
   if (_IsFilterMode)
   {
     tTabWidget = new QTabWidget(0);
+    tTabWidget->setSizePolicy(
+        QSizePolicy::MinimumExpanding,QSizePolicy::Minimum);
     _ConfigureWidget = createConfigureWidget(0);
+//    _ConfigureWidget->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     _OperateWidget = createOperateWidget(0);
     tTabWidget->addTab(_ConfigureWidget,QString("Configure"));
     tTabWidget->addTab(_OperateWidget,QString("Operate"));
@@ -346,6 +370,9 @@ QWidget *MainWindow::createConfigureWidget(QWidget *aParent)
 {
     QWidget *tConfigure = new QWidget(aParent);
 
+    QGroupBox *tDelimitModeWidget = createDelimitModeGroup(tConfigure);
+    tDelimitModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+
     QGroupBox *tFormatModeWidget = createFormatModeGroup(tConfigure);
     tFormatModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
@@ -358,8 +385,10 @@ QWidget *MainWindow::createConfigureWidget(QWidget *aParent)
 
 
     QHBoxLayout *tLayout = new QHBoxLayout;
+    tLayout->addWidget(tDelimitModeWidget);
     tLayout->addWidget(tFormatModeWidget);
     tLayout->addWidget(tCustomFormatGroup);
+    tLayout->setAlignment(tDelimitModeWidget,Qt::AlignTop);
     tLayout->setAlignment(tFormatModeWidget,Qt::AlignTop);
     tLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
 
@@ -393,6 +422,54 @@ QWidget *MainWindow::createOperateWidget(QWidget *aParent)
 }
 
 //-----------------------------------------------------------------------------
+// Creates the delimit mode widget.
+//-----------------------------------------------------------------------------
+QGroupBox *MainWindow::createDelimitModeGroup(QWidget *aParent)
+{
+    QGroupBox *tGroup = new QGroupBox("Delimit Records Mode",aParent);
+    tGroup->setFlat(true);
+
+    _DelimitAllButton =
+        new QRadioButton("Always",tGroup);
+    _DelimitOutputButton =
+        new QRadioButton("On output",tGroup);
+    _DelimitNoneButton =
+        new QRadioButton("Never",tGroup);
+
+   _DelimitOutputButton->setChecked(true);
+
+    connect(_DelimitAllButton,SIGNAL(toggled(bool)),
+        this,SLOT(onDelimitOptionSelection(bool)));
+    connect(_DelimitOutputButton,SIGNAL(toggled(bool)),
+        this,SLOT(onDelimitOptionSelection(bool)));
+    connect(_DelimitNoneButton,SIGNAL(toggled(bool)),
+        this,SLOT(onDelimitOptionSelection(bool)));
+
+    connect(this,SIGNAL(delimitOptionSelected(int)),
+        _StreamReader,SLOT(setDelimitMode(int)));
+
+#if 0 //TODO rm
+    /*
+     * Create delimit records checkbox and connect it to the stream reader.
+     */
+    QCheckBox *tDelimitRecordsCheckBox =
+        new QCheckBox("Delimit records",tGroup);
+    tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
+
+    connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
+        _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
+#endif
+
+    QVBoxLayout *tLayout = new QVBoxLayout;
+    tLayout->addWidget(_DelimitAllButton);
+    tLayout->addWidget(_DelimitOutputButton);
+    tLayout->addWidget(_DelimitNoneButton);
+
+    tGroup->setLayout(tLayout);
+    return tGroup;
+}
+
+//-----------------------------------------------------------------------------
 // Creates the format mode widget.
 //-----------------------------------------------------------------------------
 QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
@@ -409,7 +486,7 @@ QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
     _FormatCustomButton =
         new QRadioButton("Custom Formatting",tGroup);
 
-    _FormatAsIsButton->setChecked(true);
+    _FormatCustomButton->setChecked(true);
 
     connect(_FormatAsIsButton,SIGNAL(toggled(bool)),
         this,SLOT(onFormatOptionSelection(bool)));
@@ -423,6 +500,7 @@ QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
     connect(this,SIGNAL(formatOptionSelected(int)),
         _RecordProcessor,SLOT(setFormatMode(int)));
 
+#if 0 //TODO rm
     /*
      * Create delimit records checkbox and connect it to the stream reader.
      */
@@ -432,15 +510,15 @@ QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
 
     connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
         _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
+#endif
 
-    QVBoxLayout *tGroupLayout = new QVBoxLayout;
-    tGroupLayout->addWidget(_FormatAsIsButton);
-    tGroupLayout->addWidget(_FormatLongnameButton);
-    tGroupLayout->addWidget(_FormatTableButton);
-    tGroupLayout->addWidget(_FormatCustomButton);
-    tGroupLayout->addWidget(tDelimitRecordsCheckBox);
+    QVBoxLayout *tLayout = new QVBoxLayout;
+    tLayout->addWidget(_FormatAsIsButton);
+    tLayout->addWidget(_FormatLongnameButton);
+    tLayout->addWidget(_FormatTableButton);
+    tLayout->addWidget(_FormatCustomButton);
 
-    tGroup->setLayout(tGroupLayout);
+    tGroup->setLayout(tLayout);
     return tGroup;
 }
 
