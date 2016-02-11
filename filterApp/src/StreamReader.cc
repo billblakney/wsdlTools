@@ -8,7 +8,8 @@ ccl::Logger StreamReader::sLogger("StreamReader");
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader(RecordProcessor *aRecordProcessor)
-  : _RecordCount(0),
+  : _NumRecordsTotal(0),
+    _NumRecordsOutput(0),
     _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
     _DelimitMode(eOutputRecords),
@@ -242,10 +243,12 @@ void StreamReader::readAndProcessStructLines()
   SimpleLineMatcher tBeginMessageMatcher(".*===RECEIVED MESSAGE===.*");
   SimpleLineMatcher tEndMessageMatcher(".*===END MESSAGE===.*");
 
-  _RecordCount = 0;
+  _NumRecordsTotal = 0;
+  _NumRecordsOutput = 0;
+
   static const char *kStartHeader =
       "==================================================";
-  static const char *kEndDelimiter   = "---------- %d ----------";
+  static const char *kEndDelimiter   = "---------%d/%d----------";
 
   std::string tFirstFieldMatch = _DataStructModel->getFirstFieldMatch();
   DEBUG(sLogger,"match to start record: " << tFirstFieldMatch);
@@ -351,8 +354,10 @@ void StreamReader::readAndProcessStructLines()
         if (_DelimitMode == eAllRecords ||
             (_DelimitMode == eOutputRecords && tWasOutput))
         {
+          _NumRecordsOutput++;
+
           char tBuff[81];
-          sprintf(tBuff,kEndDelimiter,_RecordCount);
+          sprintf(tBuff,kEndDelimiter,_NumRecordsOutput,_NumRecordsTotal);
           std::cout << tBuff << std::endl;
         }
         tFoundStart = false;
@@ -372,7 +377,7 @@ void StreamReader::readAndProcessStructLines()
           if (tFirstFieldMatcher.match(tLineBuffer))
           {
             tFoundFirstField = true;
-            _RecordCount++;
+            _NumRecordsTotal++;
           }
           else
           {
