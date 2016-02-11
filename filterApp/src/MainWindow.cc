@@ -27,7 +27,7 @@ MainWindow::MainWindow(
     _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
     _StructComboBox(0),
-    _OptionsWidget(0),
+    _ConfigureWidget(0),
     _StructTree(0),
     _PropagateCheckBox(0),
     _FormatAsIsButton(0),
@@ -223,9 +223,10 @@ void MainWindow::setupView(std::string aStructName)
   if (_IsFilterMode)
   {
     tTabWidget = new QTabWidget(0);
-    _OptionsWidget = createOptionsWidget(0);
-    tTabWidget->addTab(_OptionsWidget,QString("Configure"));
-    tTabWidget->addTab(new QLabel("WOW"),QString("Wow"));
+    _ConfigureWidget = createConfigureWidget(0);
+    _OperateWidget = createOperateWidget(0);
+    tTabWidget->addTab(_ConfigureWidget,QString("Configure"));
+    tTabWidget->addTab(_OperateWidget,QString("Operate"));
 
     /*
      * Create bypass checkbox and connect it to the stream reader.
@@ -341,17 +342,40 @@ QComboBox *MainWindow::createStructComboBox(QWidget *aParent)
 //-----------------------------------------------------------------------------
 // Creates the options widget.
 //-----------------------------------------------------------------------------
-QWidget *MainWindow::createOptionsWidget(QWidget *aParent)
+QWidget *MainWindow::createConfigureWidget(QWidget *aParent)
 {
-    QWidget *tOptions = new QWidget(aParent);
+    QWidget *tConfigure = new QWidget(aParent);
 
-    QGroupBox *tFormatModeWidget = createFormatModeGroup(tOptions);
+    QGroupBox *tFormatModeWidget = createFormatModeGroup(tConfigure);
     tFormatModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-    QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tOptions);
+    QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tConfigure);
     tCustomFormatGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-    QGroupBox *tOutputModeGroup = createOutputModeGroup(tOptions);
+//    QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
+//    tMainOptionsLayout->addWidget(tOutputModeGroup);
+//    tMainOptions->setLayout(tMainOptionsLayout);
+
+
+    QHBoxLayout *tLayout = new QHBoxLayout;
+    tLayout->addWidget(tFormatModeWidget);
+    tLayout->addWidget(tCustomFormatGroup);
+    tLayout->setAlignment(tFormatModeWidget,Qt::AlignTop);
+    tLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
+
+    tConfigure->setLayout(tLayout);
+
+    return tConfigure;
+}
+
+//-----------------------------------------------------------------------------
+// Creates the options widget.
+//-----------------------------------------------------------------------------
+QWidget *MainWindow::createOperateWidget(QWidget *aParent)
+{
+    QWidget *tOperate = new QWidget(aParent);
+
+    QGroupBox *tOutputModeGroup = createOutputModeGroup(tOperate);
     tOutputModeGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
 //    QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
@@ -359,17 +383,13 @@ QWidget *MainWindow::createOptionsWidget(QWidget *aParent)
 //    tMainOptions->setLayout(tMainOptionsLayout);
 
 
-    QHBoxLayout *tOptionsLayout = new QHBoxLayout;
-    tOptionsLayout->addWidget(tFormatModeWidget);
-    tOptionsLayout->addWidget(tCustomFormatGroup);
-    tOptionsLayout->addWidget(tOutputModeGroup);
-    tOptionsLayout->setAlignment(tFormatModeWidget,Qt::AlignTop);
-    tOptionsLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
-    tOptionsLayout->setAlignment(tOutputModeGroup,Qt::AlignTop);
+    QHBoxLayout *tLayout = new QHBoxLayout;
+    tLayout->addWidget(tOutputModeGroup);
+    tLayout->setAlignment(tOutputModeGroup,Qt::AlignTop);
 
-    tOptions->setLayout(tOptionsLayout);
+    tOperate->setLayout(tLayout);
 
-    return tOptions;
+    return tOperate;
 }
 
 //-----------------------------------------------------------------------------

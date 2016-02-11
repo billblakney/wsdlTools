@@ -69,7 +69,8 @@ protected:
 	std::string         _StructName;
 	DataStructModel    *_DataStructModel;
 	QComboBox          *_StructComboBox;
-	QWidget            *_OptionsWidget;
+	QWidget            *_ConfigureWidget;
+	QWidget            *_OperateWidget;
 	StructTreeView     *_StructTree;
 	QCheckBox          *_PropagateCheckBox;
 
@@ -96,7 +97,9 @@ protected:
 
   QComboBox *createStructComboBox(QWidget *aParent);
 
-  QWidget *createOptionsWidget(QWidget *aParent);
+  QWidget *createConfigureWidget(QWidget *aParent);
+
+  QWidget *createOperateWidget(QWidget *aParent);
 
   QGroupBox *createFormatModeGroup(QWidget *aParent);
 
