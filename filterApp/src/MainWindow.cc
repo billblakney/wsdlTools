@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <QAbstractItemModel>
+#include <QActionGroup>
 #include <QButtonGroup>
 #include <QHeaderView>
 #include <QPushButton>
@@ -9,6 +10,7 @@
 #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
+#include <QStatusBar>
 #include <QToolBar>
 #include <QVBoxLayout>
 #include "ComboBoxDelegate.hh"
@@ -183,6 +185,14 @@ void MainWindow::onFormatOptionSelection(bool aIsChecked)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::onBypass()
+{
+    std::cout << "Bypass clicked" << std::endl;
+    emit outputModeSelected((int)StreamReader::eBypass);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::onGo()
 {
     std::cout << "Go clicked" << std::endl;
@@ -229,13 +239,15 @@ void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
 //-----------------------------------------------------------------------------
 void MainWindow::setupView(std::string aStructName)
 {
+   QPixmap tBypass("bypass3.png");
    QPixmap tGreenLight("green.png");
    QPixmap tRedLight("red.png");
 //   QPixmap quitpix("quit.png");
 
    QAction *quit = new QAction("&Quit", this);
 
-   QAction *tGoAction = new QAction("&Go", this);
+   QAction *tBypassAction = new QAction("&Bypass", this);
+   QAction *tGoAction = new QAction("&Normal", this);
    QAction *tStopAction = new QAction("&Stop", this);
 
    QMenu *file;
@@ -245,9 +257,11 @@ void MainWindow::setupView(std::string aStructName)
    file = menuBar()->addMenu("&Run");
    file->addAction(tGoAction);
    file->addAction(tStopAction);
+   file->addAction(tBypassAction);
 
    connect(tGoAction, SIGNAL(triggered()), this, SLOT(onGo()));
    connect(tStopAction, SIGNAL(triggered()), this, SLOT(onStop()));
+   connect(tBypassAction, SIGNAL(triggered()), this, SLOT(onBypass()));
 
 #if 0
    connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
@@ -255,10 +269,21 @@ void MainWindow::setupView(std::string aStructName)
 
    QToolBar *toolbar = addToolBar("main toolbar");
    QAction *tGoActionTB = toolbar->addAction(QIcon(tGreenLight), "Go");
-   QAction *tStopActionTB = toolbar->addAction(QIcon(tRedLight), "Stop");
+   QAction *tStopActionTB = toolbar->addAction(QIcon(tRedLight), "Normal");
+   QAction *tBypassActionTB = toolbar->addAction(QIcon(tBypass), "Bypass");
+   tGoActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
+   tStopActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+   tBypassActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_B));
+
+   // TODO don't really need QActionGroup. is any use? header
+   QActionGroup *myGroup = new QActionGroup(this);
+   myGroup->addAction(tGoAction);
+   myGroup->addAction(tStopAction);
+   myGroup->addAction(tBypassAction);
 
    connect(tGoActionTB, SIGNAL(triggered()), this, SLOT(onGo()));
    connect(tStopActionTB, SIGNAL(triggered()), this, SLOT(onStop()));
+   connect(tBypassActionTB, SIGNAL(triggered()), this, SLOT(onBypass()));
 
 #if 0
    toolbar->addSeparator();
@@ -267,6 +292,10 @@ void MainWindow::setupView(std::string aStructName)
        "Quit Application");
    connect(quit2, SIGNAL(triggered()), qApp, SLOT(quit()));
 #endif
+
+   _OperationStatus = new QLabel("Mode: Normal");
+   statusBar()->addWidget(new QLabel("Status - XXX"));
+   statusBar()->addPermanentWidget(new QLabel("Permanent"));
 
    _CentralWidget = new QWidget(this);
    setCentralWidget(_CentralWidget);

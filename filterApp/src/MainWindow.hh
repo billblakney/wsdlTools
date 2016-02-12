@@ -4,6 +4,7 @@
 #include <string>
 #include <QComboBox>
 #include <QGroupBox>
+#include <QLabel>
 #include <QRadioButton>
 #include <QStringList>
 #include <QWidget>
@@ -65,6 +66,8 @@ public slots:
 
   void onOutputModeButtonClicked(QAbstractButton *aButton);
 
+  void onBypass();
+
   void onGo();
 
   void onStop();
@@ -72,6 +75,7 @@ public slots:
 protected:
 
   QWidget            *_CentralWidget;
+  QLabel             *_OperationStatus;
 
 	StructorBuilder    *_StructorBuilder;
   bool                _IsFilterMode;
