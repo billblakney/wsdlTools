@@ -231,6 +231,7 @@ void MainWindow::onDelimitNone()
 void MainWindow::onAsIsFormat()
 {
   setFormatMode(RecordProcessor::eAsIs);
+std::cout << "AS-IS" << std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -238,6 +239,7 @@ void MainWindow::onAsIsFormat()
 void MainWindow::onLongnameFormat()
 {
   setFormatMode(RecordProcessor::eLongname);
+std::cout << "LONGNAME" << std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -245,6 +247,7 @@ void MainWindow::onLongnameFormat()
 void MainWindow::onTableFormat()
 {
   setFormatMode(RecordProcessor::eTable);
+std::cout << "TABLE" << std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -252,6 +255,7 @@ void MainWindow::onTableFormat()
 void MainWindow::onCustomFormat()
 {
   setFormatMode(RecordProcessor::eCustom);
+std::cout << "CUSTOM" << std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -294,6 +298,14 @@ void MainWindow::setOutputMode(StreamReader::OutputMode aMode)
 //-----------------------------------------------------------------------------
 void MainWindow::setFormatMode(RecordProcessor::FormatMode aMode)
 {
+  switch (aMode) {
+  case RecordProcessor::eAsIs:
+    std::cout << "EMITTING As-Is FORMAT" << std::endl;
+    break;
+  case RecordProcessor::eLongname:
+    std::cout << "EMITTING Longname FORMAT" << std::endl;
+    break;
+  }
   emit formatOptionSelected((int)aMode);
 }
 
@@ -342,12 +354,6 @@ void MainWindow::setupView(std::string aStructName)
    _CentralWidget = new QWidget(this);
    setCentralWidget(_CentralWidget);
 
-   QDockWidget *shapesDockWidget = new QDockWidget(QString("Shapes"));
-   shapesDockWidget->setObjectName("shapesDockWidget");
-   shapesDockWidget->setWidget(new QLabel("dock area"));
-   shapesDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
-   addDockWidget(Qt::TopDockWidgetArea, shapesDockWidget);
-
   /*
    * Set the name of the structure to be used for the tree view.
    * When running in the filter mode, aStructName should always have a value.
@@ -376,6 +382,20 @@ void MainWindow::setupView(std::string aStructName)
    * are called.
    */
   _StructTree = createTreeView(_CentralWidget);
+
+#if 1
+  /*
+   * Dock.
+   */
+    _ConfigureWidget = createConfigureWidget(0);
+
+//   QDockWidget *shapesDockWidget = new QDockWidget(QString("Shapes"));
+   QDockWidget *shapesDockWidget = new QDockWidget(_ConfigureWidget);
+   shapesDockWidget->setObjectName("shapesDockWidget");
+   shapesDockWidget->setWidget(new QLabel("dock area"));
+   shapesDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
+   addDockWidget(Qt::TopDockWidgetArea, shapesDockWidget);
+#endif
 
   QTabWidget *tTabWidget = NULL;
   /*
@@ -518,6 +538,8 @@ void MainWindow::setupMenuAndToolbar()
    connect(tTableFormatAction, SIGNAL(triggered()), this, SLOT(onTableFormat()));
    connect(tCustomFormatAction, SIGNAL(triggered()), this, SLOT(onCustomFormat()));
 
+   connect(this,SIGNAL(formatOptionSelected(int)), _RecordProcessor,SLOT(setFormatMode(int)));
+
    /*
     * Create record delimiter actions.
     */
@@ -539,6 +561,8 @@ void MainWindow::setupMenuAndToolbar()
    connect(tDelimitOutputAction, SIGNAL(triggered()), this, SLOT(onDelimitOut()));
    connect(tDelimitAllAction, SIGNAL(triggered()), this, SLOT(onDelimitAll()));
    connect(tDelimitNoneAction, SIGNAL(triggered()), this, SLOT(onDelimitNone()));
+
+   connect(this,SIGNAL(delimitOptionSelected(int)), _StreamReader,SLOT(setDelimitMode(int)));
 
    /*
     * Create menu.
@@ -659,7 +683,7 @@ QComboBox *MainWindow::createStructComboBox(QWidget *aParent)
   int tSelection = tComboBox->findText(tSelectionStr);
   tComboBox->setCurrentIndex(tSelection);
 
-  connect(tComboBox, SIGNAL(activated(int)), aParent,
+  connect(tComboBox, SIGNAL(activated(int)), this,
       SLOT(onStructComboBoxActivated(int)));
 
   return tComboBox;
@@ -672,11 +696,13 @@ QWidget *MainWindow::createConfigureWidget(QWidget *aParent)
 {
     QWidget *tConfigure = new QWidget(aParent);
 
+#if 0
     QGroupBox *tDelimitModeWidget = createDelimitModeGroup(tConfigure);
     tDelimitModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     QGroupBox *tFormatModeWidget = createFormatModeGroup(tConfigure);
     tFormatModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+#endif
 
     QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tConfigure);
     tCustomFormatGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
@@ -687,11 +713,11 @@ QWidget *MainWindow::createConfigureWidget(QWidget *aParent)
 
 
     QHBoxLayout *tLayout = new QHBoxLayout;
-    tLayout->addWidget(tDelimitModeWidget);
-    tLayout->addWidget(tFormatModeWidget);
+//    tLayout->addWidget(tDelimitModeWidget);
+//    tLayout->addWidget(tFormatModeWidget);
     tLayout->addWidget(tCustomFormatGroup);
-    tLayout->setAlignment(tDelimitModeWidget,Qt::AlignTop);
-    tLayout->setAlignment(tFormatModeWidget,Qt::AlignTop);
+//    tLayout->setAlignment(tDelimitModeWidget,Qt::AlignTop);
+//    tLayout->setAlignment(tFormatModeWidget,Qt::AlignTop);
     tLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
 
     tConfigure->setLayout(tLayout);
