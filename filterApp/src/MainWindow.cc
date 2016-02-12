@@ -280,9 +280,17 @@ void MainWindow::setupView(std::string aStructName)
 
    QAction *quit = new QAction("&Quit", this);
 
-   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Normal", this);
-   QAction *tStopAction = new QAction(QIcon(tRedLight),"&Freeze", this);
+   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Run", this);
+   QAction *tStopAction = new QAction(QIcon(tRedLight),"&Stop", this);
    QAction *tBypassAction = new QAction(QIcon(tBypass),"&Bypass", this);
+
+   tGoAction->setShortcut(QKeySequence(Qt::Key_R));
+   tStopAction->setShortcut(QKeySequence(Qt::Key_S));
+   tBypassAction->setShortcut(QKeySequence(Qt::Key_B));
+
+   QAction *tDelimitAllAction = new QAction(QIcon(tBypass),"&Delimit All Records", this);
+   QAction *tDelimitOutputAction = new QAction(QIcon(tBypass),"&Delimit Output Records", this);
+   QAction *tDelimitNoneAction = new QAction(QIcon(tBypass),"&No Record Delimiter", this);
 
    QMenu *file;
    file = menuBar()->addMenu("&File");
@@ -293,14 +301,32 @@ void MainWindow::setupView(std::string aStructName)
    file->addAction(tStopAction);
    file->addAction(tBypassAction);
 
+   file = menuBar()->addMenu("&Delimit Records");
+   file->addAction(tDelimitAllAction);
+   file->addAction(tDelimitOutputAction);
+   file->addAction(tDelimitNoneAction);
+
    tGoAction->setCheckable(true);
    tStopAction->setCheckable(true);
    tBypassAction->setCheckable(true);
 
-   QActionGroup *tGroup = new QActionGroup(this);
-   tGroup->addAction(tGoAction);
-   tGroup->addAction(tStopAction);
-   tGroup->addAction(tBypassAction);
+   tGoAction->setChecked(true);
+
+   QActionGroup *tRunGroup = new QActionGroup(this);
+   tRunGroup->addAction(tGoAction);
+   tRunGroup->addAction(tStopAction);
+   tRunGroup->addAction(tBypassAction);
+
+   tDelimitAllAction->setCheckable(true);
+   tDelimitOutputAction->setCheckable(true);
+   tDelimitNoneAction->setCheckable(true);
+
+   tDelimitOutputAction->setChecked(true);
+
+   QActionGroup *tDelimitGroup = new QActionGroup(this);
+   tDelimitGroup->addAction(tDelimitAllAction);
+   tDelimitGroup->addAction(tDelimitOutputAction);
+   tDelimitGroup->addAction(tDelimitNoneAction);
 
    connect(tGoAction, SIGNAL(triggered()), this, SLOT(onGo()));
    connect(tStopAction, SIGNAL(triggered()), this, SLOT(onStop()));
@@ -314,6 +340,10 @@ void MainWindow::setupView(std::string aStructName)
    toolbar->addAction(tGoAction);
    toolbar->addAction(tStopAction);
    toolbar->addAction(tBypassAction);
+   toolbar->addSeparator();
+   toolbar->addAction(tDelimitAllAction);
+   toolbar->addAction(tDelimitOutputAction);
+   toolbar->addAction(tDelimitNoneAction);
 
 
 #if 0
