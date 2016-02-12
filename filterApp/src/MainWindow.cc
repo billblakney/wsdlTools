@@ -246,9 +246,9 @@ void MainWindow::setupView(std::string aStructName)
 
    QAction *quit = new QAction("&Quit", this);
 
-   QAction *tBypassAction = new QAction("&Bypass", this);
    QAction *tGoAction = new QAction("&Normal", this);
-   QAction *tStopAction = new QAction("&Stop", this);
+   QAction *tStopAction = new QAction("&Freeze", this);
+   QAction *tBypassAction = new QAction("&Bypass", this);
 
    QMenu *file;
    file = menuBar()->addMenu("&File");
@@ -259,6 +259,15 @@ void MainWindow::setupView(std::string aStructName)
    file->addAction(tStopAction);
    file->addAction(tBypassAction);
 
+   tGoAction->setCheckable(true);
+   tStopAction->setCheckable(true);
+   tBypassAction->setCheckable(true);
+
+   QActionGroup *tGroup = new QActionGroup(this);
+   tGroup->addAction(tGoAction);
+   tGroup->addAction(tStopAction);
+   tGroup->addAction(tBypassAction);
+
    connect(tGoAction, SIGNAL(triggered()), this, SLOT(onGo()));
    connect(tStopAction, SIGNAL(triggered()), this, SLOT(onStop()));
    connect(tBypassAction, SIGNAL(triggered()), this, SLOT(onBypass()));
@@ -268,18 +277,22 @@ void MainWindow::setupView(std::string aStructName)
 #endif
 
    QToolBar *toolbar = addToolBar("main toolbar");
-   QAction *tGoActionTB = toolbar->addAction(QIcon(tGreenLight), "Go");
-   QAction *tStopActionTB = toolbar->addAction(QIcon(tRedLight), "Normal");
+   QAction *tGoActionTB = toolbar->addAction(QIcon(tGreenLight), "Normal");
+   QAction *tStopActionTB = toolbar->addAction(QIcon(tRedLight), "Freeze");
    QAction *tBypassActionTB = toolbar->addAction(QIcon(tBypass), "Bypass");
+
    tGoActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
-   tStopActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+   tStopActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F));
    tBypassActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_B));
 
-   // TODO don't really need QActionGroup. is any use? header
-   QActionGroup *myGroup = new QActionGroup(this);
-   myGroup->addAction(tGoAction);
-   myGroup->addAction(tStopAction);
-   myGroup->addAction(tBypassAction);
+   tGoActionTB->setCheckable(true);
+   tStopActionTB->setCheckable(true);
+   tBypassActionTB->setCheckable(true);
+
+   QActionGroup *tGroupTB = new QActionGroup(this);
+   tGroupTB->addAction(tGoActionTB);
+   tGroupTB->addAction(tStopActionTB);
+   tGroupTB->addAction(tBypassActionTB);
 
    connect(tGoActionTB, SIGNAL(triggered()), this, SLOT(onGo()));
    connect(tStopActionTB, SIGNAL(triggered()), this, SLOT(onStop()));
