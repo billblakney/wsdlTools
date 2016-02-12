@@ -87,15 +87,15 @@ void StreamReader::setOutputMode(OutputMode aOutputMode)
 {
   if (aOutputMode == eNormal)
   {
-    std::cout << "Setting output mode to NORMAL." << std::endl;
+    std::cout << "Output mode set to NORMAL" << std::endl;
   }
   else if (aOutputMode == eBypass)
   {
-    std::cout << "Setting output mode to BYPASS." << std::endl;
+    std::cout << "Output mode set to BYPASS" << std::endl;
   }
   else if (aOutputMode == eFreezeDrop)
   {
-    std::cout << "Setting output mode to FREEZE-DROP." << std::endl;
+    std::cout << "Output mode set to FREEZE" << std::endl;
   }
 
   _Mutex.lock();

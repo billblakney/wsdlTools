@@ -187,24 +187,58 @@ void MainWindow::onFormatOptionSelection(bool aIsChecked)
 //-----------------------------------------------------------------------------
 void MainWindow::onBypass()
 {
-    std::cout << "Bypass clicked" << std::endl;
-    emit outputModeSelected((int)StreamReader::eBypass);
+    setOutputMode(StreamReader::eBypass);
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MainWindow::onGo()
 {
-    std::cout << "Go clicked" << std::endl;
-    emit outputModeSelected((int)StreamReader::eNormal);
+    setOutputMode(StreamReader::eNormal);
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MainWindow::onStop()
 {
-    std::cout << "Stop clicked" << std::endl;
-    emit outputModeSelected((int)StreamReader::eFreezeDrop);
+    setOutputMode(StreamReader::eFreezeDrop);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::setOutputMode(StreamReader::OutputMode aMode)
+{
+  emit outputModeSelected((int)aMode);
+
+  QPalette tPalette;
+
+  switch (aMode) {
+    case StreamReader::eNormal:
+      tPalette.setColor(QPalette::Window, Qt::white);
+      tPalette.setColor(QPalette::WindowText, Qt::black);
+      setStatusLabel("Normal",tPalette);
+      break;
+    case StreamReader::eFreezeDrop:
+      tPalette.setColor(QPalette::Window, Qt::darkRed);
+      tPalette.setColor(QPalette::WindowText, Qt::white);
+      setStatusLabel("Freeze",tPalette);
+      break;
+    case StreamReader::eBypass:
+      tPalette.setColor(QPalette::Window, Qt::darkGray);
+      tPalette.setColor(QPalette::WindowText, Qt::white);
+      setStatusLabel("Bypass",tPalette);
+      break;
+    default:
+      break;
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::setStatusLabel(QString aStatus,QPalette aPalette)
+{
+  _StatusLabel->setPalette(aPalette);
+  _StatusLabel->setText("Mode: " + aStatus);
 }
 
 //-----------------------------------------------------------------------------
@@ -306,9 +340,13 @@ void MainWindow::setupView(std::string aStructName)
    connect(quit2, SIGNAL(triggered()), qApp, SLOT(quit()));
 #endif
 
-   _OperationStatus = new QLabel("Mode: Normal");
-   statusBar()->addWidget(new QLabel("Status - XXX"));
-   statusBar()->addPermanentWidget(new QLabel("Permanent"));
+   _StatusLabel = new QLabel();
+   _StatusLabel->setAutoFillBackground(true);
+
+   setOutputMode(StreamReader::eNormal);
+
+   statusBar()->addWidget(_StatusLabel);
+   statusBar()->addPermanentWidget(new QLabel("-counts-"));
 
    _CentralWidget = new QWidget(this);
    setCentralWidget(_CentralWidget);

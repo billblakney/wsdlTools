@@ -75,7 +75,7 @@ public slots:
 protected:
 
   QWidget            *_CentralWidget;
-  QLabel             *_OperationStatus;
+  QLabel             *_StatusLabel;
 
 	StructorBuilder    *_StructorBuilder;
   bool                _IsFilterMode;
@@ -111,6 +111,10 @@ protected:
   void readEnvironmentVariables();
 
   void processCommandLine(int argc,char *argv[]);
+
+  void setOutputMode(StreamReader::OutputMode aMode);
+
+  void setStatusLabel(QString aStatus,QPalette aPalette);
 
   StructTreeView *createTreeView(QWidget *aParent);
 
