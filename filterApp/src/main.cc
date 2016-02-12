@@ -139,6 +139,8 @@ int main(int argc, char *argv[])
   QApplication app(argc, argv);
   app.setApplicationDisplayName(QString("WSDL FIlter"));
 
+  QPalette tPalette(Qt::lightGray);
+  app.setPalette(tPalette);
 
   /*
    * Read the environment variables.

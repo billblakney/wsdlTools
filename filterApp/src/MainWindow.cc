@@ -280,9 +280,9 @@ void MainWindow::setupView(std::string aStructName)
 
    QAction *quit = new QAction("&Quit", this);
 
-   QAction *tGoAction = new QAction("&Normal", this);
-   QAction *tStopAction = new QAction("&Freeze", this);
-   QAction *tBypassAction = new QAction("&Bypass", this);
+   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Normal", this);
+   QAction *tStopAction = new QAction(QIcon(tRedLight),"&Freeze", this);
+   QAction *tBypassAction = new QAction(QIcon(tBypass),"&Bypass", this);
 
    QMenu *file;
    file = menuBar()->addMenu("&File");
@@ -311,26 +311,10 @@ void MainWindow::setupView(std::string aStructName)
 #endif
 
    QToolBar *toolbar = addToolBar("main toolbar");
-   QAction *tGoActionTB = toolbar->addAction(QIcon(tGreenLight), "Normal");
-   QAction *tStopActionTB = toolbar->addAction(QIcon(tRedLight), "Freeze");
-   QAction *tBypassActionTB = toolbar->addAction(QIcon(tBypass), "Bypass");
+   toolbar->addAction(tGoAction);
+   toolbar->addAction(tStopAction);
+   toolbar->addAction(tBypassAction);
 
-   tGoActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
-   tStopActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F));
-   tBypassActionTB->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_B));
-
-   tGoActionTB->setCheckable(true);
-   tStopActionTB->setCheckable(true);
-   tBypassActionTB->setCheckable(true);
-
-   QActionGroup *tGroupTB = new QActionGroup(this);
-   tGroupTB->addAction(tGoActionTB);
-   tGroupTB->addAction(tStopActionTB);
-   tGroupTB->addAction(tBypassActionTB);
-
-   connect(tGoActionTB, SIGNAL(triggered()), this, SLOT(onGo()));
-   connect(tStopActionTB, SIGNAL(triggered()), this, SLOT(onStop()));
-   connect(tBypassActionTB, SIGNAL(triggered()), this, SLOT(onBypass()));
 
 #if 0
    toolbar->addSeparator();
