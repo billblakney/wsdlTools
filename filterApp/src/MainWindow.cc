@@ -207,6 +207,34 @@ void MainWindow::onStop()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::onDelimitOut()
+{
+  setDelimitMode(StreamReader::eOutputRecords);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onDelimitAll()
+{
+  setDelimitMode(StreamReader::eAllRecords);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onDelimitNone()
+{
+  setDelimitMode(StreamReader::eNoRecords);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::setDelimitMode(StreamReader::DelimitMode aMode)
+{
+  emit delimitOptionSelected((int)aMode);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::setOutputMode(StreamReader::OutputMode aMode)
 {
   emit outputModeSelected((int)aMode);
@@ -274,97 +302,7 @@ void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
 //-----------------------------------------------------------------------------
 void MainWindow::setupView(std::string aStructName)
 {
-   QPixmap tBypass("bypass3.png");
-   QPixmap tGreenLight("green.png");
-   QPixmap tRedLight("red.png");
-   QPixmap tDelimAll("delim_all.png");
-   QPixmap tDelimOut("delim_out.png");
-   QPixmap tDelimNone("delim_none.png");
-//   QPixmap quitpix("quit.png");
-
-   QAction *quit = new QAction("&Quit", this);
-
-   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Go", this);
-   QAction *tStopAction = new QAction(QIcon(tRedLight),"&Stop", this);
-   QAction *tBypassAction = new QAction(QIcon(tBypass),"&Bypass", this);
-
-   tGoAction->setShortcut(QKeySequence(Qt::Key_G));
-   tStopAction->setShortcut(QKeySequence(Qt::Key_S));
-   tBypassAction->setShortcut(QKeySequence(Qt::Key_B));
-
-   QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),"&Delimit Output Records", this);
-   QAction *tDelimitNoneAction = new QAction(QIcon(tDelimNone),"&No Record Delimiters", this);
-   QAction *tDelimitAllAction = new QAction(QIcon(tDelimAll),"&Delimit All Records", this);
-
-   QMenu *file;
-   file = menuBar()->addMenu("&File");
-   file->addAction(quit);
-
-   file = menuBar()->addMenu("&Run");
-   file->addAction(tGoAction);
-   file->addAction(tStopAction);
-   file->addAction(tBypassAction);
-
-   file = menuBar()->addMenu("&Delimit Records");
-   file->addAction(tDelimitOutputAction);
-   file->addAction(tDelimitNoneAction);
-   file->addAction(tDelimitAllAction);
-
-   tGoAction->setCheckable(true);
-   tStopAction->setCheckable(true);
-   tBypassAction->setCheckable(true);
-
-   tGoAction->setChecked(true);
-
-   QActionGroup *tRunGroup = new QActionGroup(this);
-   tRunGroup->addAction(tGoAction);
-   tRunGroup->addAction(tStopAction);
-   tRunGroup->addAction(tBypassAction);
-
-   tDelimitAllAction->setCheckable(true);
-   tDelimitOutputAction->setCheckable(true);
-   tDelimitNoneAction->setCheckable(true);
-
-   tDelimitOutputAction->setChecked(true);
-
-   QActionGroup *tDelimitGroup = new QActionGroup(this);
-   tDelimitGroup->addAction(tDelimitOutputAction);
-   tDelimitGroup->addAction(tDelimitNoneAction);
-   tDelimitGroup->addAction(tDelimitAllAction);
-
-   connect(tGoAction, SIGNAL(triggered()), this, SLOT(onGo()));
-   connect(tStopAction, SIGNAL(triggered()), this, SLOT(onStop()));
-   connect(tBypassAction, SIGNAL(triggered()), this, SLOT(onBypass()));
-
-#if 0
-   connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
-#endif
-
-   QToolBar *toolbar = addToolBar("main toolbar");
-   toolbar->addAction(tGoAction);
-   toolbar->addAction(tStopAction);
-   toolbar->addAction(tBypassAction);
-   toolbar->addSeparator();
-   toolbar->addAction(tDelimitOutputAction);
-   toolbar->addAction(tDelimitNoneAction);
-   toolbar->addAction(tDelimitAllAction);
-
-
-#if 0
-   toolbar->addSeparator();
-
-   QAction *quit2 = toolbar->addAction(QIcon(quitpix),
-       "Quit Application");
-   connect(quit2, SIGNAL(triggered()), qApp, SLOT(quit()));
-#endif
-
-   _StatusLabel = new QLabel();
-   _StatusLabel->setAutoFillBackground(true);
-
-   setOutputMode(StreamReader::eNormal);
-
-   statusBar()->addWidget(_StatusLabel);
-   statusBar()->addPermanentWidget(new QLabel("-counts-"));
+  setupMenuAndToolbar();
 
    _CentralWidget = new QWidget(this);
    setCentralWidget(_CentralWidget);
@@ -464,6 +402,123 @@ void MainWindow::setupView(std::string aStructName)
   else
   {
   }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::setupMenuAndToolbar()
+{
+   QPixmap tGreenLight("green.png");
+   QPixmap tRedLight("red.png");
+   QPixmap tBypass("bypass3.png");
+
+   QPixmap tDelimAll("delim_all.png");
+   QPixmap tDelimOut("delim_out.png");
+   QPixmap tDelimNone("delim_none.png");
+//   QPixmap quitpix("quit.png");
+
+#if FILE_MENU
+   /*
+    * Quit action
+    */
+   QAction *quit = new QAction("&Quit", this);
+
+   connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
+#endif
+
+   /*
+    * Create go/stop/bypass actions.
+    */
+   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Go", this);
+   QAction *tStopAction = new QAction(QIcon(tRedLight),"&Stop", this);
+   QAction *tBypassAction = new QAction(QIcon(tBypass),"&Bypass", this);
+
+   tGoAction->setShortcut(QKeySequence(Qt::Key_G));
+   tStopAction->setShortcut(QKeySequence(Qt::Key_S));
+   tBypassAction->setShortcut(QKeySequence(Qt::Key_B));
+
+   tGoAction->setCheckable(true);
+   tStopAction->setCheckable(true);
+   tBypassAction->setCheckable(true);
+
+   tGoAction->setChecked(true);
+
+   QActionGroup *tRunGroup = new QActionGroup(this);
+   tRunGroup->addAction(tGoAction);
+   tRunGroup->addAction(tStopAction);
+   tRunGroup->addAction(tBypassAction);
+
+   connect(tGoAction, SIGNAL(triggered()), this, SLOT(onGo()));
+   connect(tStopAction, SIGNAL(triggered()), this, SLOT(onStop()));
+   connect(tBypassAction, SIGNAL(triggered()), this, SLOT(onBypass()));
+
+   /*
+    * Create record delimiter actions.
+    */
+   QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),"&Delimit Output Records", this);
+   QAction *tDelimitNoneAction = new QAction(QIcon(tDelimNone),"&No Record Delimiters", this);
+   QAction *tDelimitAllAction = new QAction(QIcon(tDelimAll),"&Delimit All Records", this);
+
+   tDelimitAllAction->setCheckable(true);
+   tDelimitOutputAction->setCheckable(true);
+   tDelimitNoneAction->setCheckable(true);
+
+   tDelimitOutputAction->setChecked(true);
+
+   QActionGroup *tDelimitGroup = new QActionGroup(this);
+   tDelimitGroup->addAction(tDelimitOutputAction);
+   tDelimitGroup->addAction(tDelimitNoneAction);
+   tDelimitGroup->addAction(tDelimitAllAction);
+
+   connect(tDelimitOutputAction, SIGNAL(triggered()), this, SLOT(onDelimitOut()));
+   connect(tDelimitAllAction, SIGNAL(triggered()), this, SLOT(onDelimitAll()));
+   connect(tDelimitNoneAction, SIGNAL(triggered()), this, SLOT(onDelimitNone()));
+
+   /*
+    * Create menu.
+    */
+   QMenu *tMenu;
+
+#if FILE_MENU
+   tMenu = menuBar()->addMenu("&File");
+   tMenu->addAction(quit);
+#endif
+
+   tMenu = menuBar()->addMenu("&Operate");
+   tMenu->addAction(tGoAction);
+   tMenu->addAction(tStopAction);
+   tMenu->addAction(tBypassAction);
+
+   tMenu = menuBar()->addMenu("&Delimit Records");
+   tMenu->addAction(tDelimitOutputAction);
+   tMenu->addAction(tDelimitNoneAction);
+   tMenu->addAction(tDelimitAllAction);
+
+   QToolBar *toolbar = addToolBar("main toolbar");
+   toolbar->addAction(tGoAction);
+   toolbar->addAction(tStopAction);
+   toolbar->addAction(tBypassAction);
+   toolbar->addSeparator();
+   toolbar->addAction(tDelimitOutputAction);
+   toolbar->addAction(tDelimitNoneAction);
+   toolbar->addAction(tDelimitAllAction);
+
+
+#if 0
+   toolbar->addSeparator();
+
+   QAction *quit2 = toolbar->addAction(QIcon(quitpix),
+       "Quit Application");
+   connect(quit2, SIGNAL(triggered()), qApp, SLOT(quit()));
+#endif
+
+   _StatusLabel = new QLabel();
+   _StatusLabel->setAutoFillBackground(true);
+
+   setOutputMode(StreamReader::eNormal);
+
+   statusBar()->addWidget(_StatusLabel);
+   statusBar()->addPermanentWidget(new QLabel("-counts-"));
 }
 
 //-----------------------------------------------------------------------------

@@ -67,10 +67,12 @@ public slots:
   void onOutputModeButtonClicked(QAbstractButton *aButton);
 
   void onBypass();
-
   void onGo();
-
   void onStop();
+
+  void onDelimitOut();
+  void onDelimitAll();
+  void onDelimitNone();
 
 protected:
 
@@ -112,7 +114,11 @@ protected:
 
   void processCommandLine(int argc,char *argv[]);
 
+  void setupMenuAndToolbar();
+
   void setOutputMode(StreamReader::OutputMode aMode);
+
+  void setDelimitMode(StreamReader::DelimitMode aMode);
 
   void setStatusLabel(QString aStatus,QPalette aPalette);
 
