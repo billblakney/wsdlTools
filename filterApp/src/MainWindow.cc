@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 #include <QActionGroup>
 #include <QButtonGroup>
+#include <QDockWidget>
 #include <QHeaderView>
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -276,21 +277,24 @@ void MainWindow::setupView(std::string aStructName)
    QPixmap tBypass("bypass3.png");
    QPixmap tGreenLight("green.png");
    QPixmap tRedLight("red.png");
+   QPixmap tDelimAll("delim_all.png");
+   QPixmap tDelimOut("delim_out.png");
+   QPixmap tDelimNone("delim_none.png");
 //   QPixmap quitpix("quit.png");
 
    QAction *quit = new QAction("&Quit", this);
 
-   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Run", this);
+   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Go", this);
    QAction *tStopAction = new QAction(QIcon(tRedLight),"&Stop", this);
    QAction *tBypassAction = new QAction(QIcon(tBypass),"&Bypass", this);
 
-   tGoAction->setShortcut(QKeySequence(Qt::Key_R));
+   tGoAction->setShortcut(QKeySequence(Qt::Key_G));
    tStopAction->setShortcut(QKeySequence(Qt::Key_S));
    tBypassAction->setShortcut(QKeySequence(Qt::Key_B));
 
-   QAction *tDelimitAllAction = new QAction(QIcon(tBypass),"&Delimit All Records", this);
-   QAction *tDelimitOutputAction = new QAction(QIcon(tBypass),"&Delimit Output Records", this);
-   QAction *tDelimitNoneAction = new QAction(QIcon(tBypass),"&No Record Delimiter", this);
+   QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),"&Delimit Output Records", this);
+   QAction *tDelimitNoneAction = new QAction(QIcon(tDelimNone),"&No Record Delimiters", this);
+   QAction *tDelimitAllAction = new QAction(QIcon(tDelimAll),"&Delimit All Records", this);
 
    QMenu *file;
    file = menuBar()->addMenu("&File");
@@ -302,9 +306,9 @@ void MainWindow::setupView(std::string aStructName)
    file->addAction(tBypassAction);
 
    file = menuBar()->addMenu("&Delimit Records");
-   file->addAction(tDelimitAllAction);
    file->addAction(tDelimitOutputAction);
    file->addAction(tDelimitNoneAction);
+   file->addAction(tDelimitAllAction);
 
    tGoAction->setCheckable(true);
    tStopAction->setCheckable(true);
@@ -324,9 +328,9 @@ void MainWindow::setupView(std::string aStructName)
    tDelimitOutputAction->setChecked(true);
 
    QActionGroup *tDelimitGroup = new QActionGroup(this);
-   tDelimitGroup->addAction(tDelimitAllAction);
    tDelimitGroup->addAction(tDelimitOutputAction);
    tDelimitGroup->addAction(tDelimitNoneAction);
+   tDelimitGroup->addAction(tDelimitAllAction);
 
    connect(tGoAction, SIGNAL(triggered()), this, SLOT(onGo()));
    connect(tStopAction, SIGNAL(triggered()), this, SLOT(onStop()));
@@ -341,9 +345,9 @@ void MainWindow::setupView(std::string aStructName)
    toolbar->addAction(tStopAction);
    toolbar->addAction(tBypassAction);
    toolbar->addSeparator();
-   toolbar->addAction(tDelimitAllAction);
    toolbar->addAction(tDelimitOutputAction);
    toolbar->addAction(tDelimitNoneAction);
+   toolbar->addAction(tDelimitAllAction);
 
 
 #if 0
@@ -364,6 +368,12 @@ void MainWindow::setupView(std::string aStructName)
 
    _CentralWidget = new QWidget(this);
    setCentralWidget(_CentralWidget);
+
+   QDockWidget *shapesDockWidget = new QDockWidget(QString("Shapes"));
+   shapesDockWidget->setObjectName("shapesDockWidget");
+   shapesDockWidget->setWidget(new QLabel("dock area"));
+   shapesDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
+   addDockWidget(Qt::TopDockWidgetArea, shapesDockWidget);
 
   /*
    * Set the name of the structure to be used for the tree view.
