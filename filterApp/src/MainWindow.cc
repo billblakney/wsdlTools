@@ -7,6 +7,9 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMenu>
+#include <QMenuBar>
+#include <QToolBar>
 #include <QVBoxLayout>
 #include "ComboBoxDelegate.hh"
 #include "TestRegexDelegate.hh"
@@ -20,7 +23,9 @@ MainWindow::MainWindow(
     int argc, char *argv[],QApplication &aApp,QWidget *aParent,
     StructorBuilder *aStructorBuilder,bool aIsFilterMode,
     StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
-  : QWidget(aParent),
+/*  : QWidget(aParent),TODO*/
+  : QMainWindow(aParent),
+    _CentralWidget(0),
     _StructorBuilder(aStructorBuilder),
     _IsFilterMode(aIsFilterMode),
     _StreamReader(aStreamReader),
@@ -178,6 +183,22 @@ void MainWindow::onFormatOptionSelection(bool aIsChecked)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::onGo()
+{
+    std::cout << "Go clicked" << std::endl;
+    emit outputModeSelected((int)StreamReader::eNormal);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onStop()
+{
+    std::cout << "Stop clicked" << std::endl;
+    emit outputModeSelected((int)StreamReader::eFreezeDrop);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
 {
   if (aButton == _OutputNormalButton)
@@ -208,6 +229,48 @@ void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
 //-----------------------------------------------------------------------------
 void MainWindow::setupView(std::string aStructName)
 {
+   QPixmap tGreenLight("green.png");
+   QPixmap tRedLight("red.png");
+//   QPixmap quitpix("quit.png");
+
+   QAction *quit = new QAction("&Quit", this);
+
+   QAction *tGoAction = new QAction("&Go", this);
+   QAction *tStopAction = new QAction("&Stop", this);
+
+   QMenu *file;
+   file = menuBar()->addMenu("&File");
+   file->addAction(quit);
+
+   file = menuBar()->addMenu("&Run");
+   file->addAction(tGoAction);
+   file->addAction(tStopAction);
+
+   connect(tGoAction, SIGNAL(triggered()), this, SLOT(onGo()));
+   connect(tStopAction, SIGNAL(triggered()), this, SLOT(onStop()));
+
+#if 0
+   connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
+#endif
+
+   QToolBar *toolbar = addToolBar("main toolbar");
+   QAction *tGoActionTB = toolbar->addAction(QIcon(tGreenLight), "Go");
+   QAction *tStopActionTB = toolbar->addAction(QIcon(tRedLight), "Stop");
+
+   connect(tGoActionTB, SIGNAL(triggered()), this, SLOT(onGo()));
+   connect(tStopActionTB, SIGNAL(triggered()), this, SLOT(onStop()));
+
+#if 0
+   toolbar->addSeparator();
+
+   QAction *quit2 = toolbar->addAction(QIcon(quitpix),
+       "Quit Application");
+   connect(quit2, SIGNAL(triggered()), qApp, SLOT(quit()));
+#endif
+
+   _CentralWidget = new QWidget(this);
+   setCentralWidget(_CentralWidget);
+
   /*
    * Set the name of the structure to be used for the tree view.
    * When running in the filter mode, aStructName should always have a value.
@@ -227,7 +290,7 @@ void MainWindow::setupView(std::string aStructName)
   /*
    * Create structure dropdown list.
    */
-  _StructComboBox = createStructComboBox(this);
+  _StructComboBox = createStructComboBox(_CentralWidget);
 
   /*
    * Create structure tree view.
@@ -235,7 +298,7 @@ void MainWindow::setupView(std::string aStructName)
    * other methods used below rely on _DataStructModel being set before they
    * are called.
    */
-  _StructTree = createTreeView(this);
+  _StructTree = createTreeView(_CentralWidget);
 
   QTabWidget *tTabWidget = NULL;
   /*
@@ -256,7 +319,7 @@ void MainWindow::setupView(std::string aStructName)
      * Create bypass checkbox and connect it to the stream reader.
      */
     _PropagateCheckBox = new QCheckBox(
-        "Propagate check on field name node to children",this);
+        "Propagate check on field name node to children",_CentralWidget);
 
     connect(_PropagateCheckBox,SIGNAL(toggled(bool)),
         _DataStructModel,SLOT(onPropogateToggled(bool)));
@@ -280,7 +343,7 @@ void MainWindow::setupView(std::string aStructName)
   }
   tWindowLayout->addWidget(_StructTree);
 
-  setLayout(tWindowLayout);
+  _CentralWidget->setLayout(tWindowLayout);
 
   // always hide these debug columns
   _StructTree->hideColumn(DataStructModel::eColFieldKey);

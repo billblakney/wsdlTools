@@ -137,6 +137,7 @@ int main(int argc, char *argv[])
   ccl::Logger::initialize();
 
   QApplication app(argc, argv);
+  app.setApplicationDisplayName(QString("WSDL FIlter"));
 
 
   /*

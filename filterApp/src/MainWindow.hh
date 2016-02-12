@@ -7,13 +7,14 @@
 #include <QRadioButton>
 #include <QStringList>
 #include <QWidget>
+#include <QMainWindow>
 #include "DataStructModel.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "StructorBuilder.hh"
 #include "StructTreeView.hh"
 
-class MainWindow: public QWidget
+class MainWindow: public QMainWindow
 {
   Q_OBJECT
 public:
@@ -64,7 +65,13 @@ public slots:
 
   void onOutputModeButtonClicked(QAbstractButton *aButton);
 
+  void onGo();
+
+  void onStop();
+
 protected:
+
+  QWidget            *_CentralWidget;
 
 	StructorBuilder    *_StructorBuilder;
   bool                _IsFilterMode;
