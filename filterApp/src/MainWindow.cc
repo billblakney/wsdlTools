@@ -298,14 +298,6 @@ void MainWindow::setOutputMode(StreamReader::OutputMode aMode)
 //-----------------------------------------------------------------------------
 void MainWindow::setFormatMode(RecordProcessor::FormatMode aMode)
 {
-  switch (aMode) {
-  case RecordProcessor::eAsIs:
-    std::cout << "EMITTING As-Is FORMAT" << std::endl;
-    break;
-  case RecordProcessor::eLongname:
-    std::cout << "EMITTING Longname FORMAT" << std::endl;
-    break;
-  }
   emit formatOptionSelected((int)aMode);
 }
 
@@ -390,9 +382,9 @@ void MainWindow::setupView(std::string aStructName)
     _ConfigureWidget = createConfigureWidget(0);
 
 //   QDockWidget *shapesDockWidget = new QDockWidget(QString("Shapes"));
-   QDockWidget *shapesDockWidget = new QDockWidget(_ConfigureWidget);
+   QDockWidget *shapesDockWidget = new QDockWidget(this);
    shapesDockWidget->setObjectName("shapesDockWidget");
-   shapesDockWidget->setWidget(new QLabel("dock area"));
+   shapesDockWidget->setWidget(_ConfigureWidget);
    shapesDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
    addDockWidget(Qt::TopDockWidgetArea, shapesDockWidget);
 #endif
@@ -435,7 +427,7 @@ void MainWindow::setupView(std::string aStructName)
 //  }
   if (tTabWidget)
   {
-    tWindowLayout->addWidget(tTabWidget);
+//    tWindowLayout->addWidget(tTabWidget);
     tWindowLayout->addWidget(_PropagateCheckBox);
   }
   tWindowLayout->addWidget(_StructTree);
