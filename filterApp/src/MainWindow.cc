@@ -228,6 +228,34 @@ void MainWindow::onDelimitNone()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::onAsIsFormat()
+{
+  setFormatMode(RecordProcessor::eAsIs);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onLongnameFormat()
+{
+  setFormatMode(RecordProcessor::eLongname);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onTableFormat()
+{
+  setFormatMode(RecordProcessor::eTable);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onCustomFormat()
+{
+  setFormatMode(RecordProcessor::eCustom);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::setDelimitMode(StreamReader::DelimitMode aMode)
 {
   emit delimitOptionSelected((int)aMode);
@@ -260,6 +288,13 @@ void MainWindow::setOutputMode(StreamReader::OutputMode aMode)
     default:
       break;
   }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::setFormatMode(RecordProcessor::FormatMode aMode)
+{
+  emit formatOptionSelected((int)aMode);
 }
 
 //-----------------------------------------------------------------------------
@@ -453,6 +488,37 @@ void MainWindow::setupMenuAndToolbar()
    connect(tBypassAction, SIGNAL(triggered()), this, SLOT(onBypass()));
 
    /*
+    * Create format mode actions.
+    */
+   QAction *tAsIsFormatAction = new QAction(QIcon(tGreenLight),"&As-is", this);
+   QAction *tLongnameFormatAction = new QAction(QIcon(tRedLight),"&Long name", this);
+   QAction *tTableFormatAction = new QAction(QIcon(tBypass),"&Table", this);
+   QAction *tCustomFormatAction = new QAction(QIcon(tBypass),"&Custom", this);
+
+   tAsIsFormatAction->setShortcut(QKeySequence(Qt::Key_A));
+   tLongnameFormatAction->setShortcut(QKeySequence(Qt::Key_L));
+   tTableFormatAction->setShortcut(QKeySequence(Qt::Key_T));
+   tCustomFormatAction->setShortcut(QKeySequence(Qt::Key_C));
+
+   tAsIsFormatAction->setCheckable(true);
+   tLongnameFormatAction->setCheckable(true);
+   tTableFormatAction->setCheckable(true);
+   tCustomFormatAction->setCheckable(true);
+
+   tAsIsFormatAction->setChecked(true);
+
+   QActionGroup *tFormatGroup = new QActionGroup(this);
+   tFormatGroup->addAction(tAsIsFormatAction);
+   tFormatGroup->addAction(tLongnameFormatAction);
+   tFormatGroup->addAction(tTableFormatAction);
+   tFormatGroup->addAction(tCustomFormatAction);
+
+   connect(tAsIsFormatAction, SIGNAL(triggered()), this, SLOT(onAsIsFormat()));
+   connect(tLongnameFormatAction, SIGNAL(triggered()), this, SLOT(onLongnameFormat()));
+   connect(tTableFormatAction, SIGNAL(triggered()), this, SLOT(onTableFormat()));
+   connect(tCustomFormatAction, SIGNAL(triggered()), this, SLOT(onCustomFormat()));
+
+   /*
     * Create record delimiter actions.
     */
    QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),"&Delimit Output Records", this);
@@ -494,7 +560,16 @@ void MainWindow::setupMenuAndToolbar()
    tMenu->addAction(tDelimitNoneAction);
    tMenu->addAction(tDelimitAllAction);
 
-   QToolBar *toolbar = addToolBar("main toolbar");
+   tMenu = menuBar()->addMenu("&Format Mode");
+   tMenu->addAction(tAsIsFormatAction);
+   tMenu->addAction(tLongnameFormatAction);
+   tMenu->addAction(tTableFormatAction);
+   tMenu->addAction(tCustomFormatAction);
+
+   /*
+    * Create toolbar.
+    */
+   QToolBar *toolbar = addToolBar("Main Toolbar");
    toolbar->addAction(tGoAction);
    toolbar->addAction(tStopAction);
    toolbar->addAction(tBypassAction);
@@ -502,6 +577,11 @@ void MainWindow::setupMenuAndToolbar()
    toolbar->addAction(tDelimitOutputAction);
    toolbar->addAction(tDelimitNoneAction);
    toolbar->addAction(tDelimitAllAction);
+   toolbar->addSeparator();
+   toolbar->addAction(tAsIsFormatAction);
+   toolbar->addAction(tLongnameFormatAction);
+   toolbar->addAction(tTableFormatAction);
+   toolbar->addAction(tCustomFormatAction);
 
 
 #if 0
