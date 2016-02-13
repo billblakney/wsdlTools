@@ -46,6 +46,8 @@ public slots:
 
   void onModelUpdate();
 
+  void onOutputModeAction(QAction *aAction);
+
   void onAsIsPushbuttonClicked(bool);
   void onLongnamePushbuttonClicked(bool);
   void onTablePushbuttonClicked(bool);

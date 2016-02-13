@@ -139,6 +139,36 @@ void MainWindow::processCommandLine(int argc,char *argv[])
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::onOutputModeAction(QAction *aAction)
+{
+  StreamReader::OutputMode aMode =
+      static_cast<StreamReader::OutputMode>(aAction->data().toInt());
+
+  QPalette tPalette;
+
+  switch (aMode) {
+    case StreamReader::eNormal:
+      tPalette.setColor(QPalette::Window, Qt::white);
+      tPalette.setColor(QPalette::WindowText, Qt::black);
+      setStatusLabel("Normal",tPalette);
+      break;
+    case StreamReader::eFreezeDrop:
+      tPalette.setColor(QPalette::Window, Qt::darkRed);
+      tPalette.setColor(QPalette::WindowText, Qt::white);
+      setStatusLabel("Freeze",tPalette);
+      break;
+    case StreamReader::eBypass:
+      tPalette.setColor(QPalette::Window, Qt::darkGray);
+      tPalette.setColor(QPalette::WindowText, Qt::white);
+      setStatusLabel("Bypass",tPalette);
+      break;
+    default:
+      break;
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::setStatusLabel(QString aStatus,QPalette aPalette)
 {
   _StatusLabel->setPalette(aPalette);
@@ -204,7 +234,6 @@ void MainWindow::setupView(std::string aStructName)
    addDockWidget(Qt::TopDockWidgetArea, shapesDockWidget);
 #endif
 
-  QTabWidget *tTabWidget = NULL;
   /*
    * The options will only be populated when in filter mode.
    */
@@ -225,7 +254,7 @@ void MainWindow::setupView(std::string aStructName)
    */
   QVBoxLayout *tWindowLayout = new QVBoxLayout;
   tWindowLayout->addWidget(_StructComboBox);
-  if (tTabWidget)
+  if (_IsFilterMode)
   {
     tWindowLayout->addWidget(_PropagateCheckBox);
   }
@@ -256,12 +285,18 @@ void MainWindow::setupMenuAndToolbar()
 {
    QPixmap tGreenLight("green.png");
    QPixmap tRedLight("red.png");
-   QPixmap tBypass("bypass3.png");
+//   QPixmap tBypass("bypass3.png");
+   QPixmap tBypass("bypass_arrow.png");
 
    QPixmap tDelimAll("delim_all.png");
    QPixmap tDelimOut("delim_out.png");
    QPixmap tDelimNone("delim_none.png");
 //   QPixmap quitpix("quit.png");
+
+   QPixmap tFormatAsIs("fmt_asis.png");
+   QPixmap tFormatLongname("fmt_longname.png");
+   QPixmap tFormatTable("fmt_table.png");
+   QPixmap tFormatCustom("fmt_custom.png");
 
 #if FILE_MENU
    /*
@@ -304,14 +339,15 @@ void MainWindow::setupMenuAndToolbar()
 
    // action signal-slot
    connect(tRunGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onOutputModeAction(QAction*)));
+   connect(tRunGroup, SIGNAL(triggered(QAction*)), this, SLOT(onOutputModeAction(QAction*)));
 
    /*
     * Create format mode actions.
     */
-   QAction *tAsIsFormatAction = new QAction(QIcon(tGreenLight),"&As-is", this);
-   QAction *tLongnameFormatAction = new QAction(QIcon(tRedLight),"&Long name", this);
-   QAction *tTableFormatAction = new QAction(QIcon(tBypass),"&Table", this);
-   QAction *tCustomFormatAction = new QAction(QIcon(tBypass),"&Custom", this);
+   QAction *tAsIsFormatAction = new QAction(QIcon(tFormatAsIs),"&As-is", this);
+   QAction *tLongnameFormatAction = new QAction(QIcon(tFormatLongname),"&Long name", this);
+   QAction *tTableFormatAction = new QAction(QIcon(tFormatTable),"&Table", this);
+   QAction *tCustomFormatAction = new QAction(QIcon(tFormatCustom),"&Custom", this);
 
    // short-cuts
    tAsIsFormatAction->setShortcut(QKeySequence(Qt::Key_A));
@@ -427,6 +463,8 @@ void MainWindow::setupMenuAndToolbar()
    _StatusLabel->setAutoFillBackground(true);
 
    statusBar()->addWidget(_StatusLabel);
+   onOutputModeAction(tGoAction); // initializes status label to the default
+
    statusBar()->addPermanentWidget(new QLabel("-counts-"));
 }
 
