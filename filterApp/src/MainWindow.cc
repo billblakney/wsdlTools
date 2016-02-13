@@ -634,10 +634,3 @@ void MainWindow::onStructComboBoxActivated(int index)
   QString tString = _StructComboBox->itemText(index);
   setTreeViewStruct(tString.toStdString());
 }
-
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-void MainWindow::onSetFilterClicked(bool)
-{
-  _DataStructModel->printTestNodes();
-}
