@@ -135,14 +135,6 @@ protected:
 
   QWidget *createConfigureWidget(QWidget *aParent);
 
-  QWidget *createOperateWidget(QWidget *aParent);
-
-  QGroupBox *createDelimitModeGroup(QWidget *aParent);
-
-  QGroupBox *createFormatModeGroup(QWidget *aParent);
-
-  QGroupBox *createOutputModeGroup(QWidget *aParent);
-
   QGroupBox *createCustomFormatGroup(QWidget *aParent);
 
 	QStringList convertToQStringList(std::vector<std::string> aStrings);

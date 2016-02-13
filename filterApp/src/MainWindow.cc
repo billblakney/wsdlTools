@@ -26,7 +26,6 @@ MainWindow::MainWindow(
     int argc, char *argv[],QApplication &aApp,QWidget *aParent,
     StructorBuilder *aStructorBuilder,bool aIsFilterMode,
     StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
-/*  : QWidget(aParent),TODO*/
   : QMainWindow(aParent),
     _CentralWidget(0),
     _StructorBuilder(aStructorBuilder),
@@ -395,15 +394,6 @@ void MainWindow::setupView(std::string aStructName)
    */
   if (_IsFilterMode)
   {
-    tTabWidget = new QTabWidget(0);
-    tTabWidget->setSizePolicy(
-        QSizePolicy::MinimumExpanding,QSizePolicy::Minimum);
-//    _ConfigureWidget = createConfigureWidget(0);
-//    _ConfigureWidget->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-//    _OperateWidget = createOperateWidget(0);
-//    tTabWidget->addTab(_ConfigureWidget,QString("Configure"));
-//    tTabWidget->addTab(_OperateWidget,QString("Operate"));
-
     /*
      * Create bypass checkbox and connect it to the stream reader.
      */
@@ -419,15 +409,8 @@ void MainWindow::setupView(std::string aStructName)
    */
   QVBoxLayout *tWindowLayout = new QVBoxLayout;
   tWindowLayout->addWidget(_StructComboBox);
-//TODO rm
-//  if (_OptionsWidget)
-//  {
-//    tWindowLayout->addWidget(_OptionsWidget);
-//    tWindowLayout->addWidget(_PropagateCheckBox);
-//  }
   if (tTabWidget)
   {
-//    tWindowLayout->addWidget(tTabWidget);
     tWindowLayout->addWidget(_PropagateCheckBox);
   }
   tWindowLayout->addWidget(_StructTree);
@@ -720,195 +703,6 @@ QWidget *MainWindow::createConfigureWidget(QWidget *aParent)
     return tConfigure;
 }
 
-//-----------------------------------------------------------------------------
-// Creates the options widget.
-//-----------------------------------------------------------------------------
-QWidget *MainWindow::createOperateWidget(QWidget *aParent)
-{
-    QWidget *tOperate = new QWidget(aParent);
-
-    QGroupBox *tOutputModeGroup = createOutputModeGroup(tOperate);
-    tOutputModeGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-//    QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
-//    tMainOptionsLayout->addWidget(tOutputModeGroup);
-//    tMainOptions->setLayout(tMainOptionsLayout);
-
-
-    QHBoxLayout *tLayout = new QHBoxLayout;
-    tLayout->addWidget(tOutputModeGroup);
-    tLayout->setAlignment(tOutputModeGroup,Qt::AlignTop);
-
-    tOperate->setLayout(tLayout);
-
-    return tOperate;
-}
-
-//-----------------------------------------------------------------------------
-// Creates the delimit mode widget.
-//-----------------------------------------------------------------------------
-QGroupBox *MainWindow::createDelimitModeGroup(QWidget *aParent)
-{
-    QGroupBox *tGroup = new QGroupBox("Delimit Records Mode",aParent);
-    tGroup->setFlat(true);
-
-    _DelimitAllButton =
-        new QRadioButton("Always",tGroup);
-    _DelimitOutputButton =
-        new QRadioButton("On output",tGroup);
-    _DelimitNoneButton =
-        new QRadioButton("Never",tGroup);
-
-   _DelimitOutputButton->setChecked(true);
-
-    connect(_DelimitAllButton,SIGNAL(toggled(bool)),
-        this,SLOT(onDelimitOptionSelection(bool)));
-    connect(_DelimitOutputButton,SIGNAL(toggled(bool)),
-        this,SLOT(onDelimitOptionSelection(bool)));
-    connect(_DelimitNoneButton,SIGNAL(toggled(bool)),
-        this,SLOT(onDelimitOptionSelection(bool)));
-
-    connect(this,SIGNAL(delimitOptionSelected(int)),
-        _StreamReader,SLOT(setDelimitMode(int)));
-
-#if 0 //TODO rm
-    /*
-     * Create delimit records checkbox and connect it to the stream reader.
-     */
-    QCheckBox *tDelimitRecordsCheckBox =
-        new QCheckBox("Delimit records",tGroup);
-    tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
-
-    connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
-        _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
-#endif
-
-    QVBoxLayout *tLayout = new QVBoxLayout;
-    tLayout->addWidget(_DelimitAllButton);
-    tLayout->addWidget(_DelimitOutputButton);
-    tLayout->addWidget(_DelimitNoneButton);
-
-    tGroup->setLayout(tLayout);
-    return tGroup;
-}
-
-//-----------------------------------------------------------------------------
-// Creates the format mode widget.
-//-----------------------------------------------------------------------------
-QGroupBox *MainWindow::createFormatModeGroup(QWidget *aParent)
-{
-    QGroupBox *tGroup = new QGroupBox("Format Mode",aParent);
-    tGroup->setFlat(true);
-
-    _FormatAsIsButton =
-        new QRadioButton("As-is Formatting",tGroup);
-    _FormatLongnameButton =
-        new QRadioButton("Longname Formatting",tGroup);
-    _FormatTableButton =
-        new QRadioButton("Table Formatting",tGroup);
-    _FormatCustomButton =
-        new QRadioButton("Custom Formatting",tGroup);
-
-    _FormatCustomButton->setChecked(true);
-
-    connect(_FormatAsIsButton,SIGNAL(toggled(bool)),
-        this,SLOT(onFormatOptionSelection(bool)));
-    connect(_FormatLongnameButton,SIGNAL(toggled(bool)),
-        this,SLOT(onFormatOptionSelection(bool)));
-    connect(_FormatTableButton,SIGNAL(toggled(bool)),
-        this,SLOT(onFormatOptionSelection(bool)));
-    connect(_FormatCustomButton,SIGNAL(toggled(bool)),
-        this,SLOT(onFormatOptionSelection(bool)));
-
-    connect(this,SIGNAL(formatOptionSelected(int)),
-        _RecordProcessor,SLOT(setFormatMode(int)));
-
-#if 0 //TODO rm
-    /*
-     * Create delimit records checkbox and connect it to the stream reader.
-     */
-    QCheckBox *tDelimitRecordsCheckBox =
-        new QCheckBox("Delimit records",tGroup);
-    tDelimitRecordsCheckBox->setCheckState(Qt::Checked);
-
-    connect(tDelimitRecordsCheckBox,SIGNAL(toggled(bool)),
-        _StreamReader,SLOT(onDelimitRecordsToggle(bool)));
-#endif
-
-    QVBoxLayout *tLayout = new QVBoxLayout;
-    tLayout->addWidget(_FormatAsIsButton);
-    tLayout->addWidget(_FormatLongnameButton);
-    tLayout->addWidget(_FormatTableButton);
-    tLayout->addWidget(_FormatCustomButton);
-
-    tGroup->setLayout(tLayout);
-    return tGroup;
-}
-
-//-----------------------------------------------------------------------------
-// Creates the output mode widget.
-QGroupBox *MainWindow::createOutputModeGroup(QWidget *aParent)
-{
-    QGroupBox *tGroup = new QGroupBox("Output Mode",aParent);
-    tGroup->setFlat(true);
-
-    _OutputNormalButton =
-        new QRadioButton("Normal",tGroup);
-    _OutputFreezeDropButton =
-        new QRadioButton("Freeze - drop incoming",tGroup);
-    _OutputFreezeQueueButton =
-        new QRadioButton("Freeze - queue incoming",tGroup);
-    _OutputBypassButton =
-        new QRadioButton("Bypass",tGroup);
-
-    _OutputFreezeQueueButton->setEnabled(false);
-
-    _OutputNormalButton->setChecked(true);
-
-    _OutputModeButtonGroup = new QButtonGroup(this);
-
-    _OutputModeButtonGroup->addButton(_OutputNormalButton);
-    _OutputModeButtonGroup->addButton(_OutputFreezeDropButton);
-    _OutputModeButtonGroup->addButton(_OutputFreezeQueueButton);
-    _OutputModeButtonGroup->addButton(_OutputBypassButton);
-
-    connect(_OutputModeButtonGroup,SIGNAL(buttonClicked(QAbstractButton*)),
-        this,SLOT(onOutputModeButtonClicked(QAbstractButton*)));
-
-    connect(this,SIGNAL(outputModeSelected(int)),
-        _StreamReader,SLOT(onOutputModeSelected(int)));
-
-#define USE_FREEZE_QUEUE
-#ifdef USE_FREEZE_QUEUE
-    QWidget *tFreezeQueuePanel = new QWidget(this);
-    tFreezeQueuePanel->setContentsMargins(0,0,0,0);
-
-    QPushButton *tNext = new QPushButton("Next",tFreezeQueuePanel);
-    tNext->setMaximumSize(30,20);
-    tNext->setEnabled(false);
-
-    QLabel *tQueueCount = new QLabel("Queued: ",tFreezeQueuePanel);
-    tQueueCount->setEnabled(false);
-
-    QHBoxLayout *tFreezeQueueLayout = new QHBoxLayout;
-    tFreezeQueueLayout->addWidget(tNext);
-    tFreezeQueueLayout->addWidget(tQueueCount);
-    tFreezeQueuePanel->setLayout(tFreezeQueueLayout);
-#endif
-
-    QVBoxLayout *tGroupLayout = new QVBoxLayout;
-    tGroupLayout->addWidget(_OutputNormalButton);
-    tGroupLayout->addWidget(_OutputBypassButton);
-    tGroupLayout->addWidget(_OutputFreezeDropButton);
-    tGroupLayout->addWidget(_OutputFreezeQueueButton);
-#ifdef USE_FREEZE_QUEUE
-    tGroupLayout->addWidget(tFreezeQueuePanel);
-#endif
-
-    tGroup->setLayout(tGroupLayout);
-    return tGroup;
-}
-
 //-------------------------------------------------------------------------------
 // Note that tree view must be created before this is called. Otherwise,
 // _DataStructMode will be null, and so the connections won't be made.
@@ -948,15 +742,6 @@ QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
     tGrid->addWidget(_TableCheckBox,2,1);
 
     tGroup->setLayout(tGrid);
-
-#if 0
-    QVBoxLayout *tGroupLayout = new QVBoxLayout;
-    tGroupLayout->addWidget(tAsIsButton);
-    tGroupLayout->addWidget(tLongnameButton);
-    tGroupLayout->addWidget(tTableButton);
-
-    tGroup->setLayout(tGroupLayout);
-#endif
 
     return tGroup;
 }
