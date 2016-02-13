@@ -398,11 +398,11 @@ void MainWindow::setupView(std::string aStructName)
     tTabWidget = new QTabWidget(0);
     tTabWidget->setSizePolicy(
         QSizePolicy::MinimumExpanding,QSizePolicy::Minimum);
-    _ConfigureWidget = createConfigureWidget(0);
+//    _ConfigureWidget = createConfigureWidget(0);
 //    _ConfigureWidget->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-    _OperateWidget = createOperateWidget(0);
-    tTabWidget->addTab(_ConfigureWidget,QString("Configure"));
-    tTabWidget->addTab(_OperateWidget,QString("Operate"));
+//    _OperateWidget = createOperateWidget(0);
+//    tTabWidget->addTab(_ConfigureWidget,QString("Configure"));
+//    tTabWidget->addTab(_OperateWidget,QString("Operate"));
 
     /*
      * Create bypass checkbox and connect it to the stream reader.
@@ -498,6 +498,9 @@ void MainWindow::setupMenuAndToolbar()
    connect(tGoAction, SIGNAL(triggered()), this, SLOT(onGo()));
    connect(tStopAction, SIGNAL(triggered()), this, SLOT(onStop()));
    connect(tBypassAction, SIGNAL(triggered()), this, SLOT(onBypass()));
+
+    connect(this,SIGNAL(outputModeSelected(int)),
+        _StreamReader,SLOT(onOutputModeSelected(int)));
 
    /*
     * Create format mode actions.
@@ -964,6 +967,7 @@ void MainWindow::onAsIsPushbuttonClicked(bool)
 {
   int tAsIsInt = (int)RecordProcessor::eAsIs;
   bool tChecked = (_AsIsCheckBox->isChecked() ? true: false);
+std::cout << "tChecked=" << tChecked << std::endl; //TODO rm
   emit applyFormatMode(tAsIsInt,tChecked);
 }
 

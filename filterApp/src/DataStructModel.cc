@@ -1016,6 +1016,7 @@ uint DataStructModel::getPostfixIndex(std::string &aPostfix) const
 //-------------------------------------------------------------------------------
 void DataStructModel::applyFormatMode(int aFormatMode,bool aCheckedOnly)
 {
+std::cout << "aCheckedOnly=" << aCheckedOnly << std::endl; //TODO rm
   RecordProcessor::FormatMode tFormatMode =
       static_cast<RecordProcessor::FormatMode>(aFormatMode);
 
