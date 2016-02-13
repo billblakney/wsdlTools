@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <QAction>
 #include "StreamReader.hh"
 #include "SimpleLineMatcher.hh"
 
@@ -105,9 +106,9 @@ void StreamReader::setOutputMode(OutputMode aOutputMode)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StreamReader::onOutputModeSelected(int aOutputMode)
+void StreamReader::onOutputModeAction(QAction* aAction)
 {
-  OutputMode tMode = static_cast<OutputMode>(aOutputMode);
+  OutputMode tMode = static_cast<OutputMode>(aAction->data().toInt());
   setOutputMode(tMode);
 }
 

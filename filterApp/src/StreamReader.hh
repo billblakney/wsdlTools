@@ -41,7 +41,7 @@ public slots:
 
   void onDataStructModelAvailable(void * aDataStructModel);
 
-  void onOutputModeSelected(int aOutputMode);
+  void onOutputModeAction(QAction* aAction);
 
   void setDelimitMode(int aDelimitMode);
 

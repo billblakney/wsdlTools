@@ -42,8 +42,6 @@ signals:
 
   void formatOptionSelected(int aFormatOption);
 
-  void outputModeSelected(int aOutputMode);
-
   void applyFormatMode(int aFormatMode,bool aCheckedOnly);
 
 public slots:
@@ -59,12 +57,6 @@ public slots:
   void onStructComboBoxActivated(int index);
 
   void onSetFilterClicked(bool);
-
-  void onOutputModeButtonClicked(QAbstractButton *aButton);
-
-  void onBypass();
-  void onGo();
-  void onStop();
 
   void onDelimitOut();
   void onDelimitAll();
@@ -116,8 +108,6 @@ protected:
   void processCommandLine(int argc,char *argv[]);
 
   void setupMenuAndToolbar();
-
-  void setOutputMode(StreamReader::OutputMode aMode);
 
   void setDelimitMode(StreamReader::DelimitMode aMode);
 

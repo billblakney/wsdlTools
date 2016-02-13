@@ -139,27 +139,6 @@ void MainWindow::processCommandLine(int argc,char *argv[])
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MainWindow::onBypass()
-{
-    setOutputMode(StreamReader::eBypass);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::onGo()
-{
-    setOutputMode(StreamReader::eNormal);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::onStop()
-{
-    setOutputMode(StreamReader::eFreezeDrop);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
 void MainWindow::onDelimitOut()
 {
   setDelimitMode(StreamReader::eOutputRecords);
@@ -220,35 +199,6 @@ void MainWindow::setDelimitMode(StreamReader::DelimitMode aMode)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MainWindow::setOutputMode(StreamReader::OutputMode aMode)
-{
-  emit outputModeSelected((int)aMode);
-
-  QPalette tPalette;
-
-  switch (aMode) {
-    case StreamReader::eNormal:
-      tPalette.setColor(QPalette::Window, Qt::white);
-      tPalette.setColor(QPalette::WindowText, Qt::black);
-      setStatusLabel("Normal",tPalette);
-      break;
-    case StreamReader::eFreezeDrop:
-      tPalette.setColor(QPalette::Window, Qt::darkRed);
-      tPalette.setColor(QPalette::WindowText, Qt::white);
-      setStatusLabel("Freeze",tPalette);
-      break;
-    case StreamReader::eBypass:
-      tPalette.setColor(QPalette::Window, Qt::darkGray);
-      tPalette.setColor(QPalette::WindowText, Qt::white);
-      setStatusLabel("Bypass",tPalette);
-      break;
-    default:
-      break;
-  }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
 void MainWindow::setFormatMode(RecordProcessor::FormatMode aMode)
 {
   emit formatOptionSelected((int)aMode);
@@ -260,27 +210,6 @@ void MainWindow::setStatusLabel(QString aStatus,QPalette aPalette)
 {
   _StatusLabel->setPalette(aPalette);
   _StatusLabel->setText("Mode: " + aStatus);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::onOutputModeButtonClicked(QAbstractButton *aButton)
-{
-  if (aButton == _OutputNormalButton)
-  {
-    std::cout << "Normal clicked" << std::endl;
-    emit outputModeSelected((int)StreamReader::eNormal);
-  }
-  else if (aButton == _OutputBypassButton)
-  {
-    std::cout << "Bypass clicked" << std::endl;
-    emit outputModeSelected((int)StreamReader::eBypass);
-  }
-  else if (aButton == _OutputFreezeDropButton)
-  {
-    std::cout << "Freeze clicked" << std::endl;
-    emit outputModeSelected((int)StreamReader::eFreezeDrop);
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -427,17 +356,16 @@ void MainWindow::setupMenuAndToolbar()
 
    tGoAction->setChecked(true);
 
+   tGoAction->setData(QVariant(StreamReader::eNormal));
+   tStopAction->setData(QVariant(StreamReader::eFreezeDrop));
+   tBypassAction->setData(QVariant(StreamReader::eBypass));
+
    QActionGroup *tRunGroup = new QActionGroup(this);
    tRunGroup->addAction(tGoAction);
    tRunGroup->addAction(tStopAction);
    tRunGroup->addAction(tBypassAction);
 
-   connect(tGoAction, SIGNAL(triggered()), this, SLOT(onGo()));
-   connect(tStopAction, SIGNAL(triggered()), this, SLOT(onStop()));
-   connect(tBypassAction, SIGNAL(triggered()), this, SLOT(onBypass()));
-
-    connect(this,SIGNAL(outputModeSelected(int)),
-        _StreamReader,SLOT(onOutputModeSelected(int)));
+   connect(tRunGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onOutputModeAction(QAction*)));
 
    /*
     * Create format mode actions.
@@ -550,8 +478,6 @@ void MainWindow::setupMenuAndToolbar()
 
    _StatusLabel = new QLabel();
    _StatusLabel->setAutoFillBackground(true);
-
-   setOutputMode(StreamReader::eNormal);
 
    statusBar()->addWidget(_StatusLabel);
    statusBar()->addPermanentWidget(new QLabel("-counts-"));
