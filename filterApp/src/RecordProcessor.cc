@@ -34,10 +34,10 @@ void RecordProcessor::configure(
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void RecordProcessor::setFormatMode(int aFormatMode)
+void RecordProcessor::onFormatModeAction(QAction* aAction)
 {
   _Mutex.lock();
-  _FormatMode = static_cast<FormatMode>(aFormatMode);
+  _FormatMode = static_cast<FormatMode>(aAction->data().toInt());
   _Mutex.unlock();
 }
 

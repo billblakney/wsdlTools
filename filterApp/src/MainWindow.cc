@@ -160,48 +160,9 @@ void MainWindow::onDelimitNone()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MainWindow::onAsIsFormat()
-{
-  setFormatMode(RecordProcessor::eAsIs);
-std::cout << "AS-IS" << std::endl;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::onLongnameFormat()
-{
-  setFormatMode(RecordProcessor::eLongname);
-std::cout << "LONGNAME" << std::endl;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::onTableFormat()
-{
-  setFormatMode(RecordProcessor::eTable);
-std::cout << "TABLE" << std::endl;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::onCustomFormat()
-{
-  setFormatMode(RecordProcessor::eCustom);
-std::cout << "CUSTOM" << std::endl;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
 void MainWindow::setDelimitMode(StreamReader::DelimitMode aMode)
 {
   emit delimitOptionSelected((int)aMode);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::setFormatMode(RecordProcessor::FormatMode aMode)
-{
-  emit formatOptionSelected((int)aMode);
 }
 
 //-----------------------------------------------------------------------------
@@ -346,25 +307,30 @@ void MainWindow::setupMenuAndToolbar()
    QAction *tStopAction = new QAction(QIcon(tRedLight),"&Stop", this);
    QAction *tBypassAction = new QAction(QIcon(tBypass),"&Bypass", this);
 
+   // short-cuts
    tGoAction->setShortcut(QKeySequence(Qt::Key_G));
    tStopAction->setShortcut(QKeySequence(Qt::Key_S));
    tBypassAction->setShortcut(QKeySequence(Qt::Key_B));
 
+   // check boxes
    tGoAction->setCheckable(true);
    tStopAction->setCheckable(true);
    tBypassAction->setCheckable(true);
 
    tGoAction->setChecked(true);
 
+   // action data for action group trigger
    tGoAction->setData(QVariant(StreamReader::eNormal));
    tStopAction->setData(QVariant(StreamReader::eFreezeDrop));
    tBypassAction->setData(QVariant(StreamReader::eBypass));
 
+   // action group
    QActionGroup *tRunGroup = new QActionGroup(this);
    tRunGroup->addAction(tGoAction);
    tRunGroup->addAction(tStopAction);
    tRunGroup->addAction(tBypassAction);
 
+   // action signal-slot
    connect(tRunGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onOutputModeAction(QAction*)));
 
    /*
@@ -375,11 +341,13 @@ void MainWindow::setupMenuAndToolbar()
    QAction *tTableFormatAction = new QAction(QIcon(tBypass),"&Table", this);
    QAction *tCustomFormatAction = new QAction(QIcon(tBypass),"&Custom", this);
 
+   // short-cuts
    tAsIsFormatAction->setShortcut(QKeySequence(Qt::Key_A));
    tLongnameFormatAction->setShortcut(QKeySequence(Qt::Key_L));
    tTableFormatAction->setShortcut(QKeySequence(Qt::Key_T));
    tCustomFormatAction->setShortcut(QKeySequence(Qt::Key_C));
 
+   // check boxes
    tAsIsFormatAction->setCheckable(true);
    tLongnameFormatAction->setCheckable(true);
    tTableFormatAction->setCheckable(true);
@@ -387,18 +355,21 @@ void MainWindow::setupMenuAndToolbar()
 
    tAsIsFormatAction->setChecked(true);
 
+   // action data for action group trigger
+   tAsIsFormatAction->setData(QVariant(RecordProcessor::eAsIs));
+   tLongnameFormatAction->setData(QVariant(RecordProcessor::eLongname));
+   tTableFormatAction->setData(QVariant(RecordProcessor::eTable));
+   tCustomFormatAction->setData(QVariant(RecordProcessor::eCustom));
+
+   // action group
    QActionGroup *tFormatGroup = new QActionGroup(this);
    tFormatGroup->addAction(tAsIsFormatAction);
    tFormatGroup->addAction(tLongnameFormatAction);
    tFormatGroup->addAction(tTableFormatAction);
    tFormatGroup->addAction(tCustomFormatAction);
 
-   connect(tAsIsFormatAction, SIGNAL(triggered()), this, SLOT(onAsIsFormat()));
-   connect(tLongnameFormatAction, SIGNAL(triggered()), this, SLOT(onLongnameFormat()));
-   connect(tTableFormatAction, SIGNAL(triggered()), this, SLOT(onTableFormat()));
-   connect(tCustomFormatAction, SIGNAL(triggered()), this, SLOT(onCustomFormat()));
-
-   connect(this,SIGNAL(formatOptionSelected(int)), _RecordProcessor,SLOT(setFormatMode(int)));
+   // action signal-slot
+   connect(tFormatGroup, SIGNAL(triggered(QAction*)), _RecordProcessor, SLOT(onFormatModeAction(QAction*)));
 
    /*
     * Create record delimiter actions.

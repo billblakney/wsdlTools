@@ -62,11 +62,6 @@ public slots:
   void onDelimitAll();
   void onDelimitNone();
 
-  void onAsIsFormat();
-  void onLongnameFormat();
-  void onTableFormat();
-  void onCustomFormat();
-
 protected:
 
   QWidget            *_CentralWidget;
@@ -110,8 +105,6 @@ protected:
   void setupMenuAndToolbar();
 
   void setDelimitMode(StreamReader::DelimitMode aMode);
-
-  void setFormatMode(RecordProcessor::FormatMode aMode);
 
   void setStatusLabel(QString aStatus,QPalette aPalette);
 

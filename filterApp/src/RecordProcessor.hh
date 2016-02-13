@@ -1,6 +1,7 @@
 #ifndef _RECORDPROCESSOR_HH_
 #define _RECORDPROCESSOR_HH_
 
+#include <QAction>
 #include <QMutex>
 #include <QWidget>
 #include "FieldItem.hh"
@@ -60,9 +61,7 @@ public:
 
 public slots:
 
-  //---------------------------------------------------------------------------
-  //---------------------------------------------------------------------------
-  void setFormatMode(int aFormatMode);
+  void onFormatModeAction(QAction* aAction);
 
 protected:
 
