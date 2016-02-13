@@ -12,6 +12,7 @@
 class StreamReader: public QThread
 {
   Q_OBJECT;
+
 public:
 
   enum DelimitMode {eAllRecords, eOutputRecords, eNoRecords};
@@ -19,9 +20,6 @@ public:
   enum OutputMode {eNormal, eBypass, eFreezeDrop};
 
   StreamReader(RecordProcessor *aRecordProcessor);
-#if 0
-//  StreamReader(DataStructModel *aModel,RecordWriter *aWriter);
-#endif
   virtual ~StreamReader();
   void setRecordWriter(RecordWriter *aWriter);
 
@@ -43,7 +41,7 @@ public slots:
 
   void onOutputModeAction(QAction* aAction);
 
-  void setDelimitMode(int aDelimitMode);
+  void onDelimitModeAction(QAction* aAction);
 
 
   void run();

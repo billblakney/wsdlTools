@@ -38,10 +38,6 @@ signals:
 
   void dataStructModelAvailable(void *aModel);
 
-  void delimitOptionSelected(int aDelimitOption);
-
-  void formatOptionSelected(int aFormatOption);
-
   void applyFormatMode(int aFormatMode,bool aCheckedOnly);
 
 public slots:
@@ -55,12 +51,6 @@ public slots:
   void onTablePushbuttonClicked(bool);
 
   void onStructComboBoxActivated(int index);
-
-  void onSetFilterClicked(bool);
-
-  void onDelimitOut();
-  void onDelimitAll();
-  void onDelimitNone();
 
 protected:
 

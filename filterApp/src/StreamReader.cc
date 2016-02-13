@@ -127,23 +127,25 @@ bool StreamReader::inDelimitRecordsMode()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StreamReader::setDelimitMode(int aDelimitMode)
+void StreamReader::onDelimitModeAction(QAction* aAction)
 {
-  if (aDelimitMode == eAllRecords)
+  DelimitMode tDelimitMode = static_cast<DelimitMode>(aAction->data().toInt());
+
+  if (tDelimitMode == eAllRecords)
   {
     std::cout << "Delimiting all records." << std::endl;
   }
-  else if (aDelimitMode == eOutputRecords)
+  else if (tDelimitMode == eOutputRecords)
   {
     std::cout << "Delimiting output records only." << std::endl;
   }
-  else if (aDelimitMode == eNoRecords)
+  else if (tDelimitMode == eNoRecords)
   {
     std::cout << "Disabling record delimiting." << std::endl;
   }
 
   _Mutex.lock();
-  _DelimitMode = static_cast<DelimitMode>(aDelimitMode);
+  _DelimitMode = tDelimitMode;
   _Mutex.unlock();
 }
 
