@@ -96,6 +96,12 @@ protected:
 
   void setupMenuAndToolbar();
 
+  void setupOperateActions(QMenu *aMenu,QToolBar *aToolBar);
+
+  void setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar);
+
+  void setupFormatActions(QMenu *aMenu,QToolBar *aToolBar);
+
   void setDelimitMode(StreamReader::DelimitMode aMode);
 
   void setStatusLabel(QString aStatus,QPalette aPalette);

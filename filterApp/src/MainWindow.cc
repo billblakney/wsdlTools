@@ -231,7 +231,7 @@ void MainWindow::setupView(std::string aStructName)
    shapesDockWidget->setObjectName("shapesDockWidget");
    shapesDockWidget->setWidget(_ConfigureWidget);
    shapesDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
-   addDockWidget(Qt::TopDockWidgetArea, shapesDockWidget);
+   addDockWidget(Qt::TopDockWidgetArea, shapesDockWidget);//TODO zzz
 #endif
 
   /*
@@ -281,191 +281,185 @@ void MainWindow::setupView(std::string aStructName)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
+{
+  // pixmaps
+  QPixmap tGreenLight("green.png");
+  QPixmap tRedLight("red.png");
+  //   QPixmap tBypass("bypass3.png");
+  QPixmap tBypass("bypass_arrow.png");
+
+  // actions
+  QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Go", this);
+  QAction *tStopAction = new QAction(QIcon(tRedLight),"&Stop", this);
+  QAction *tBypassAction = new QAction(QIcon(tBypass),"&Bypass", this);
+
+  // short-cuts
+  tGoAction->setShortcut(QKeySequence(Qt::Key_G));
+  tStopAction->setShortcut(QKeySequence(Qt::Key_S));
+  tBypassAction->setShortcut(QKeySequence(Qt::Key_B));
+
+  // check boxes
+  tGoAction->setCheckable(true);
+  tStopAction->setCheckable(true);
+  tBypassAction->setCheckable(true);
+
+  tGoAction->setChecked(true);
+
+  // action data for action group trigger
+  tGoAction->setData(QVariant(StreamReader::eNormal));
+  tStopAction->setData(QVariant(StreamReader::eFreezeDrop));
+  tBypassAction->setData(QVariant(StreamReader::eBypass));
+
+  // action group
+  QActionGroup *tRunGroup = new QActionGroup(this);
+  tRunGroup->addAction(tGoAction);
+  tRunGroup->addAction(tStopAction);
+  tRunGroup->addAction(tBypassAction);
+
+  // action signal-slot
+  connect(tRunGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onOutputModeAction(QAction*)));
+  connect(tRunGroup, SIGNAL(triggered(QAction*)), this, SLOT(onOutputModeAction(QAction*)));
+
+  // menu
+  aMenu = menuBar()->addMenu("&Operate");
+  aMenu->addAction(tGoAction);
+  aMenu->addAction(tStopAction);
+  aMenu->addAction(tBypassAction);
+
+  // toolbar
+  aToolBar->addAction(tGoAction);
+  aToolBar->addAction(tStopAction);
+  aToolBar->addAction(tBypassAction);
+
+  onOutputModeAction(tGoAction); // initializes status label to the default //TODO ok here?
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
+{
+  // pixamps
+  QPixmap tDelimAll("delim_all.png");
+  QPixmap tDelimOut("delim_out.png");
+  QPixmap tDelimNone("delim_none.png");
+
+  // actions
+  QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),"&Delimit Output Records", this);
+  QAction *tDelimitNoneAction = new QAction(QIcon(tDelimNone),"&No Record Delimiters", this);
+  QAction *tDelimitAllAction = new QAction(QIcon(tDelimAll),"&Delimit All Records", this);
+
+  // check boxes
+  tDelimitAllAction->setCheckable(true);
+  tDelimitOutputAction->setCheckable(true);
+  tDelimitNoneAction->setCheckable(true);
+
+  tDelimitOutputAction->setChecked(true);
+
+  // action data for action group trigger
+  tDelimitAllAction->setData(QVariant(StreamReader::eAllRecords));
+  tDelimitOutputAction->setData(QVariant(StreamReader::eOutputRecords));
+  tDelimitNoneAction->setData(QVariant(StreamReader::eNoRecords));
+
+  // action group
+  QActionGroup *tDelimitGroup = new QActionGroup(this);
+  tDelimitGroup->addAction(tDelimitOutputAction);
+  tDelimitGroup->addAction(tDelimitNoneAction);
+  tDelimitGroup->addAction(tDelimitAllAction);
+
+  // action signal-slot
+  connect(tDelimitGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onDelimitModeAction(QAction*)));
+
+  // menu
+  aMenu = menuBar()->addMenu("&Delimit Records");
+  aMenu->addAction(tDelimitOutputAction);
+  aMenu->addAction(tDelimitNoneAction);
+  aMenu->addAction(tDelimitAllAction);
+
+  // toolbar
+  aToolBar->addAction(tDelimitOutputAction);
+  aToolBar->addAction(tDelimitNoneAction);
+  aToolBar->addAction(tDelimitAllAction);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
+{
+  //pixmaps
+  QPixmap tFormatAsIs("fmt_asis.png");
+  QPixmap tFormatLongname("fmt_longname.png");
+  QPixmap tFormatTable("fmt_table.png");
+  QPixmap tFormatCustom("fmt_custom.png");
+
+  // actions
+  QAction *tAsIsFormatAction = new QAction(QIcon(tFormatAsIs),"&As-is", this);
+  QAction *tLongnameFormatAction = new QAction(QIcon(tFormatLongname),"&Long name", this);
+  QAction *tTableFormatAction = new QAction(QIcon(tFormatTable),"&Table", this);
+  QAction *tCustomFormatAction = new QAction(QIcon(tFormatCustom),"&Custom", this);
+
+  // short-cuts
+  tAsIsFormatAction->setShortcut(QKeySequence(Qt::Key_A));
+  tLongnameFormatAction->setShortcut(QKeySequence(Qt::Key_L));
+  tTableFormatAction->setShortcut(QKeySequence(Qt::Key_T));
+  tCustomFormatAction->setShortcut(QKeySequence(Qt::Key_C));
+
+  // check boxes
+  tAsIsFormatAction->setCheckable(true);
+  tLongnameFormatAction->setCheckable(true);
+  tTableFormatAction->setCheckable(true);
+  tCustomFormatAction->setCheckable(true);
+
+  tAsIsFormatAction->setChecked(true);
+
+  // action data for action group trigger
+  tAsIsFormatAction->setData(QVariant(RecordProcessor::eAsIs));
+  tLongnameFormatAction->setData(QVariant(RecordProcessor::eLongname));
+  tTableFormatAction->setData(QVariant(RecordProcessor::eTable));
+  tCustomFormatAction->setData(QVariant(RecordProcessor::eCustom));
+
+  // action group
+  QActionGroup *tFormatGroup = new QActionGroup(this);
+  tFormatGroup->addAction(tAsIsFormatAction);
+  tFormatGroup->addAction(tLongnameFormatAction);
+  tFormatGroup->addAction(tTableFormatAction);
+  tFormatGroup->addAction(tCustomFormatAction);
+
+  // action signal-slot
+  connect(tFormatGroup, SIGNAL(triggered(QAction*)), _RecordProcessor, SLOT(onFormatModeAction(QAction*)));
+
+  // menu
+  aMenu = menuBar()->addMenu("&Format Mode");
+  aMenu->addAction(tAsIsFormatAction);
+  aMenu->addAction(tLongnameFormatAction);
+  aMenu->addAction(tTableFormatAction);
+  aMenu->addAction(tCustomFormatAction);
+
+  // toolbar
+  aToolBar->addAction(tAsIsFormatAction);
+  aToolBar->addAction(tLongnameFormatAction);
+  aToolBar->addAction(tTableFormatAction);
+  aToolBar->addAction(tCustomFormatAction);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::setupMenuAndToolbar()
 {
-   QPixmap tGreenLight("green.png");
-   QPixmap tRedLight("red.png");
-//   QPixmap tBypass("bypass3.png");
-   QPixmap tBypass("bypass_arrow.png");
+  QMenu *tMenu;
+  QToolBar *tToolBar = addToolBar("Main Toolbar");
 
-   QPixmap tDelimAll("delim_all.png");
-   QPixmap tDelimOut("delim_out.png");
-   QPixmap tDelimNone("delim_none.png");
-//   QPixmap quitpix("quit.png");
+  _StatusLabel = new QLabel();
+  _StatusLabel->setAutoFillBackground(true);
 
-   QPixmap tFormatAsIs("fmt_asis.png");
-   QPixmap tFormatLongname("fmt_longname.png");
-   QPixmap tFormatTable("fmt_table.png");
-   QPixmap tFormatCustom("fmt_custom.png");
+  statusBar()->addWidget(_StatusLabel);
+  statusBar()->addPermanentWidget(new QLabel("-counts-"));
 
-#if FILE_MENU
-   /*
-    * Quit action
-    */
-   QAction *quit = new QAction("&Quit", this);
-
-   connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
-#endif
-
-   /*
-    * Create go/stop/bypass actions.
-    */
-   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Go", this);
-   QAction *tStopAction = new QAction(QIcon(tRedLight),"&Stop", this);
-   QAction *tBypassAction = new QAction(QIcon(tBypass),"&Bypass", this);
-
-   // short-cuts
-   tGoAction->setShortcut(QKeySequence(Qt::Key_G));
-   tStopAction->setShortcut(QKeySequence(Qt::Key_S));
-   tBypassAction->setShortcut(QKeySequence(Qt::Key_B));
-
-   // check boxes
-   tGoAction->setCheckable(true);
-   tStopAction->setCheckable(true);
-   tBypassAction->setCheckable(true);
-
-   tGoAction->setChecked(true);
-
-   // action data for action group trigger
-   tGoAction->setData(QVariant(StreamReader::eNormal));
-   tStopAction->setData(QVariant(StreamReader::eFreezeDrop));
-   tBypassAction->setData(QVariant(StreamReader::eBypass));
-
-   // action group
-   QActionGroup *tRunGroup = new QActionGroup(this);
-   tRunGroup->addAction(tGoAction);
-   tRunGroup->addAction(tStopAction);
-   tRunGroup->addAction(tBypassAction);
-
-   // action signal-slot
-   connect(tRunGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onOutputModeAction(QAction*)));
-   connect(tRunGroup, SIGNAL(triggered(QAction*)), this, SLOT(onOutputModeAction(QAction*)));
-
-   /*
-    * Create format mode actions.
-    */
-   QAction *tAsIsFormatAction = new QAction(QIcon(tFormatAsIs),"&As-is", this);
-   QAction *tLongnameFormatAction = new QAction(QIcon(tFormatLongname),"&Long name", this);
-   QAction *tTableFormatAction = new QAction(QIcon(tFormatTable),"&Table", this);
-   QAction *tCustomFormatAction = new QAction(QIcon(tFormatCustom),"&Custom", this);
-
-   // short-cuts
-   tAsIsFormatAction->setShortcut(QKeySequence(Qt::Key_A));
-   tLongnameFormatAction->setShortcut(QKeySequence(Qt::Key_L));
-   tTableFormatAction->setShortcut(QKeySequence(Qt::Key_T));
-   tCustomFormatAction->setShortcut(QKeySequence(Qt::Key_C));
-
-   // check boxes
-   tAsIsFormatAction->setCheckable(true);
-   tLongnameFormatAction->setCheckable(true);
-   tTableFormatAction->setCheckable(true);
-   tCustomFormatAction->setCheckable(true);
-
-   tAsIsFormatAction->setChecked(true);
-
-   // action data for action group trigger
-   tAsIsFormatAction->setData(QVariant(RecordProcessor::eAsIs));
-   tLongnameFormatAction->setData(QVariant(RecordProcessor::eLongname));
-   tTableFormatAction->setData(QVariant(RecordProcessor::eTable));
-   tCustomFormatAction->setData(QVariant(RecordProcessor::eCustom));
-
-   // action group
-   QActionGroup *tFormatGroup = new QActionGroup(this);
-   tFormatGroup->addAction(tAsIsFormatAction);
-   tFormatGroup->addAction(tLongnameFormatAction);
-   tFormatGroup->addAction(tTableFormatAction);
-   tFormatGroup->addAction(tCustomFormatAction);
-
-   // action signal-slot
-   connect(tFormatGroup, SIGNAL(triggered(QAction*)), _RecordProcessor, SLOT(onFormatModeAction(QAction*)));
-
-   /*
-    * Create record delimiter actions.
-    */
-   QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),"&Delimit Output Records", this);
-   QAction *tDelimitNoneAction = new QAction(QIcon(tDelimNone),"&No Record Delimiters", this);
-   QAction *tDelimitAllAction = new QAction(QIcon(tDelimAll),"&Delimit All Records", this);
-
-   // check boxes
-   tDelimitAllAction->setCheckable(true);
-   tDelimitOutputAction->setCheckable(true);
-   tDelimitNoneAction->setCheckable(true);
-
-   tDelimitOutputAction->setChecked(true);
-
-   // action data for action group trigger
-   tDelimitAllAction->setData(QVariant(StreamReader::eAllRecords));
-   tDelimitOutputAction->setData(QVariant(StreamReader::eOutputRecords));
-   tDelimitNoneAction->setData(QVariant(StreamReader::eNoRecords));
-
-   // action group
-   QActionGroup *tDelimitGroup = new QActionGroup(this);
-   tDelimitGroup->addAction(tDelimitOutputAction);
-   tDelimitGroup->addAction(tDelimitNoneAction);
-   tDelimitGroup->addAction(tDelimitAllAction);
-
-   // action signal-slot
-   connect(tDelimitGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onDelimitModeAction(QAction*)));
-
-   /*
-    * Create menu.
-    */
-   QMenu *tMenu;
-
-#if FILE_MENU
-   tMenu = menuBar()->addMenu("&File");
-   tMenu->addAction(quit);
-#endif
-
-   tMenu = menuBar()->addMenu("&Operate");
-   tMenu->addAction(tGoAction);
-   tMenu->addAction(tStopAction);
-   tMenu->addAction(tBypassAction);
-
-   tMenu = menuBar()->addMenu("&Delimit Records");
-   tMenu->addAction(tDelimitOutputAction);
-   tMenu->addAction(tDelimitNoneAction);
-   tMenu->addAction(tDelimitAllAction);
-
-   tMenu = menuBar()->addMenu("&Format Mode");
-   tMenu->addAction(tAsIsFormatAction);
-   tMenu->addAction(tLongnameFormatAction);
-   tMenu->addAction(tTableFormatAction);
-   tMenu->addAction(tCustomFormatAction);
-
-   /*
-    * Create toolbar.
-    */
-   QToolBar *toolbar = addToolBar("Main Toolbar");
-   toolbar->addAction(tGoAction);
-   toolbar->addAction(tStopAction);
-   toolbar->addAction(tBypassAction);
-   toolbar->addSeparator();
-   toolbar->addAction(tDelimitOutputAction);
-   toolbar->addAction(tDelimitNoneAction);
-   toolbar->addAction(tDelimitAllAction);
-   toolbar->addSeparator();
-   toolbar->addAction(tAsIsFormatAction);
-   toolbar->addAction(tLongnameFormatAction);
-   toolbar->addAction(tTableFormatAction);
-   toolbar->addAction(tCustomFormatAction);
-
-
-#if 0
-   toolbar->addSeparator();
-
-   QAction *quit2 = toolbar->addAction(QIcon(quitpix),
-       "Quit Application");
-   connect(quit2, SIGNAL(triggered()), qApp, SLOT(quit()));
-#endif
-
-   _StatusLabel = new QLabel();
-   _StatusLabel->setAutoFillBackground(true);
-
-   statusBar()->addWidget(_StatusLabel);
-   onOutputModeAction(tGoAction); // initializes status label to the default
-
-   statusBar()->addPermanentWidget(new QLabel("-counts-"));
+  setupOperateActions(tMenu,tToolBar);
+  tToolBar->addSeparator();
+  setupDelimitActions(tMenu,tToolBar);
+  tToolBar->addSeparator();
+  setupFormatActions(tMenu,tToolBar);
 }
 
 //-----------------------------------------------------------------------------
