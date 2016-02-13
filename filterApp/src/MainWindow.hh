@@ -58,10 +58,6 @@ public slots:
 
   void onSetFilterClicked(bool);
 
-  void onDelimitOut();
-  void onDelimitAll();
-  void onDelimitNone();
-
 protected:
 
   QWidget            *_CentralWidget;

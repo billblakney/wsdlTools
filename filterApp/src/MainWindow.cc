@@ -139,34 +139,6 @@ void MainWindow::processCommandLine(int argc,char *argv[])
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MainWindow::onDelimitOut()
-{
-  setDelimitMode(StreamReader::eOutputRecords);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::onDelimitAll()
-{
-  setDelimitMode(StreamReader::eAllRecords);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::onDelimitNone()
-{
-  setDelimitMode(StreamReader::eNoRecords);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::setDelimitMode(StreamReader::DelimitMode aMode)
-{
-  emit delimitOptionSelected((int)aMode);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
 void MainWindow::setStatusLabel(QString aStatus,QPalette aPalette)
 {
   _StatusLabel->setPalette(aPalette);
@@ -378,22 +350,26 @@ void MainWindow::setupMenuAndToolbar()
    QAction *tDelimitNoneAction = new QAction(QIcon(tDelimNone),"&No Record Delimiters", this);
    QAction *tDelimitAllAction = new QAction(QIcon(tDelimAll),"&Delimit All Records", this);
 
+   // check boxes
    tDelimitAllAction->setCheckable(true);
    tDelimitOutputAction->setCheckable(true);
    tDelimitNoneAction->setCheckable(true);
 
    tDelimitOutputAction->setChecked(true);
 
+   // action data for action group trigger
+   tDelimitAllAction->setData(QVariant(StreamReader::eAllRecords));
+   tDelimitOutputAction->setData(QVariant(StreamReader::eOutputRecords));
+   tDelimitNoneAction->setData(QVariant(StreamReader::eNoRecords));
+
+   // action group
    QActionGroup *tDelimitGroup = new QActionGroup(this);
    tDelimitGroup->addAction(tDelimitOutputAction);
    tDelimitGroup->addAction(tDelimitNoneAction);
    tDelimitGroup->addAction(tDelimitAllAction);
 
-   connect(tDelimitOutputAction, SIGNAL(triggered()), this, SLOT(onDelimitOut()));
-   connect(tDelimitAllAction, SIGNAL(triggered()), this, SLOT(onDelimitAll()));
-   connect(tDelimitNoneAction, SIGNAL(triggered()), this, SLOT(onDelimitNone()));
-
-   connect(this,SIGNAL(delimitOptionSelected(int)), _StreamReader,SLOT(setDelimitMode(int)));
+   // action signal-slot
+   connect(tDelimitGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onDelimitModeAction(QAction*)));
 
    /*
     * Create menu.
@@ -586,7 +562,6 @@ void MainWindow::onAsIsPushbuttonClicked(bool)
 {
   int tAsIsInt = (int)RecordProcessor::eAsIs;
   bool tChecked = (_AsIsCheckBox->isChecked() ? true: false);
-std::cout << "tChecked=" << tChecked << std::endl; //TODO rm
   emit applyFormatMode(tAsIsInt,tChecked);
 }
 
