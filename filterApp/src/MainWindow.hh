@@ -60,10 +60,6 @@ public slots:
 
   void onSetFilterClicked(bool);
 
-  void onDelimitOptionSelection(bool /*aIsChecked*/); //TODO make protected?
-
-  void onFormatOptionSelection(bool /*aIsChecked*/); //TODO make protected?
-
   void onOutputModeButtonClicked(QAbstractButton *aButton);
 
   void onBypass();

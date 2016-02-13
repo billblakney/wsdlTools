@@ -139,52 +139,6 @@ void MainWindow::processCommandLine(int argc,char *argv[])
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MainWindow::onDelimitOptionSelection(bool aIsChecked)
-{
-  if (!aIsChecked) // only need to process the toggle on, not the one off
-    return;
-
-  if (_DelimitAllButton->isChecked())
-  {
-    emit delimitOptionSelected((int)StreamReader::eAllRecords);
-  }
-  else if (_DelimitOutputButton->isChecked())
-  {
-    emit delimitOptionSelected((int)StreamReader::eOutputRecords);
-  }
-  else if (_DelimitNoneButton->isChecked())
-  {
-    emit delimitOptionSelected((int)StreamReader::eNoRecords);
-  }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void MainWindow::onFormatOptionSelection(bool aIsChecked)
-{
-  if (!aIsChecked) // only need to process the toggle on, not the one off
-    return;
-
-  if (_FormatAsIsButton->isChecked())
-  {
-    emit formatOptionSelected((int)RecordProcessor::eAsIs);
-  }
-  else if (_FormatLongnameButton->isChecked())
-  {
-    emit formatOptionSelected((int)RecordProcessor::eLongname);
-  }
-  else if (_FormatTableButton->isChecked())
-  {
-    emit formatOptionSelected((int)RecordProcessor::eTable);
-  }
-  else if (_FormatCustomButton->isChecked())
-  {
-    emit formatOptionSelected((int)RecordProcessor::eCustom);
-  }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
 void MainWindow::onBypass()
 {
     setOutputMode(StreamReader::eBypass);
@@ -674,28 +628,11 @@ QWidget *MainWindow::createConfigureWidget(QWidget *aParent)
 {
     QWidget *tConfigure = new QWidget(aParent);
 
-#if 0
-    QGroupBox *tDelimitModeWidget = createDelimitModeGroup(tConfigure);
-    tDelimitModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-    QGroupBox *tFormatModeWidget = createFormatModeGroup(tConfigure);
-    tFormatModeWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-#endif
-
     QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tConfigure);
     tCustomFormatGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-//    QVBoxLayout *tMainOptionsLayout = new QVBoxLayout;
-//    tMainOptionsLayout->addWidget(tOutputModeGroup);
-//    tMainOptions->setLayout(tMainOptionsLayout);
-
-
     QHBoxLayout *tLayout = new QHBoxLayout;
-//    tLayout->addWidget(tDelimitModeWidget);
-//    tLayout->addWidget(tFormatModeWidget);
     tLayout->addWidget(tCustomFormatGroup);
-//    tLayout->setAlignment(tDelimitModeWidget,Qt::AlignTop);
-//    tLayout->setAlignment(tFormatModeWidget,Qt::AlignTop);
     tLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
 
     tConfigure->setLayout(tLayout);
