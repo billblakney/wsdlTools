@@ -37,6 +37,7 @@ MainWindow::MainWindow(
     _ConfigureWidget(0),
     _StructTree(0),
     _PropagateCheckBox(0),
+    _CustomFormatToolsWidget(0),
     _FormatAsIsButton(0),
     _FormatLongnameButton(0),
     _FormatTableButton(0),
@@ -219,20 +220,6 @@ void MainWindow::setupView(std::string aStructName)
    * are called.
    */
   _StructTree = createTreeView(_CentralWidget);
-
-#if 1
-  /*
-   * Dock.
-   */
-    _ConfigureWidget = createConfigureWidget(0);
-
-//   QDockWidget *shapesDockWidget = new QDockWidget(QString("Shapes"));
-   QDockWidget *shapesDockWidget = new QDockWidget(this);
-   shapesDockWidget->setObjectName("shapesDockWidget");
-   shapesDockWidget->setWidget(_ConfigureWidget);
-   shapesDockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
-   addDockWidget(Qt::TopDockWidgetArea, shapesDockWidget);//TODO zzz
-#endif
 
   /*
    * The options will only be populated when in filter mode.
@@ -444,6 +431,32 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
+{
+  // pixamps
+  QPixmap tCustomFormat("go.png");
+
+  // actions
+  QAction *tCustomFormatAction =
+      new QAction(QIcon(tCustomFormat),"Custom format tool", this);
+
+  // check boxes
+  tCustomFormatAction->setCheckable(false);
+
+  // action signal-slot
+  connect(tCustomFormatAction,SIGNAL(triggered()),
+      this,SLOT(onCustomFormatToolAction()));
+
+  // menu
+  aMenu = menuBar()->addMenu("&Tools");
+  aMenu->addAction(tCustomFormatAction);
+
+  // toolbar
+  aToolBar->addAction(tCustomFormatAction);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::setupMenuAndToolbar()
 {
   QMenu *tMenu;
@@ -460,6 +473,8 @@ void MainWindow::setupMenuAndToolbar()
   setupDelimitActions(tMenu,tToolBar);
   tToolBar->addSeparator();
   setupFormatActions(tMenu,tToolBar);
+  tToolBar->addSeparator();
+  setupToolActions(tMenu,tToolBar);
 }
 
 //-----------------------------------------------------------------------------
@@ -613,6 +628,26 @@ void MainWindow::onTablePushbuttonClicked(bool)
   int tTableInt = (int)RecordProcessor::eTable;
   bool tChecked = (_TableCheckBox->isChecked() ? true: false);
   emit applyFormatMode(tTableInt,tChecked);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onCustomFormatToolAction()
+{
+#if 1
+  /*
+   * Dock.
+   */
+    _ConfigureWidget = createConfigureWidget(0);
+
+//   QDockWidget *shapesDockWidget = new QDockWidget(QString("Shapes"));
+   _CustomFormatToolsWidget = new QDockWidget(0);
+   _CustomFormatToolsWidget->setObjectName("shapesDockWidget");
+   _CustomFormatToolsWidget->setWidget(_ConfigureWidget);
+   _CustomFormatToolsWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
+#endif
+
+  addDockWidget(Qt::TopDockWidgetArea, _CustomFormatToolsWidget);
 }
 
 //-------------------------------------------------------------------------------

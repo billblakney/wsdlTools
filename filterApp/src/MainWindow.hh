@@ -52,6 +52,8 @@ public slots:
   void onLongnamePushbuttonClicked(bool);
   void onTablePushbuttonClicked(bool);
 
+  void onCustomFormatToolAction();
+
   void onStructComboBoxActivated(int index);
 
 protected:
@@ -70,6 +72,7 @@ protected:
 	QWidget            *_OperateWidget;
 	StructTreeView     *_StructTree;
 	QCheckBox          *_PropagateCheckBox;
+	QDockWidget        *_CustomFormatToolsWidget;
 
   QRadioButton       *_DelimitAllButton;
   QRadioButton       *_DelimitOutputButton;
@@ -101,6 +104,8 @@ protected:
   void setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar);
 
   void setupFormatActions(QMenu *aMenu,QToolBar *aToolBar);
+
+  void setupToolActions(QMenu *aMenu,QToolBar *aToolBar);
 
   void setDelimitMode(StreamReader::DelimitMode aMode);
 
