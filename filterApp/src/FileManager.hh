@@ -7,19 +7,20 @@
 class FileManager
 {
 public:
-  FileManager();
+
+  FileManager(DataStructModel *aModel);
   virtual ~FileManager();
-  static void saveConfiguration(DataStructModel *aModel);
-  static void openConfiguration(DataStructModel *aModel);
-static void skipUnknownElement();
+  void saveConfiguration();
+  void openConfiguration();
 
-static void readWsdlfilterElement();
-static void readFieldElements();
-static void readConfigElements();
+protected:
+  QXmlStreamReader reader;
+  DataStructModel *_DataStructModel;
 
-static void readFieldElement(); // TODO not used
-
-static QXmlStreamReader reader;
+  void readWsdlfilterElement();
+  void readFieldElements();
+  void readConfigElements();
+  void skipUnknownElement();
 };
 
 #endif /* FILEMANAGER_HH_ */

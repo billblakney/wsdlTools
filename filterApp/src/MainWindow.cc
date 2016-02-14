@@ -17,7 +17,6 @@
 #include "ComboBoxDelegate.hh"
 #include "TestRegexDelegate.hh"
 #include "MainWindow.hh"
-#include "FileManager.hh"
 
 using namespace std;
 
@@ -49,7 +48,8 @@ MainWindow::MainWindow(
     _OutputFreezeQueueButton(0),
     _AsIsCheckBox(0),
     _LongnameCheckBox(0),
-    _TableCheckBox(0)
+    _TableCheckBox(0),
+    _ConfigFileManager(0)
 {
   Q_UNUSED(aApp);
 
@@ -125,14 +125,14 @@ void MainWindow::setInitialStructName(std::string aStructName)
 //-----------------------------------------------------------------------------
 void MainWindow::onFileOpenAction()
 {
-  FileManager::openConfiguration(_DataStructModel);
+  _ConfigFileManager->openConfiguration();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MainWindow::onFileSaveAction()
 {
-  FileManager::saveConfiguration(_DataStructModel);
+  _ConfigFileManager->saveConfiguration();
 }
 
 //-----------------------------------------------------------------------------
@@ -718,6 +718,11 @@ void MainWindow::onStructNameAvailable(QString aStructName)
    */
   setInitialStructName(aStructName.toStdString());
   setupView(_StructName);
+
+  /*
+   * Create the config file manager.
+   */
+  _ConfigFileManager = new FileManager(_DataStructModel);
 
   /*
    * Give the stream reader the data struct model so that it can start

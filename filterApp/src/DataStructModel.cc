@@ -73,6 +73,21 @@ FieldItem *DataStructModel::getTopNode()
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
+FieldItem *DataStructModel::getNode(std::string aKey)
+{
+  std::vector<FieldItem *>::iterator tIter;
+  for (tIter = _TreeItems.begin(); tIter != _TreeItems.end(); tIter++)
+  {
+    if (!aKey.compare((*tIter)->getData().getKey()))
+    {
+      return *tIter;
+    }
+  }
+  return NULL;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 std::vector<std::string> DataStructModel::getTestNodes()
 {
   return _TestScopes;

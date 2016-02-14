@@ -6,12 +6,11 @@
 #include <QXmlStreamWriter>
 #include "DataStructModel.hh"
 
-QXmlStreamReader FileManager::reader;
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-FileManager::FileManager()
+FileManager::FileManager(DataStructModel *aModel)
 {
+  _DataStructModel = aModel;
 }
 
 //-----------------------------------------------------------------------------
@@ -21,11 +20,11 @@ FileManager::~FileManager()
 }
 
 //-----------------------------------------------------------------------------
-// TODO is untested and may not work
 //-----------------------------------------------------------------------------
 void FileManager::skipUnknownElement()
 {
-std::cout << "SKIPPINGGGGGGGGGGGGGGGGGGGGGGGGG" << std::endl;
+  std::cout << "skipping unknown xml element" << std::endl;
+
   reader.readNext();
 
   while (!reader.atEnd())
@@ -54,15 +53,36 @@ void FileManager::readFieldElements()
 
   while (!reader.atEnd() && !reader.isEndElement())
   {
-    if (reader.isStartElement()) // TODO try make else if
+    if (reader.isStartElement())
     {
       if (reader.name() == "field")
       {
-        QString tString = reader.attributes().value("key").toString();
-        std::cout << "key: " << qPrintable(tString) << std::endl;
-        QString tString2 = reader.attributes().value("checkstate").toString();
-        std::cout << "checkstate: " << qPrintable(tString2) << std::endl;
-        QString tStr = reader.readElementText(); //TODO not used
+        QString tKey = reader.attributes().value("key").toString();
+        std::cout << "key: " << qPrintable(tKey) << std::endl;
+        QString tCheckValue = reader.attributes().value("checked").toString();
+        std::cout << "checked: " << qPrintable(tCheckValue) << std::endl;
+
+        bool tChecked = (tCheckValue.toStdString().compare("1")?false:true);
+
+        FieldItem *tFieldItem = _DataStructModel->getNode(tKey.toStdString());
+        if (tFieldItem)
+        {
+          FieldItemData &tData = tFieldItem->getData();
+          bool tCurrentState = tData.isChecked();
+          if (tChecked != tCurrentState)
+          {
+            if (tChecked)
+            {
+              tData.setCheckState(Qt::Checked);
+            }
+            else
+            {
+              tData.setCheckState(Qt::Unchecked);
+            }
+          }
+        }
+
+        reader.readElementText();
       }
       else
       {
@@ -93,7 +113,7 @@ void FileManager::readConfigElements()
         QString tStr = reader.readElementText();
         std::cout << "delimit_mode: " << qPrintable(tStr) << std::endl;
       }
-      else // TODO check to see if it works
+      else
       {
         skipUnknownElement();
       }
@@ -122,7 +142,7 @@ void FileManager::readWsdlfilterElement()
       }
       else
       {
-        reader.raiseError(QObject::tr("expected config or fields"));
+        skipUnknownElement();
       }
     }
     reader.readNext();
@@ -131,7 +151,7 @@ void FileManager::readWsdlfilterElement()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::openConfiguration(DataStructModel *aModel)
+void FileManager::openConfiguration()
 {
   QString fileName = QFileDialog::getOpenFileName(0,
       QString("Open WSDL Config File"), "/tmp",
@@ -173,7 +193,7 @@ void FileManager::openConfiguration(DataStructModel *aModel)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::saveConfiguration(DataStructModel *aModel)
+void FileManager::saveConfiguration()
 {
 
   QString tFileName = QFileDialog::getOpenFileName(0,
@@ -192,7 +212,7 @@ void FileManager::saveConfiguration(DataStructModel *aModel)
     return;
   }
 
-  std::vector<FieldItem *> &tTreeItems = aModel->getTreeItems();
+  std::vector<FieldItem *> &tTreeItems = _DataStructModel->getTreeItems();
 
   xmlWriter.setDevice(&file);
 
@@ -225,7 +245,7 @@ void FileManager::saveConfiguration(DataStructModel *aModel)
 
     // write attributes
     xmlWriter.writeAttribute("key",tData.getKey().c_str());
-    xmlWriter.writeAttribute("checkstate", (tData.getCheckState()?"1":"0"));
+    xmlWriter.writeAttribute("checked", (tData.getCheckState()?"1":"0"));
 
     // close tag field
     xmlWriter.writeEndElement();
