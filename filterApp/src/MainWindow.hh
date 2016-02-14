@@ -42,19 +42,25 @@ signals:
 
 public slots:
 
-  void onStructNameAvailable(QString aStructName);
-
-  void onModelUpdate();
-
+  // handle menu/toolbar actions
+  void onFileOpenAction();
+  void onFileSaveAction();
   void onOutputModeAction(QAction *aAction);
+  void onCustomFormatToolAction();
 
+  // handle custom format tool pushbutton
   void onAsIsPushbuttonClicked(bool);
   void onLongnamePushbuttonClicked(bool);
   void onTablePushbuttonClicked(bool);
 
-  void onCustomFormatToolAction();
+  // start filter mode once input stream struct name is available
+  void onStructNameAvailable(QString aStructName);
 
+  // handle user selection of struct in browse mode
   void onStructComboBoxActivated(int index);
+
+  // handle changes to data model to repaint struct tree
+  void onModelUpdate();
 
 protected:
 

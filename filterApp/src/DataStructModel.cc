@@ -37,10 +37,31 @@ DataStructModel::DataStructModel(
 
   buildTree(_TopNodeItem,aStruct);
 
+  appendToTreeItemVector(_TopNodeItem);
+
 //DEBUG(sLogger,"CTOR getDotString: "
 //    << getDotString(aStructBuilder,aStructure->_Name,"aStruct"));
 //DEBUG(sLogger,"CTOR getMatchString: "
 //    << getMatchString(_TopNodeItem));
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void DataStructModel::appendToTreeItemVector(FieldItem *aNode)
+{
+  for (int i = 0; i < aNode->childCount(); i++)
+  {
+    FieldItem *tChild = aNode->child(i);
+    _TreeItems.push_back(tChild);
+    appendToTreeItemVector(tChild);
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::vector<FieldItem *> &DataStructModel::getTreeItems()
+{
+  return _TreeItems;
 }
 
 //-------------------------------------------------------------------------------

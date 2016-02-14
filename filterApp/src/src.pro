@@ -40,6 +40,7 @@ HEADERS += \
            DataStructModel.hh \
            FieldItem.hh \
            FieldItemData.hh \
+           FileManager.hh \
            LineMatcher.hh \
            MainWindow.hh \
            RecordLine.hh \
@@ -57,6 +58,7 @@ SOURCES += \
            DataStructModel.cc \
            FieldItem.cc \
            FieldItemData.cc \
+           FileManager.cc \
            LineMatcher.cc \
            MainWindow.cc \
            RecordLine.cc \

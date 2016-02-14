@@ -17,6 +17,7 @@
 #include "ComboBoxDelegate.hh"
 #include "TestRegexDelegate.hh"
 #include "MainWindow.hh"
+#include "FileManager.hh"
 
 using namespace std;
 
@@ -118,6 +119,20 @@ void MainWindow::onModelUpdate()
 void MainWindow::setInitialStructName(std::string aStructName)
 {
   _StructName = aStructName;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onFileOpenAction()
+{
+  FileManager::openConfiguration(_DataStructModel);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onFileSaveAction()
+{
+  FileManager::saveConfiguration(_DataStructModel);
 }
 
 //-----------------------------------------------------------------------------

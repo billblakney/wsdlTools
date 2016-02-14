@@ -1,6 +1,7 @@
 #ifndef DATASTRUCTMODEL_HH_
 #define DATASTRUCTMODEL_HH_
 
+#include <vector>
 #include <QAbstractItemModel>
 #include <QFont>
 #include <QModelIndex>
@@ -46,6 +47,10 @@ public:
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
   FieldItem *getTopNode();
+
+  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  std::vector<FieldItem *> &getTreeItems();
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
@@ -161,15 +166,24 @@ protected:
 
   StructorBuilder *_StructBuilder;
 
-  // root and top nodes
+  // root node
   FieldItem *_RootItem;
+
+  // top node
   FieldItem *_TopNodeItem;
+
+  // tree nodes
+  std::vector<FieldItem *> _TreeItems;
+
+
   bool       _PropogateFieldChecks;
 
   // test nodes
   std::vector<std::string> _TestScopes;
   std::vector<std::string> _Formats;
   std::vector<std::string> _Postfixes;
+
+  void appendToTreeItemVector(FieldItem *aNode);
 
   void transformTestRegex(std::string &aValue);
 
