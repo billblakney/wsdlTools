@@ -441,6 +441,45 @@ void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 }
 
 //-----------------------------------------------------------------------------
+// TODO move
+//-----------------------------------------------------------------------------
+void MainWindow::setupFileActions(QMenu *aMenu,QToolBar *aToolBar)
+{
+  // pixamps
+  QPixmap tFileOpen("document_open.png");
+  QPixmap tFileSave("document_save.png");
+
+  // actions
+  QAction *tFileOpenAction =
+      new QAction(QIcon(tFileOpen),"Open &file", this);
+  QAction *tFileSaveAction =
+      new QAction(QIcon(tFileSave),"Save &file", this);
+
+  // short-cuts
+  tFileOpenAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
+  tFileSaveAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_W));
+
+  // check boxes
+  tFileOpenAction->setCheckable(false);
+  tFileSaveAction->setCheckable(false);
+
+  // action signal-slot
+  connect(tFileOpenAction,SIGNAL(triggered()),
+      this,SLOT(onFileOpenAction()));
+  connect(tFileSaveAction,SIGNAL(triggered()),
+      this,SLOT(onFileSaveAction()));
+
+  // menu
+  aMenu = menuBar()->addMenu("&File");
+  aMenu->addAction(tFileOpenAction);
+  aMenu->addAction(tFileSaveAction);
+
+  // toolbar
+  aToolBar->addAction(tFileOpenAction);
+  aToolBar->addAction(tFileSaveAction);
+}
+
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MainWindow::setupMenuAndToolbar()
 {
@@ -453,6 +492,8 @@ void MainWindow::setupMenuAndToolbar()
   statusBar()->addWidget(_StatusLabel);
   statusBar()->addPermanentWidget(new QLabel("-counts-"));
 
+  setupFileActions(tMenu,tToolBar);
+  tToolBar->addSeparator();
   setupOperateActions(tMenu,tToolBar);
   tToolBar->addSeparator();
   setupDelimitActions(tMenu,tToolBar);

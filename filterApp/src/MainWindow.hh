@@ -95,6 +95,8 @@ protected:
 
   void setupMenuAndToolbar();
 
+  void setupFileActions(QMenu *aMenu,QToolBar *aToolBar);
+
   void setupOperateActions(QMenu *aMenu,QToolBar *aToolBar);
 
   void setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar);
