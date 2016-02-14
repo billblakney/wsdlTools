@@ -20,7 +20,7 @@ class MainWindow: public QMainWindow
   Q_OBJECT
 public:
 
-  MainWindow(int argc,char *argv[],QApplication &aApp,QWidget *aParent,
+  MainWindow(QApplication &aApp,QWidget *aParent,
       StructorBuilder *_StructorBuilder,bool aIsFilterMode = false,
       StreamReader *aStreamReader = 0,RecordProcessor *aRecordProcessor = 0);
 
@@ -92,10 +92,6 @@ protected:
   QCheckBox *_AsIsCheckBox;
   QCheckBox *_LongnameCheckBox;
   QCheckBox *_TableCheckBox;
-
-  void readEnvironmentVariables();
-
-  void processCommandLine(int argc,char *argv[]);
 
   void setupMenuAndToolbar();
 

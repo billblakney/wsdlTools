@@ -23,7 +23,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
-    int argc, char *argv[],QApplication &aApp,QWidget *aParent,
+    QApplication &aApp,QWidget *aParent,
     StructorBuilder *aStructorBuilder,bool aIsFilterMode,
     StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
   : QMainWindow(aParent),
@@ -63,11 +63,6 @@ MainWindow::MainWindow(
       "padding: 0 3px 0 3px"
       "}"
       );
-
-  /*
-   * Process command line arguments.
-   */
-  processCommandLine(argc,argv);
 }
 
 //-----------------------------------------------------------------------------
@@ -123,19 +118,6 @@ void MainWindow::onModelUpdate()
 void MainWindow::setInitialStructName(std::string aStructName)
 {
   _StructName = aStructName;
-}
-
-/*------------------------------------------------------------------------------
- *----------------------------------------------------------------------------*/
-void MainWindow::processCommandLine(int argc,char *argv[])
-{
-  Q_UNUSED(argc);
-  Q_UNUSED(argv);
-#if 0
-  for (int tIdx = 0; tIdx < argc; tIdx++)
-  {
-  }
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -434,7 +416,7 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
 void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
-  QPixmap tCustomFormat("go.png");
+  QPixmap tCustomFormat("custom_fmt_tool.png");
 
   // actions
   QAction *tCustomFormatAction =
@@ -459,7 +441,7 @@ void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 //-----------------------------------------------------------------------------
 void MainWindow::setupMenuAndToolbar()
 {
-  QMenu *tMenu;
+  QMenu *tMenu = new QMenu();
   QToolBar *tToolBar = addToolBar("Main Toolbar");
 
   _StatusLabel = new QLabel();

@@ -75,9 +75,9 @@ void parseHeaderFile()
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void runBrowseMode(QApplication &app,int argc,char *argv[])
+void runBrowseMode(QApplication &app)
 {
-  MainWindow *window = new MainWindow(argc,argv,app,0,_StructorBuilder);
+  MainWindow *window = new MainWindow(app,0,_StructorBuilder);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
   window->setupView(_InitialStruct);
@@ -86,7 +86,7 @@ void runBrowseMode(QApplication &app,int argc,char *argv[])
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void runStreamReaderMode(QApplication &app,int argc,char *argv[])
+void runStreamReaderMode(QApplication &app)
 {
   /*
    * Create the record processor.
@@ -102,7 +102,7 @@ void runStreamReaderMode(QApplication &app,int argc,char *argv[])
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(argc,argv,app,0,_StructorBuilder,
+  MainWindow *tMainWindow = new MainWindow(app,0,_StructorBuilder,
       true,tStreamReader,tRecordProcessor);
   //  window->setGeometry(1920 + 530,135,625,900);
 //  tMainWindow->setGeometry(1920      ,135,900,900);
@@ -170,11 +170,11 @@ int main(int argc, char *argv[])
   if (_BrowseMode)
   {
     std::cout << "running in browse mode" << std::endl;
-    runBrowseMode(app,argc,argv);
+    runBrowseMode(app);
   }
   else
   {
-    runStreamReaderMode(app,argc,argv);
+    runStreamReaderMode(app);
   }
   return app.exec();
 }
