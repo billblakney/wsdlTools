@@ -169,7 +169,10 @@ void MainWindow::setStatusLabel(QString aStatus,QPalette aPalette)
 //-----------------------------------------------------------------------------
 void MainWindow::setupView(std::string aStructName)
 {
-  setupMenuAndToolbar();
+  if (_IsFilterMode)
+  {
+    setupMenuAndToolbar();
+  }
 
    _CentralWidget = new QWidget(this);
    setCentralWidget(_CentralWidget);
