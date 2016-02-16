@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <unistd.h>
 #include <QApplication>
+#include <QSettings>
 #include "MainWindow.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
@@ -104,8 +105,8 @@ void runStreamReaderMode(QApplication &app)
    */
   MainWindow *tMainWindow = new MainWindow(app,0,_StructorBuilder,
       true,tStreamReader,tRecordProcessor);
-  //  window->setGeometry(1920 + 530,135,625,900);
-//  tMainWindow->setGeometry(1920      ,135,900,900);
+  // tMainWindow->setGeometry(1920 + 530,135,625,900);
+  // tMainWindow->setGeometry(1920      ,135,900,900);
   tMainWindow->setGeometry(1920      ,135,650,700);
 
   /*
@@ -130,6 +131,19 @@ void runStreamReaderMode(QApplication &app)
   tStreamReader->start();
 }
 
+void test()
+{
+  QString tWsdlRoot("/home/bill/workspace/IEC_APB_FA_REALSIM/APB/toolbox/utilities/wsdlTools/");
+  QSettings settings(tWsdlRoot + "config/defaults.ini", QSettings::IniFormat);
+
+  QVariant tVariant("test.cfg");
+  QVariant tVariant2("aName");
+  QVariant tVariant3("aSchool");
+  settings.setValue("default_wcf/ssifg_STUDENT_MSG", tVariant);
+  settings.setValue("default_wcf/ssifg_STUDENT_MSG.name", tVariant2);
+  settings.setValue("default_wcf/ssifg_STUDENT_MSG.school", tVariant3);
+}
+
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
@@ -141,6 +155,8 @@ int main(int argc, char *argv[])
 
 //  QPalette tPalette(Qt::lightGray);
 //  app.setPalette(tPalette);
+
+test();
 
   /*
    * Read the environment variables.
