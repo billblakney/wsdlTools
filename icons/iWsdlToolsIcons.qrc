@@ -1,0 +1,17 @@
+ <!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+     <file>document_open.png</file>
+     <file>document_save.png</file>
+     <file>green.png</file>
+     <file>red.png</file>
+     <file>bypass_arrow.png</file>
+     <file>delim_out.png</file>
+     <file>delim_none.png</file>
+     <file>delim_all.png</file>
+     <file>fmt_asis.png</file>
+     <file>fmt_longname.png</file>
+     <file>fmt_table.png</file>
+     <file>fmt_custom.png</file>
+     <file>custom_fmt_tool.png</file>
+ </qresource>
+ </RCC>

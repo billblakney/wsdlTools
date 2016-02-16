@@ -271,10 +271,9 @@ void MainWindow::setupView(std::string aStructName)
 void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixmaps
-  QPixmap tGreenLight("green.png");
-  QPixmap tRedLight("red.png");
-  //   QPixmap tBypass("bypass3.png");
-  QPixmap tBypass("bypass_arrow.png");
+  QPixmap tGreenLight(":/green.png");
+  QPixmap tRedLight(":/red.png");
+  QPixmap tBypass(":/bypass_arrow.png");
 
   // actions
   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Go", this);
@@ -327,9 +326,9 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
 void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
-  QPixmap tDelimAll("delim_all.png");
-  QPixmap tDelimOut("delim_out.png");
-  QPixmap tDelimNone("delim_none.png");
+  QPixmap tDelimAll(":/delim_all.png");
+  QPixmap tDelimOut(":/delim_out.png");
+  QPixmap tDelimNone(":/delim_none.png");
 
   // actions
   QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),"&Delimit Output Records", this);
@@ -374,10 +373,10 @@ void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
 void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   //pixmaps
-  QPixmap tFormatAsIs("fmt_asis.png");
-  QPixmap tFormatLongname("fmt_longname.png");
-  QPixmap tFormatTable("fmt_table.png");
-  QPixmap tFormatCustom("fmt_custom.png");
+  QPixmap tFormatAsIs(":/fmt_asis.png");
+  QPixmap tFormatLongname(":/fmt_longname.png");
+  QPixmap tFormatTable(":/fmt_table.png");
+  QPixmap tFormatCustom(":/fmt_custom.png");
 
   // actions
   QAction *tAsIsFormatAction = new QAction(QIcon(tFormatAsIs),"&As-is", this);
@@ -434,7 +433,7 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
 void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
-  QPixmap tCustomFormat("custom_fmt_tool.png");
+  QPixmap tCustomFormat(":/custom_fmt_tool.png");
 
   // actions
   QAction *tCustomFormatAction =
@@ -461,8 +460,8 @@ void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 void MainWindow::setupFileActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
-  QPixmap tFileOpen("document_open.png");
-  QPixmap tFileSave("document_save.png");
+  QPixmap tFileOpen(":/document_open.png");
+  QPixmap tFileSave(":/document_save.png");
 
   // actions
   QAction *tFileOpenAction =
@@ -472,7 +471,7 @@ void MainWindow::setupFileActions(QMenu *aMenu,QToolBar *aToolBar)
 
   // short-cuts
   tFileOpenAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
-  tFileSaveAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_W));
+  tFileSaveAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
 
   // check boxes
   tFileOpenAction->setCheckable(false);

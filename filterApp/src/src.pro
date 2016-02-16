@@ -8,6 +8,7 @@ DESTDIR      = $(BIN_DIR)
 QMAKE_CLEAN  = $(BIN_DIR)/app_iec_wsdlFilter
 QMAKE_CLEAN  += debug/* release/*
 CONFIG       += debug_and_release
+RESOURCES     = ../../icons/iWsdlToolsIcons.qrc
 DEPENDPATH += .
 QT += xml
 
