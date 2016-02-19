@@ -174,6 +174,9 @@ int main(int argc, char *argv[])
     std::cout << " struct: " << qPrintable(tSpec.getStructName());
     std::cout << " header: " << qPrintable(tSpec.getHeader()) << std::endl;
   }
+  AppConfig tAppConfig = tAppConfigFile.appConfig();
+  std::cout << "settings:" << std::endl;
+  std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
 
   /*
    * Must have a header file specified.

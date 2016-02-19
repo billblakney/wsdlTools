@@ -3,6 +3,7 @@
 
 #include <map>
 #include <QXmlStreamReader>
+#include "AppConfig.hh"
 #include "MessageSpec.hh"
 
 class AppConfigFile
@@ -11,7 +12,9 @@ public:
   static std::string kTag;
 
   static const char *kWsdlFilterConfigTag;
-  static const char *kDefaultsTag;
+  static const char *kConfigTag;
+  static const char *kOpenFilterDirTag;
+  static const char *kSaveFilterDirTag;
   static const char *kDefaultOperateModeTag;
   static const char *kDefaultDelimitModeTag;
   static const char *kMessagesTag;
@@ -26,11 +29,13 @@ public:
 #if 0
   void saveConfiguration();
 #endif
+  AppConfig &appConfig();
   std::map<QString,MessageSpec> &messageMap();
 
 protected:
   QXmlStreamReader reader;
   QString _ConfigFilename;
+  AppConfig _AppConfig;
   std::map<QString,MessageSpec> _MessageMap;
 
   void readWsdlFilterConfigElement();

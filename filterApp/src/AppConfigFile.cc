@@ -6,7 +6,9 @@
 #include "AppConfigFile.hh"
 
 const char *AppConfigFile::kWsdlFilterConfigTag = "wsdlfilterconfig";
-const char *AppConfigFile::kDefaultsTag = "defaults";
+const char *AppConfigFile::kConfigTag = "config";
+const char *AppConfigFile::kOpenFilterDirTag = "open_filter_dir";
+const char *AppConfigFile::kSaveFilterDirTag = "save_filter_dir";
 const char *AppConfigFile::kDefaultOperateModeTag = "default_operate_mode";
 const char *AppConfigFile::kDefaultDelimitModeTag = "default_delimit_mode";
 const char *AppConfigFile::kMessagesTag = "messages";
@@ -62,7 +64,6 @@ void AppConfigFile::openConfiguration()
     }
   }
 
-//  std::cout << "done===============" << std::endl;
   file.close();
 }
 
@@ -76,7 +77,7 @@ void AppConfigFile::readWsdlFilterConfigElement()
   {
     if (reader.isStartElement())
     {
-      if (reader.name() == kDefaultsTag)
+      if (reader.name() == kConfigTag)
       {
         readDefaultsElements();
       }
@@ -103,15 +104,25 @@ void AppConfigFile::readDefaultsElements()
   {
     if (reader.isStartElement())
     {
-      if (reader.name() == kDefaultOperateModeTag)
+      if (reader.name() == kOpenFilterDirTag)
       {
         QString tStr = reader.readElementText();
-        std::cout << "default_operate_mode: " << qPrintable(tStr) << std::endl;
+        _AppConfig.SetOpenFilterDir(tStr);
+      }
+      else if (reader.name() == kSaveFilterDirTag)
+      {
+        QString tStr = reader.readElementText();
+        _AppConfig.SetSaveFilterDir(tStr);
+      }
+      else if (reader.name() == kDefaultOperateModeTag)
+      {
+        QString tStr = reader.readElementText();
+        _AppConfig.SetDefaultOperateMode(tStr);
       }
       else if (reader.name() == kDefaultDelimitModeTag)
       {
         QString tStr = reader.readElementText();
-        std::cout << "default_delimit_mode: " << qPrintable(tStr) << std::endl;
+        _AppConfig.SetDefaultDelimitMode(tStr);
       }
       else
       {
@@ -185,6 +196,13 @@ std::map<QString,MessageSpec> &AppConfigFile::messageMap()
   return _MessageMap;
 }
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+AppConfig &AppConfigFile::appConfig()
+{
+  return _AppConfig;
+}
+
 #if 0
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -237,7 +255,7 @@ void AppConfigFile::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
 //-----------------------------------------------------------------------------
 void AppConfigFile::writeConfigElements(QXmlStreamWriter &aWriter)
 {
-  aWriter.writeStartElement(kDefaultsTag);
+  aWriter.writeStartElement(kConfigTag);
 
   aWriter.writeStartElement(kDefaultOperateModeTag);
   aWriter.writeCharacters("go");

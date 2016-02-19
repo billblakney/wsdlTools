@@ -37,6 +37,7 @@ LIBS += \
 
 # Input
 HEADERS += \
+           AppConfig.hh \
            AppConfigFile.hh \
            ComboBoxDelegate.hh \
            DataStructModel.hh \
@@ -57,6 +58,7 @@ HEADERS += \
 
 SOURCES += \
            main.cc \
+           AppConfig.cc \
            AppConfigFile.cc \
            ComboBoxDelegate.cc \
            DataStructModel.cc \
