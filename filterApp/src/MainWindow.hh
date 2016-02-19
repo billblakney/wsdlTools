@@ -41,6 +41,8 @@ signals:
 
   void applyFormatMode(int aFormatMode,bool aCheckedOnly);
 
+  void applyTestScope(QString aTestScope,bool aCheckedOnly);
+
 public slots:
 
   // handle menu/toolbar actions
@@ -54,6 +56,9 @@ public slots:
   void onAsIsPushbuttonClicked(bool);
   void onLongnamePushbuttonClicked(bool);
   void onTablePushbuttonClicked(bool);
+
+  // handle test scope tool pushbutton
+  void onApplyTestScopeClicked(bool);
 
   // start filter mode once input stream struct name is available
   void onStructNameAvailable(QString aStructName);
@@ -76,6 +81,7 @@ protected:
 	std::string         _StructName;
 	DataStructModel    *_DataStructModel;
 	QComboBox          *_StructComboBox;
+	QComboBox          *_TestScopeComboBox;
 	QWidget            *_CustomFormatToolWidget;
 	QWidget            *_TestScopeToolWidget;
 	QWidget            *_OperateWidget;

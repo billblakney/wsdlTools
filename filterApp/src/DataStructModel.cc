@@ -1050,6 +1050,31 @@ uint DataStructModel::getPostfixIndex(std::string &aPostfix) const
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
+void DataStructModel::applyTestScope(QString aTestScope,bool aCheckedOnly)
+{
+  QVariant tScope(aTestScope);
+  applyTestScope(tScope,aCheckedOnly,_TopNodeItem);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void DataStructModel::applyTestScope(QVariant aTestScope,
+    bool aCheckedOnly,FieldItem *aFieldItem)
+{
+  if ((aCheckedOnly==false) || aFieldItem->getData().isChecked())
+  {
+    aFieldItem->setTestScope(aTestScope);
+  }
+
+  for (int tIdx = 0; tIdx < aFieldItem->childCount(); tIdx++)
+  {
+    applyTestScope(aTestScope,aCheckedOnly,aFieldItem->child(tIdx));
+  }
+  emit modelUpdated();
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 void DataStructModel::applyFormatMode(int aFormatMode,bool aCheckedOnly)
 {
   RecordProcessor::FormatMode tFormatMode =

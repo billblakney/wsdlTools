@@ -594,26 +594,27 @@ QComboBox *MainWindow::createStructComboBox(QWidget *aParent)
 //-----------------------------------------------------------------------------
 QWidget *MainWindow::createTestScopeToolWidget(QWidget *aParent)
 {
-    QWidget *tWidget = new QWidget(aParent);
+  QWidget *tWidget = new QWidget(aParent);
 
-  QComboBox *tComboBox = new QComboBox(tWidget);
-std::vector<std::string> tTempScopes;
-tTempScopes.push_back("root");
-tTempScopes.push_back("CSR");
-tTempScopes.push_back("CSR.Element");
-  tComboBox->addItems(convertToQStringList(tTempScopes));
+  _TestScopeComboBox = new QComboBox(tWidget);
+  std::vector<std::string> tTestScopes = _DataStructModel->getTestNodes();
+  _TestScopeComboBox->addItems(convertToQStringList(tTestScopes));
 
   QPushButton *tPushButton = new QPushButton("Apply",tWidget);
 
+  connect(tPushButton,SIGNAL(clicked(bool)),
+      this,SLOT(onApplyTestScopeClicked(bool)));
 
-    QHBoxLayout *tLayout = new QHBoxLayout;
-    tLayout->addWidget(tComboBox);
-//    tLayout->setAlignment(ComboBox,Qt::AlignTop);
-    tLayout->addWidget(tPushButton);
+  connect(this,SIGNAL(applyTestScope(QString,bool)),
+      _DataStructModel,SLOT(applyTestScope(QString,bool)));
 
-    tWidget->setLayout(tLayout);
+  QVBoxLayout *tLayout = new QVBoxLayout;
+  tLayout->addWidget(_TestScopeComboBox);
+  tLayout->addWidget(tPushButton);
 
-    return tWidget;
+  tWidget->setLayout(tLayout);
+
+  return tWidget;
 }
 
 //-----------------------------------------------------------------------------
@@ -621,18 +622,18 @@ tTempScopes.push_back("CSR.Element");
 //-----------------------------------------------------------------------------
 QWidget *MainWindow::createCustomFormatWidget(QWidget *aParent)
 {
-    QWidget *tConfigure = new QWidget(aParent);
+  QWidget *tConfigure = new QWidget(aParent);
 
-    QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tConfigure);
-    tCustomFormatGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+  QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tConfigure);
+  tCustomFormatGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-    QHBoxLayout *tLayout = new QHBoxLayout;
-    tLayout->addWidget(tCustomFormatGroup);
-    tLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
+  QHBoxLayout *tLayout = new QHBoxLayout;
+  tLayout->addWidget(tCustomFormatGroup);
+  tLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
 
-    tConfigure->setLayout(tLayout);
+  tConfigure->setLayout(tLayout);
 
-    return tConfigure;
+  return tConfigure;
 }
 
 //-------------------------------------------------------------------------------
@@ -641,41 +642,41 @@ QWidget *MainWindow::createCustomFormatWidget(QWidget *aParent)
 //-------------------------------------------------------------------------------
 QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
 {
-    QGroupBox *tGroup = new QGroupBox("Custom Format Utilities",aParent);
-    tGroup->setFlat(true);
+  QGroupBox *tGroup = new QGroupBox("Custom Format Utilities",aParent);
+  tGroup->setFlat(true);
 
-    QPushButton *tAsIsButton =
-        new QPushButton("Apply \"As-is\" settings",tGroup);
-    QPushButton *tLongnameButton =
-        new QPushButton("Apply \"Longname\" settings",tGroup);
-    QPushButton *tTableButton =
-        new QPushButton("Apply \"Table\" settings",tGroup);
+  QPushButton *tAsIsButton =
+      new QPushButton("Apply \"As-is\" settings",tGroup);
+  QPushButton *tLongnameButton =
+      new QPushButton("Apply \"Longname\" settings",tGroup);
+  QPushButton *tTableButton =
+      new QPushButton("Apply \"Table\" settings",tGroup);
 
-    _AsIsCheckBox = new QCheckBox("Checked fields only");
-    _LongnameCheckBox = new QCheckBox("Checked fields only");
-    _TableCheckBox = new QCheckBox("Checked fields only");
+  _AsIsCheckBox = new QCheckBox("Checked fields only");
+  _LongnameCheckBox = new QCheckBox("Checked fields only");
+  _TableCheckBox = new QCheckBox("Checked fields only");
 
-    connect(tAsIsButton,SIGNAL(clicked(bool)),
+  connect(tAsIsButton,SIGNAL(clicked(bool)),
       this,SLOT(onAsIsPushbuttonClicked(bool)));
-    connect(tLongnameButton,SIGNAL(clicked(bool)),
+  connect(tLongnameButton,SIGNAL(clicked(bool)),
       this,SLOT(onLongnamePushbuttonClicked(bool)));
-    connect(tTableButton,SIGNAL(clicked(bool)),
+  connect(tTableButton,SIGNAL(clicked(bool)),
       this,SLOT(onTablePushbuttonClicked(bool)));
 
-    connect(this,SIGNAL(applyFormatMode(int,bool)),
+  connect(this,SIGNAL(applyFormatMode(int,bool)),
       _DataStructModel,SLOT(applyFormatMode(int,bool)));
 
-    QGridLayout *tGrid = new QGridLayout(aParent);
-    tGrid->addWidget(tAsIsButton,0,0);
-    tGrid->addWidget(tLongnameButton,1,0);
-    tGrid->addWidget(tTableButton,2,0);
-    tGrid->addWidget(_AsIsCheckBox,0,1);
-    tGrid->addWidget(_LongnameCheckBox,1,1);
-    tGrid->addWidget(_TableCheckBox,2,1);
+  QGridLayout *tGrid = new QGridLayout(aParent);
+  tGrid->addWidget(tAsIsButton,0,0);
+  tGrid->addWidget(tLongnameButton,1,0);
+  tGrid->addWidget(tTableButton,2,0);
+  tGrid->addWidget(_AsIsCheckBox,0,1);
+  tGrid->addWidget(_LongnameCheckBox,1,1);
+  tGrid->addWidget(_TableCheckBox,2,1);
 
-    tGroup->setLayout(tGrid);
+  tGroup->setLayout(tGrid);
 
-    return tGroup;
+  return tGroup;
 }
 
 //-------------------------------------------------------------------------------
@@ -703,6 +704,14 @@ void MainWindow::onTablePushbuttonClicked(bool)
   int tTableInt = (int)RecordProcessor::eTable;
   bool tChecked = (_TableCheckBox->isChecked() ? true: false);
   emit applyFormatMode(tTableInt,tChecked);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onApplyTestScopeClicked(bool)
+{
+  QString tTestScope = _TestScopeComboBox->currentText();
+  emit applyTestScope(tTestScope,false);
 }
 
 //-------------------------------------------------------------------------------

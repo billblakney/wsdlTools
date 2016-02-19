@@ -160,6 +160,8 @@ public slots:
 
   void applyFormatMode(int aFormatMode,bool aCheckedOnly);
 
+  void applyTestScope(QString aTestScope,bool aCheckedOnly);
+
   void onPropogateToggled(bool aPropogateToChildren);
 
 protected:
@@ -203,6 +205,9 @@ protected:
   uint getTestScopeIndex(std::string &aTestScope) const;
 
   void setupModelData() {}
+
+  void applyTestScope(QVariant aTestScope,bool aCheckedOnly,
+      FieldItem *aFieldItem);
 
   void applyFormatMode(QVariant aFormat,QVariant aPostfix,bool aCheckedOnly,
     FieldItem *aFieldItem);
