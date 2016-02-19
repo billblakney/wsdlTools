@@ -600,7 +600,7 @@ QWidget *MainWindow::createTestScopeToolWidget(QWidget *aParent)
   std::vector<std::string> tTestScopes = _DataStructModel->getTestNodes();
   _TestScopeComboBox->addItems(convertToQStringList(tTestScopes));
 
-  QPushButton *tPushButton = new QPushButton("Apply",tWidget);
+  QPushButton *tPushButton = new QPushButton("Apply test scope",tWidget);
 
   connect(tPushButton,SIGNAL(clicked(bool)),
       this,SLOT(onApplyTestScopeClicked(bool)));
