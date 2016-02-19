@@ -33,7 +33,7 @@ public:
 
 signals:
 
-  void structNameAvailable(QString aStructName);
+  void structNameAvailable(QString aMsgId,QString aStructName);
 
 public slots:
 

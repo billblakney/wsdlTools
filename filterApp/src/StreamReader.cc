@@ -174,7 +174,7 @@ void StreamReader::run()
    * TODO signal to main window directly possible/better?
    */
 sleep(1);
-  emit structNameAvailable(QString(tStructName.c_str()));
+  emit structNameAvailable(QString(tMsgId.c_str()),QString(tStructName.c_str()));
 
 sleep(1);
   /*

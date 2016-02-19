@@ -9,7 +9,7 @@
 #include <QStringList>
 #include <QWidget>
 #include <QMainWindow>
-#include "AppConfig.hh"
+#include "AppConfigFile.hh"
 #include "DataStructModel.hh"
 #include "MessageConfigFile.hh"
 #include "RecordProcessor.hh"
@@ -22,7 +22,7 @@ class MainWindow: public QMainWindow
   Q_OBJECT
 public:
 
-  MainWindow(QApplication &aApp,QWidget *aParent,AppConfig aAppConfig,
+  MainWindow(QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
       StructorBuilder *_StructorBuilder,bool aIsFilterMode = false,
       StreamReader *aStreamReader = 0,RecordProcessor *aRecordProcessor = 0);
 
@@ -62,7 +62,7 @@ public slots:
   void onApplyTestScopeClicked(bool);
 
   // start filter mode once input stream struct name is available
-  void onStructNameAvailable(QString aStructName);
+  void onStructNameAvailable(QString aMsgId,QString aStructName);
 
   // handle user selection of struct in browse mode
   void onStructComboBoxActivated(int index);
@@ -71,7 +71,7 @@ public slots:
   void onModelUpdate();
 
 protected:
-  AppConfig           _AppConfig;
+  AppConfigFile      *_AppConfigFile;
 
   QWidget            *_CentralWidget;
   QLabel             *_StatusLabel;

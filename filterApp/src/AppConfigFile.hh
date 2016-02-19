@@ -22,6 +22,7 @@ public:
   static const char *kAttrIdTag;
   static const char *kAttrStructTag;
   static const char *kAttrHeaderTag;
+  static const char *kAttrDefaultFilterTag;
 
   AppConfigFile(QString aFilename);
   virtual ~AppConfigFile();

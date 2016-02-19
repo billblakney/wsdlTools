@@ -7,7 +7,7 @@ class MessageSpec
 {
 public:
   MessageSpec();
-  MessageSpec(QString aId,QString aStructName,QString aHeader);
+  MessageSpec(QString aId,QString aStructName,QString aHeader,QString aFilter);
   virtual ~MessageSpec();
 
 
@@ -23,10 +23,17 @@ public:
 
   void SetStructName(const QString& structName);
 
+  const QString& getFilter() const;
+
+  void SetFilter(const QString& filter);
+
+  QString toQString();
+
 protected:
   QString _Id;
   QString _StructName;
   QString _Header;
+  QString _Filter;
 };
 
 #endif /* MESSAGESPEC_H */

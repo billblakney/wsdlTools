@@ -23,11 +23,11 @@ using namespace std;
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
-    QApplication &aApp,QWidget *aParent,AppConfig aAppConfig,
+    QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
     StructorBuilder *aStructorBuilder,bool aIsFilterMode,
     StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
   : QMainWindow(aParent),
-    _AppConfig(aAppConfig),
+    _AppConfigFile(aAppConfigFile),
     _CentralWidget(0),
     _StructorBuilder(aStructorBuilder),
     _IsFilterMode(aIsFilterMode),
@@ -126,14 +126,16 @@ void MainWindow::setInitialStructName(std::string aStructName)
 //-----------------------------------------------------------------------------
 void MainWindow::onFileOpenAction()
 {
-  _MessageConfigFile->openConfiguration(_AppConfig.getCustomFiltersDir());
+  _MessageConfigFile->openConfiguration(
+      _AppConfigFile->appConfig().getCustomFiltersDir());
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MainWindow::onFileSaveAction()
 {
-  _MessageConfigFile->saveConfiguration(_AppConfig.getCustomFiltersDir());
+  _MessageConfigFile->saveConfiguration(
+      _AppConfigFile->appConfig().getCustomFiltersDir());
 }
 
 //-----------------------------------------------------------------------------
@@ -766,7 +768,7 @@ QStringList MainWindow::convertToQStringList(std::vector<std::string> aStrings)
 // The stream reader calls this once it has determined what data structure is
 // being it is going to process.
 //-------------------------------------------------------------------------------
-void MainWindow::onStructNameAvailable(QString aStructName)
+void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
 {
   /*
    * Need to set the structure name before setting up the view and launching
@@ -779,6 +781,32 @@ void MainWindow::onStructNameAvailable(QString aStructName)
    * Create the config file manager.
    */
   _MessageConfigFile = new MessageConfigFile(_DataStructModel);
+
+  /*
+   * Apply default filter settings if found.
+   */
+  std::map<QString,MessageSpec> &tMessageMap = _AppConfigFile->messageMap();
+  std::map<QString,MessageSpec>::iterator tIter;
+  tIter = tMessageMap.find(aMsgId);
+  QString tFilter;
+  if (tIter != tMessageMap.end())
+  {
+    MessageSpec tSpec = tIter->second;
+    if (aStructName == tSpec.getStructName())
+    {
+      if (tSpec.getFilter().length() > 0)
+      {
+        tFilter = tSpec.getFilter();
+        QString tDir = _AppConfigFile->appConfig().getDefaultFiltersDir();
+        _MessageConfigFile->openConfiguration(tDir,tFilter);
+      }
+    }
+    else
+    {
+      std::cout << "WARNING: unexpected message id/structure combination"
+          << std::endl;
+    }
+  }
 
   /*
    * Give the stream reader the data struct model so that it can start

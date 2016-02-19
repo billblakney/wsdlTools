@@ -16,6 +16,7 @@ const char *AppConfigFile::kMessageTag = "message";
 const char *AppConfigFile::kAttrIdTag = "id";
 const char *AppConfigFile::kAttrStructTag = "struct";
 const char *AppConfigFile::kAttrHeaderTag = "header";
+const char *AppConfigFile::kAttrDefaultFilterTag = "default_filter";
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -148,8 +149,9 @@ void AppConfigFile::readMessagesElements()
         QString tId = reader.attributes().value(kAttrIdTag).toString();
         QString tStruct = reader.attributes().value(kAttrStructTag).toString();
         QString tHeader = reader.attributes().value(kAttrHeaderTag).toString();
+        QString tFilter = reader.attributes().value(kAttrDefaultFilterTag).toString();
 
-        MessageSpec tSpec(tId,tStruct,tHeader);
+        MessageSpec tSpec(tId,tStruct,tHeader,tFilter);
         _MessageMap[tId] = tSpec;
 
         reader.readElementText();

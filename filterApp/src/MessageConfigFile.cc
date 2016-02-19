@@ -37,13 +37,23 @@ void MessageConfigFile::openConfiguration(QString aDir)
       QString("Open WSDL Config File"), aDir,
       QString("WSDL Config Files (*.wcf *.wpf)"));
 
-  QFile file(fileName);
-  if (!file.open(QFile::ReadOnly | QFile::Text)) {
-    std::cout << "Error: Cannot read file " << qPrintable(fileName)
-                        << ": " << qPrintable(file.errorString())
-                        << std::endl;
+  openConfiguration(aDir,fileName);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MessageConfigFile::openConfiguration(QString aDir,QString aFilename)
+{
+  QString aFilepath = aDir + "/" + aFilename;
+  QFile file(aFilepath);
+  if (!file.open(QFile::ReadOnly | QFile::Text))
+  {
+    std::cout << "Error: Cannot read file " << qPrintable(aFilename)
+              << ": " << qPrintable(file.errorString()) << std::endl;
     return;
   }
+
+  std::cout << "applying filter " << qPrintable(aFilepath) << std::endl;
   reader.setDevice(&file);
 
   reader.readNext();

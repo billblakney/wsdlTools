@@ -13,7 +13,7 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 
 static bool _BrowseMode = false;
 
-AppConfig _AppConfig;
+AppConfigFile *_AppConfigFile;
 
 static std::string _InitialStruct;
 
@@ -88,7 +88,7 @@ void parseHeaderFile()
  *----------------------------------------------------------------------------*/
 void runBrowseMode(QApplication &app)
 {
-  MainWindow *window = new MainWindow(app,0,_AppConfig,_StructorBuilder);
+  MainWindow *window = new MainWindow(app,0,_AppConfigFile,_StructorBuilder);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
   window->setupView(_InitialStruct);
@@ -113,7 +113,7 @@ void runStreamReaderMode(QApplication &app)
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(app,0,_AppConfig,_StructorBuilder,
+  MainWindow *tMainWindow = new MainWindow(app,0,_AppConfigFile,_StructorBuilder,
       true,tStreamReader,tRecordProcessor);
   // tMainWindow->setGeometry(1920 + 530,135,625,900);
   // tMainWindow->setGeometry(1920      ,135,900,900);
@@ -124,8 +124,8 @@ void runStreamReaderMode(QApplication &app)
    * the type of structure to be processed.
    */
   QApplication::connect(
-      tStreamReader,SIGNAL(structNameAvailable(QString)),
-      tMainWindow,SLOT(onStructNameAvailable(QString)));
+      tStreamReader,SIGNAL(structNameAvailable(QString,QString)),
+      tMainWindow,SLOT(onStructNameAvailable(QString,QString)));
 
   /*
    * Setup connection to let the stream reader have access to the data struct
@@ -162,23 +162,19 @@ int main(int argc, char *argv[])
 
   processCommandLine(argc,argv);
 
-  AppConfigFile tAppConfigFile(_ConfigFile);
-  tAppConfigFile.openConfiguration();
-  std::map<QString,MessageSpec> &tMessageMap = tAppConfigFile.messageMap();
+  _AppConfigFile = new AppConfigFile(_ConfigFile);
+  _AppConfigFile->openConfiguration();
+  std::map<QString,MessageSpec> &tMessageMap = _AppConfigFile->messageMap();
 
   std::map<QString,MessageSpec>::iterator tIter;
   for (tIter = tMessageMap.begin(); tIter != tMessageMap.end(); tIter++)
   {
     MessageSpec tSpec = tIter->second;
-
-    std::cout << "message map: " << std::endl;
-    std::cout << "id: " << qPrintable(tSpec.getId());
-    std::cout << " struct: " << qPrintable(tSpec.getStructName());
-    std::cout << " header: " << qPrintable(tSpec.getHeader()) << std::endl;
+    std::cout << qPrintable(tSpec.toQString()) << std::endl;
   }
-  _AppConfig = tAppConfigFile.appConfig();
+  AppConfig tAppConfig = _AppConfigFile->appConfig();
   std::cout << "settings:" << std::endl;
-  std::cout << qPrintable(_AppConfig.toQString()) << std::endl;
+  std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
 
   /*
    * Must have a header file specified.

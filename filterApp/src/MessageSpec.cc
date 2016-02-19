@@ -5,11 +5,13 @@ MessageSpec::MessageSpec()
 {
 }
 
-MessageSpec::MessageSpec(QString aId,QString aStructName,QString aHeader)
+MessageSpec::MessageSpec(
+    QString aId,QString aStructName,QString aHeader,QString aFilter)
 {
   _Id = aId;
   _StructName = aStructName;
   _Header = aHeader;
+  _Filter = aFilter;
 }
 
 MessageSpec::~MessageSpec()
@@ -46,3 +48,22 @@ void MessageSpec::SetStructName(const QString& structName)
   _StructName = structName;
 }
 
+const QString& MessageSpec::getFilter() const
+{
+  return _Filter;
+}
+
+void MessageSpec::SetFilter(const QString& filter)
+{
+  _Filter = filter;
+}
+
+QString MessageSpec::toQString()
+{
+  QString tStr;
+  tStr += "id: " + _Id;
+  tStr += ",struct: " + _StructName;
+  tStr += ",header: " + _Header;
+  tStr += ",filter: " + _Filter;
+  return tStr;
+}
