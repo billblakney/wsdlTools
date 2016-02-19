@@ -10,7 +10,7 @@
 #include <QWidget>
 #include <QMainWindow>
 #include "DataStructModel.hh"
-#include "FileManager.hh"
+#include "MessageConfigFile.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "StructorBuilder.hh"
@@ -109,7 +109,7 @@ protected:
   QCheckBox *_LongnameCheckBox;
   QCheckBox *_TableCheckBox;
 
-  FileManager *_ConfigFileManager;
+  MessageConfigFile *_MessageConfigFile;
 
   void setupMenuAndToolbar();
 

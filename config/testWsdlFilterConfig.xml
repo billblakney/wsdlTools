@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilterconfig>
+    <defaults>
+        <default_operate_mode>go</default_operate_mode>
+        <default_delimit_mode>on_out</default_delimit_mode>
+    </defaults>
+    <messages>
+        <message id="ssifg_STUDENT_MSG_ID" struct="STUDENT_T" header="test.H"/>
+    </messages>
+</wsdlfilterconfig>

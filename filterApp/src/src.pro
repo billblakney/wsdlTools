@@ -37,13 +37,15 @@ LIBS += \
 
 # Input
 HEADERS += \
+           AppConfigFile.hh \
            ComboBoxDelegate.hh \
            DataStructModel.hh \
            FieldItem.hh \
            FieldItemData.hh \
-           FileManager.hh \
            LineMatcher.hh \
            MainWindow.hh \
+           MessageConfigFile.hh \
+           MessageSpec.hh \
            RecordLine.hh \
            RecordProcessor.hh \
            RecordWriter.hh \
@@ -55,13 +57,15 @@ HEADERS += \
 
 SOURCES += \
            main.cc \
+           AppConfigFile.cc \
            ComboBoxDelegate.cc \
            DataStructModel.cc \
            FieldItem.cc \
            FieldItemData.cc \
-           FileManager.cc \
            LineMatcher.cc \
            MainWindow.cc \
+           MessageConfigFile.cc \
+           MessageSpec.cc \
            RecordLine.cc \
            RecordProcessor.cc \
            RecordWriter.cc \

@@ -1,16 +1,16 @@
-#ifndef FILEMANAGER_HH_
-#define FILEMANAGER_HH_
+#ifndef MESSAGECONFIGFILE_HH_
+#define MESSAGECONFIGFILE_HH_
 
 #include <QXmlStreamReader>
 #include "DataStructModel.hh"
 
-class FileManager
+class MessageConfigFile
 {
 public:
   static std::string kTag;
 
-  static const char *kWsdlfilterTag;
-  static const char *kConfigTag;
+  static const char *kWsdlfilterconfigTag;
+  static const char *kDefaultsTag;
   static const char *kOperateModeTag;
   static const char *kDelimitModeTag;
   static const char *kFieldsTag;
@@ -20,8 +20,8 @@ public:
   static const char *kValueChecked;
   static const char *kValueNotChecked;
 
-  FileManager(DataStructModel *aModel);
-  virtual ~FileManager();
+  MessageConfigFile(DataStructModel *aModel);
+  virtual ~MessageConfigFile();
   void openConfiguration();
   void saveConfiguration();
 
@@ -39,4 +39,4 @@ protected:
   void writeFieldElements(QXmlStreamWriter &aWriter);
 };
 
-#endif /* FILEMANAGER_HH_ */
+#endif /* MESSAGECONFIGFILE_HH_ */

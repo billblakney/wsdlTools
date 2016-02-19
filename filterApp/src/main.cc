@@ -1,7 +1,9 @@
 #include <cstdio>
+#include <iostream>
 #include <unistd.h>
 #include <QApplication>
 #include <QSettings>
+#include "AppConfigFile.hh"
 #include "MainWindow.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
@@ -12,6 +14,8 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 static bool _BrowseMode = false;
 
 static std::string _InitialStruct;
+
+QString _ConfigFile("/opt/idp/cots/iec/rtf/static/wsdlTools/wsdlFilter.conf");
 
 std::string _HeaderFile("/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H");
 
@@ -58,6 +62,10 @@ void processCommandLine(int argc,char *argv[])
  *----------------------------------------------------------------------------*/
 void readEnvironmentVariables()
 {
+  if(getenv("WSDL_FILTER_CONFIG_FILE"))
+  {
+    _ConfigFile = getenv("WSDL_FILTER_CONFIG_FILE");
+  }
   if(getenv("CLIRCAR_H"))
   {
     _HeaderFile = getenv("CLIRCAR_H");
@@ -131,19 +139,6 @@ void runStreamReaderMode(QApplication &app)
   tStreamReader->start();
 }
 
-void test()
-{
-  QString tWsdlRoot("/home/bill/workspace/IEC_APB_FA_REALSIM/APB/toolbox/utilities/wsdlTools/");
-  QSettings settings(tWsdlRoot + "config/defaults.ini", QSettings::IniFormat);
-
-  QVariant tVariant("test.cfg");
-  QVariant tVariant2("aName");
-  QVariant tVariant3("aSchool");
-  settings.setValue("default_wcf/ssifg_STUDENT_MSG", tVariant);
-  settings.setValue("default_wcf/ssifg_STUDENT_MSG.name", tVariant2);
-  settings.setValue("default_wcf/ssifg_STUDENT_MSG.school", tVariant3);
-}
-
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
@@ -156,8 +151,6 @@ int main(int argc, char *argv[])
 //  QPalette tPalette(Qt::lightGray);
 //  app.setPalette(tPalette);
 
-test();
-
   /*
    * Read the environment variables.
    * Currently only one: CLIRCAR_H. It may optionally be set by command-line
@@ -166,6 +159,21 @@ test();
   readEnvironmentVariables();
 
   processCommandLine(argc,argv);
+
+  AppConfigFile tAppConfigFile(_ConfigFile);
+  tAppConfigFile.openConfiguration();
+  std::map<QString,MessageSpec> &tMessageMap = tAppConfigFile.messageMap();
+
+  std::map<QString,MessageSpec>::iterator tIter;
+  for (tIter = tMessageMap.begin(); tIter != tMessageMap.end(); tIter++)
+  {
+    MessageSpec tSpec = tIter->second;
+
+    std::cout << "message map: " << std::endl;
+    std::cout << "id: " << qPrintable(tSpec.getId());
+    std::cout << " struct: " << qPrintable(tSpec.getStructName());
+    std::cout << " header: " << qPrintable(tSpec.getHeader()) << std::endl;
+  }
 
   /*
    * Must have a header file specified.

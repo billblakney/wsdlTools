@@ -1,64 +1,59 @@
-#include "FileManager.hh"
+#include <iostream>
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QXmlStreamWriter>
-#include "DataStructModel.hh"
+#include "AppConfigFile.hh"
 
-const char *FileManager::kWsdlfilterTag = "wsdlfilter";
-const char *FileManager::kConfigTag = "config";
-const char *FileManager::kOperateModeTag = "operate_mode";
-const char *FileManager::kDelimitModeTag = "delimit_mode";
-const char *FileManager::kFieldsTag = "fields";
-const char *FileManager::kFieldTag = "field";
-const char *FileManager::kAttrKeyTag = "key";
-const char *FileManager::kAttrCheckedTag = "checked";
-const char *FileManager::kValueChecked = "1";
-const char *FileManager::kValueNotChecked = "0";
+const char *AppConfigFile::kWsdlFilterConfigTag = "wsdlfilterconfig";
+const char *AppConfigFile::kDefaultsTag = "defaults";
+const char *AppConfigFile::kDefaultOperateModeTag = "default_operate_mode";
+const char *AppConfigFile::kDefaultDelimitModeTag = "default_delimit_mode";
+const char *AppConfigFile::kMessagesTag = "messages";
+const char *AppConfigFile::kMessageTag = "message";
+const char *AppConfigFile::kAttrIdTag = "id";
+const char *AppConfigFile::kAttrStructTag = "struct";
+const char *AppConfigFile::kAttrHeaderTag = "header";
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-FileManager::FileManager(DataStructModel *aModel)
+AppConfigFile::AppConfigFile(QString aConfigFilename)
 {
-  _DataStructModel = aModel;
+  _ConfigFilename = aConfigFilename;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-FileManager::~FileManager()
+AppConfigFile::~AppConfigFile()
 {
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::openConfiguration()
+void AppConfigFile::openConfiguration()
 {
-  QString fileName = QFileDialog::getOpenFileName(0,
-      QString("Open WSDL Config File"), "/tmp",
-      QString("WSDL Config Files (*.wcf *.wpf)"));
-
-  QFile file(fileName);
-  if (!file.open(QFile::ReadOnly | QFile::Text)) {
-    std::cout << "Error: Cannot read file " << qPrintable(fileName)
-                        << ": " << qPrintable(file.errorString())
-                        << std::endl;
+  QFile file(_ConfigFilename);
+  if (!file.open(QFile::ReadOnly | QFile::Text))
+  {
+    std::cout << "Error: Cannot read file " << qPrintable(_ConfigFilename)
+              << ": " << qPrintable(file.errorString()) << std::endl;
     return;
   }
-  reader.setDevice(&file);
 
+  reader.setDevice(&file);
   reader.readNext();
 
   while (!reader.atEnd())
   {
     if (reader.isStartElement())
     {
-      if (reader.name() == kWsdlfilterTag)
+      if (reader.name() == kWsdlFilterConfigTag)
       {
-        readWsdlfilterElement();
+        readWsdlFilterConfigElement();
       }
       else
       {
-        reader.raiseError(QObject::tr("Not a WSDL filter config file"));
+        reader.raiseError(QObject::tr("Not a WSDL filter app config file"));
       }
     }
     else
@@ -73,7 +68,7 @@ void FileManager::openConfiguration()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::readWsdlfilterElement()
+void AppConfigFile::readWsdlFilterConfigElement()
 {
   reader.readNext();
 
@@ -81,42 +76,13 @@ void FileManager::readWsdlfilterElement()
   {
     if (reader.isStartElement())
     {
-      if (reader.name() == kConfigTag)
+      if (reader.name() == kDefaultsTag)
       {
-        readConfigElements();
+        readDefaultsElements();
       }
-      else if (reader.name() == kFieldsTag)
+      else if (reader.name() == kMessagesTag)
       {
-        readFieldElements();
-      }
-      else
-      {
-        skipUnknownElement();
-      }
-    }
-    reader.readNext();
-  }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void FileManager::readConfigElements()
-{
-  reader.readNext();
-
-  while (!reader.atEnd() && !reader.isEndElement())
-  {
-    if (reader.isStartElement())
-    {
-      if (reader.name() == kOperateModeTag)
-      {
-        QString tStr = reader.readElementText();
-//        std::cout << "operate_mode: " << qPrintable(tStr) << std::endl;
-      }
-      else if (reader.name() == kDelimitModeTag)
-      {
-        QString tStr = reader.readElementText();
-//        std::cout << "delimit_mode: " << qPrintable(tStr) << std::endl;
+        readMessagesElements();
       }
       else
       {
@@ -129,7 +95,7 @@ void FileManager::readConfigElements()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::readFieldElements()
+void AppConfigFile::readDefaultsElements()
 {
   reader.readNext();
 
@@ -137,32 +103,43 @@ void FileManager::readFieldElements()
   {
     if (reader.isStartElement())
     {
-      if (reader.name() == kFieldTag)
+      if (reader.name() == kDefaultOperateModeTag)
       {
-        QString tKey = reader.attributes().value(kAttrKeyTag).toString();
-//        std::cout << "key: " << qPrintable(tKey) << std::endl;
-        QString tCheckValue = reader.attributes().value(kAttrCheckedTag).toString();
-//        std::cout << "checked: " << qPrintable(tCheckValue) << std::endl;
+        QString tStr = reader.readElementText();
+        std::cout << "default_operate_mode: " << qPrintable(tStr) << std::endl;
+      }
+      else if (reader.name() == kDefaultDelimitModeTag)
+      {
+        QString tStr = reader.readElementText();
+        std::cout << "default_delimit_mode: " << qPrintable(tStr) << std::endl;
+      }
+      else
+      {
+        skipUnknownElement();
+      }
+    }
+    reader.readNext();
+  }
+}
 
-        bool tChecked = (tCheckValue.toStdString().compare(kValueChecked)?false:true);
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void AppConfigFile::readMessagesElements()
+{
+  reader.readNext();
 
-        FieldItem *tFieldItem = _DataStructModel->getNode(tKey.toStdString());
-        if (tFieldItem)
-        {
-          FieldItemData &tData = tFieldItem->getData();
-          bool tCurrentState = tData.isChecked();
-          if (tChecked != tCurrentState)
-          {
-            if (tChecked)
-            {
-              tData.setCheckState(Qt::Checked);
-            }
-            else
-            {
-              tData.setCheckState(Qt::Unchecked);
-            }
-          }
-        }
+  while (!reader.atEnd() && !reader.isEndElement())
+  {
+    if (reader.isStartElement())
+    {
+      if (reader.name() == kMessageTag)
+      {
+        QString tId = reader.attributes().value(kAttrIdTag).toString();
+        QString tStruct = reader.attributes().value(kAttrStructTag).toString();
+        QString tHeader = reader.attributes().value(kAttrHeaderTag).toString();
+
+        MessageSpec tSpec(tId,tStruct,tHeader);
+        _MessageMap[tId] = tSpec;
 
         reader.readElementText();
       }
@@ -177,7 +154,7 @@ void FileManager::readFieldElements()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::skipUnknownElement()
+void AppConfigFile::skipUnknownElement()
 {
   std::cout << "WARN: skipping unknown xml element" << std::endl;
 
@@ -203,7 +180,15 @@ void FileManager::skipUnknownElement()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::saveConfiguration()
+std::map<QString,MessageSpec> &AppConfigFile::messageMap()
+{
+  return _MessageMap;
+}
+
+#if 0
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void AppConfigFile::saveConfiguration()
 {
 
   QString tFileName = QFileDialog::getOpenFileName(0,
@@ -231,15 +216,15 @@ void FileManager::saveConfiguration()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
+void AppConfigFile::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
 {
   // Writes a document start with the XML version number.
   aWriter.writeStartDocument();
 
-  aWriter.writeStartElement(kWsdlfilterTag);
+  aWriter.writeStartElement(kWsdlFilterConfigTag);
 
   writeConfigElements(aWriter);
-  writeFieldElements(aWriter);
+  writeMessageElements(aWriter);
 
   // end tag wsdlfilter
   aWriter.writeEndElement(); //wsdlfilter
@@ -250,15 +235,15 @@ void FileManager::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::writeConfigElements(QXmlStreamWriter &aWriter)
+void AppConfigFile::writeConfigElements(QXmlStreamWriter &aWriter)
 {
-  aWriter.writeStartElement(kConfigTag);
+  aWriter.writeStartElement(kDefaultsTag);
 
-  aWriter.writeStartElement(kOperateModeTag);
+  aWriter.writeStartElement(kDefaultOperateModeTag);
   aWriter.writeCharacters("go");
   aWriter.writeEndElement();
 
-  aWriter.writeStartElement(kDelimitModeTag);
+  aWriter.writeStartElement(kDefaultDelimitModeTag);
   aWriter.writeCharacters("on_out");
   aWriter.writeEndElement();
 
@@ -267,27 +252,28 @@ void FileManager::writeConfigElements(QXmlStreamWriter &aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FileManager::writeFieldElements(QXmlStreamWriter &aWriter)
+void AppConfigFile::writeMessageElements(QXmlStreamWriter &aWriter)
 {
-  std::vector<FieldItem *> &tTreeItems = _DataStructModel->getTreeItems();
+  std::vector<MessageItem *> &tTreeItems = _DataStructModel->getTreeItems();
 
-  aWriter.writeStartElement(kFieldsTag);
+  aWriter.writeStartElement(kMessagesTag);
 
-  std::vector<FieldItem *>::iterator tIter;
+  std::vector<MessageItem *>::iterator tIter;
   for (tIter = tTreeItems.begin(); tIter != tTreeItems.end(); tIter++)
   {
-    FieldItemData &tData = (*tIter)->getData();
+    MessageItemData &tData = (*tIter)->getData();
 
-    // open field tag
-    aWriter.writeStartElement(kFieldTag);
+    // open message tag
+    aWriter.writeStartElement(kMessageTag);
 
     // write attributes
-    aWriter.writeAttribute(kAttrKeyTag,tData.getKey().c_str());
-    aWriter.writeAttribute(kAttrCheckedTag, (tData.getCheckState()?kValueChecked:kValueNotChecked));
+    aWriter.writeAttribute(kAttrIdTag,tData.getId().c_str());
+    aWriter.writeAttribute(kAttrStructTag, (tData.getCheckState()?kValueStruct:kValueNotStruct));
 
-    // close tag field
+    // close tag message
     aWriter.writeEndElement();
   }
-  // end tag fields
-  aWriter.writeEndElement(); //fields
+  // end tag messages
+  aWriter.writeEndElement(); //messages
 }
+#endif

@@ -49,7 +49,7 @@ MainWindow::MainWindow(
     _AsIsCheckBox(0),
     _LongnameCheckBox(0),
     _TableCheckBox(0),
-    _ConfigFileManager(0)
+    _MessageConfigFile(0)
 {
   Q_UNUSED(aApp);
 
@@ -125,14 +125,14 @@ void MainWindow::setInitialStructName(std::string aStructName)
 //-----------------------------------------------------------------------------
 void MainWindow::onFileOpenAction()
 {
-  _ConfigFileManager->openConfiguration();
+  _MessageConfigFile->openConfiguration();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MainWindow::onFileSaveAction()
 {
-  _ConfigFileManager->saveConfiguration();
+  _MessageConfigFile->saveConfiguration();
 }
 
 //-----------------------------------------------------------------------------
@@ -777,7 +777,7 @@ void MainWindow::onStructNameAvailable(QString aStructName)
   /*
    * Create the config file manager.
    */
-  _ConfigFileManager = new FileManager(_DataStructModel);
+  _MessageConfigFile = new MessageConfigFile(_DataStructModel);
 
   /*
    * Give the stream reader the data struct model so that it can start
