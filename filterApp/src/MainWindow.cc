@@ -34,10 +34,10 @@ MainWindow::MainWindow(
     _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
     _StructComboBox(0),
-    _CustomFormatWidget(0),
+    _CustomFormatToolWidget(0),
     _StructTree(0),
     _PropagateCheckBox(0),
-    _CustomFormatToolsWidget(0),
+    _CustomFormatToolDock(0),
     _FormatAsIsButton(0),
     _FormatLongnameButton(0),
     _FormatTableButton(0),
@@ -434,24 +434,32 @@ void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
   QPixmap tCustomFormat(":/custom_fmt_tool.png");
+  QPixmap tTestScopeToolPixmap(":/custom_fmt_tool.png");
 
   // actions
   QAction *tCustomFormatAction =
       new QAction(QIcon(tCustomFormat),"Custom format tool", this);
+  QAction *tTestScopeToolAction =
+      new QAction(QIcon(tTestScopeToolPixmap),"Test scope tool", this);
 
   // check boxes
   tCustomFormatAction->setCheckable(false);
+  tTestScopeToolAction->setCheckable(false);
 
   // action signal-slot
   connect(tCustomFormatAction,SIGNAL(triggered()),
       this,SLOT(onCustomFormatToolAction()));
+  connect(tTestScopeToolAction,SIGNAL(triggered()),
+      this,SLOT(onTestScopeToolAction()));
 
   // menu
   aMenu = menuBar()->addMenu("&Tools");
   aMenu->addAction(tCustomFormatAction);
+  aMenu->addAction(tTestScopeToolAction);
 
   // toolbar
   aToolBar->addAction(tCustomFormatAction);
+  aToolBar->addAction(tTestScopeToolAction);
 }
 
 //-----------------------------------------------------------------------------
@@ -584,6 +592,33 @@ QComboBox *MainWindow::createStructComboBox(QWidget *aParent)
 //-----------------------------------------------------------------------------
 // Creates the options widget.
 //-----------------------------------------------------------------------------
+QWidget *MainWindow::createTestScopeToolWidget(QWidget *aParent)
+{
+    QWidget *tWidget = new QWidget(aParent);
+
+  QComboBox *tComboBox = new QComboBox(tWidget);
+std::vector<std::string> tTempScopes;
+tTempScopes.push_back("root");
+tTempScopes.push_back("CSR");
+tTempScopes.push_back("CSR.Element");
+  tComboBox->addItems(convertToQStringList(tTempScopes));
+
+  QPushButton *tPushButton = new QPushButton("Apply",tWidget);
+
+
+    QHBoxLayout *tLayout = new QHBoxLayout;
+    tLayout->addWidget(tComboBox);
+//    tLayout->setAlignment(ComboBox,Qt::AlignTop);
+    tLayout->addWidget(tPushButton);
+
+    tWidget->setLayout(tLayout);
+
+    return tWidget;
+}
+
+//-----------------------------------------------------------------------------
+// Creates the options widget.
+//-----------------------------------------------------------------------------
 QWidget *MainWindow::createCustomFormatWidget(QWidget *aParent)
 {
     QWidget *tConfigure = new QWidget(aParent);
@@ -674,20 +709,28 @@ void MainWindow::onTablePushbuttonClicked(bool)
 //-------------------------------------------------------------------------------
 void MainWindow::onCustomFormatToolAction()
 {
-#if 1
-  /*
-   * Dock.
-   */
-    _CustomFormatWidget = createCustomFormatWidget(0);
+    _CustomFormatToolWidget = createCustomFormatWidget(0);
 
-//   QDockWidget *shapesDockWidget = new QDockWidget(QString("Shapes"));
-   _CustomFormatToolsWidget = new QDockWidget(0);
-   _CustomFormatToolsWidget->setObjectName("shapesDockWidget");
-   _CustomFormatToolsWidget->setWidget(_CustomFormatWidget);
-   _CustomFormatToolsWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
-#endif
+   _CustomFormatToolDock = new QDockWidget(0);
+   _CustomFormatToolDock->setObjectName("customFormatToolDock");
+   _CustomFormatToolDock->setWidget(_CustomFormatToolWidget);
+   _CustomFormatToolDock->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 
-  addDockWidget(Qt::TopDockWidgetArea, _CustomFormatToolsWidget);
+  addDockWidget(Qt::TopDockWidgetArea, _CustomFormatToolDock);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onTestScopeToolAction()
+{
+   _TestScopeToolWidget = createTestScopeToolWidget(0);
+
+   _TestScopeToolDock = new QDockWidget(0);
+   _TestScopeToolDock->setObjectName("testScopeToolDock");
+   _TestScopeToolDock->setWidget(_TestScopeToolWidget);
+   _TestScopeToolDock->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
+
+  addDockWidget(Qt::TopDockWidgetArea, _TestScopeToolDock);
 }
 
 //-------------------------------------------------------------------------------

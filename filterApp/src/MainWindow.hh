@@ -48,6 +48,7 @@ public slots:
   void onFileSaveAction();
   void onOutputModeAction(QAction *aAction);
   void onCustomFormatToolAction();
+  void onTestScopeToolAction();
 
   // handle custom format tool pushbutton
   void onAsIsPushbuttonClicked(bool);
@@ -75,11 +76,13 @@ protected:
 	std::string         _StructName;
 	DataStructModel    *_DataStructModel;
 	QComboBox          *_StructComboBox;
-	QWidget            *_CustomFormatWidget;
+	QWidget            *_CustomFormatToolWidget;
+	QWidget            *_TestScopeToolWidget;
 	QWidget            *_OperateWidget;
 	StructTreeView     *_StructTree;
 	QCheckBox          *_PropagateCheckBox;
-	QDockWidget        *_CustomFormatToolsWidget;
+	QDockWidget        *_CustomFormatToolDock;
+	QDockWidget        *_TestScopeToolDock;
 
   QRadioButton       *_DelimitAllButton;
   QRadioButton       *_DelimitOutputButton;
@@ -121,6 +124,8 @@ protected:
   StructTreeView *createTreeView(QWidget *aParent);
 
   QComboBox *createStructComboBox(QWidget *aParent);
+
+  QWidget *createTestScopeToolWidget(QWidget *aParent);
 
   QWidget *createCustomFormatWidget(QWidget *aParent);
 
