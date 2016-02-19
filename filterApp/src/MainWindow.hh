@@ -75,7 +75,7 @@ protected:
 	std::string         _StructName;
 	DataStructModel    *_DataStructModel;
 	QComboBox          *_StructComboBox;
-	QWidget            *_ConfigureWidget;
+	QWidget            *_CustomFormatWidget;
 	QWidget            *_OperateWidget;
 	StructTreeView     *_StructTree;
 	QCheckBox          *_PropagateCheckBox;
@@ -122,7 +122,7 @@ protected:
 
   QComboBox *createStructComboBox(QWidget *aParent);
 
-  QWidget *createConfigureWidget(QWidget *aParent);
+  QWidget *createCustomFormatWidget(QWidget *aParent);
 
   QGroupBox *createCustomFormatGroup(QWidget *aParent);
 

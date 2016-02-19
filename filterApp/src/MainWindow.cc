@@ -34,7 +34,7 @@ MainWindow::MainWindow(
     _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
     _StructComboBox(0),
-    _ConfigureWidget(0),
+    _CustomFormatWidget(0),
     _StructTree(0),
     _PropagateCheckBox(0),
     _CustomFormatToolsWidget(0),
@@ -584,7 +584,7 @@ QComboBox *MainWindow::createStructComboBox(QWidget *aParent)
 //-----------------------------------------------------------------------------
 // Creates the options widget.
 //-----------------------------------------------------------------------------
-QWidget *MainWindow::createConfigureWidget(QWidget *aParent)
+QWidget *MainWindow::createCustomFormatWidget(QWidget *aParent)
 {
     QWidget *tConfigure = new QWidget(aParent);
 
@@ -678,12 +678,12 @@ void MainWindow::onCustomFormatToolAction()
   /*
    * Dock.
    */
-    _ConfigureWidget = createConfigureWidget(0);
+    _CustomFormatWidget = createCustomFormatWidget(0);
 
 //   QDockWidget *shapesDockWidget = new QDockWidget(QString("Shapes"));
    _CustomFormatToolsWidget = new QDockWidget(0);
    _CustomFormatToolsWidget->setObjectName("shapesDockWidget");
-   _CustomFormatToolsWidget->setWidget(_ConfigureWidget);
+   _CustomFormatToolsWidget->setWidget(_CustomFormatWidget);
    _CustomFormatToolsWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 #endif
 
