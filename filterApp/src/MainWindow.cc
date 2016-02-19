@@ -531,6 +531,9 @@ StructTreeView *MainWindow::createTreeView(QWidget *aParent)
 {
 
   StructTreeView *tTreeView = new StructTreeView(aParent);
+
+  tTreeView->setSelectionMode(QAbstractItemView::MultiSelection);
+
   setTreeViewStruct(tTreeView,_StructName);
   tTreeView->header()->resizeSection(DataStructModel::eColFieldName,225);
   tTreeView->header()->resizeSection(DataStructModel::eColTestRegex,225);
