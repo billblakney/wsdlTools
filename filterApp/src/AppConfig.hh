@@ -10,13 +10,13 @@ public:
   AppConfig(QString aOpenFilterDir,QString aSaveFilterDir,QString aDefaultOperateMode);
   virtual ~AppConfig();
 
-  const QString& getOpenFilterDir() const;
+  const QString& getDefaultFiltersDir() const;
 
-  void SetOpenFilterDir(const QString& id);
+  void SetDefaultFiltersDir(const QString& id);
 
-  const QString& getSaveFilterDir() const;
+  const QString& getCustomFiltersDir() const;
 
-  void SetSaveFilterDir(const QString& structName);
+  void SetCustomFiltersDir(const QString& structName);
 
   const QString& getDefaultOperateMode() const;
 
@@ -29,8 +29,8 @@ public:
   QString toQString();
 
 protected:
-  QString _OpenFilterDir;
-  QString _SaveFilterDir;
+  QString _DefaultFiltersDir;
+  QString _CustomFiltersDir;
   QString _DefaultOperateMode;
   QString _DefaultDelimitMode;
 };

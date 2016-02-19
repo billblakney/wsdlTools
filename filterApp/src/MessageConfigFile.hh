@@ -22,8 +22,8 @@ public:
 
   MessageConfigFile(DataStructModel *aModel);
   virtual ~MessageConfigFile();
-  void openConfiguration();
-  void saveConfiguration();
+  void openConfiguration(QString aDir);
+  void saveConfiguration(QString aDir);
 
 protected:
   QXmlStreamReader reader;

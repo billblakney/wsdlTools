@@ -23,10 +23,11 @@ using namespace std;
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
-    QApplication &aApp,QWidget *aParent,
+    QApplication &aApp,QWidget *aParent,AppConfig aAppConfig,
     StructorBuilder *aStructorBuilder,bool aIsFilterMode,
     StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
   : QMainWindow(aParent),
+    _AppConfig(aAppConfig),
     _CentralWidget(0),
     _StructorBuilder(aStructorBuilder),
     _IsFilterMode(aIsFilterMode),
@@ -125,14 +126,14 @@ void MainWindow::setInitialStructName(std::string aStructName)
 //-----------------------------------------------------------------------------
 void MainWindow::onFileOpenAction()
 {
-  _MessageConfigFile->openConfiguration();
+  _MessageConfigFile->openConfiguration(_AppConfig.getCustomFiltersDir());
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MainWindow::onFileSaveAction()
 {
-  _MessageConfigFile->saveConfiguration();
+  _MessageConfigFile->saveConfiguration(_AppConfig.getCustomFiltersDir());
 }
 
 //-----------------------------------------------------------------------------

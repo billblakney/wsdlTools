@@ -9,6 +9,7 @@
 #include <QStringList>
 #include <QWidget>
 #include <QMainWindow>
+#include "AppConfig.hh"
 #include "DataStructModel.hh"
 #include "MessageConfigFile.hh"
 #include "RecordProcessor.hh"
@@ -21,7 +22,7 @@ class MainWindow: public QMainWindow
   Q_OBJECT
 public:
 
-  MainWindow(QApplication &aApp,QWidget *aParent,
+  MainWindow(QApplication &aApp,QWidget *aParent,AppConfig aAppConfig,
       StructorBuilder *_StructorBuilder,bool aIsFilterMode = false,
       StreamReader *aStreamReader = 0,RecordProcessor *aRecordProcessor = 0);
 
@@ -70,6 +71,7 @@ public slots:
   void onModelUpdate();
 
 protected:
+  AppConfig           _AppConfig;
 
   QWidget            *_CentralWidget;
   QLabel             *_StatusLabel;

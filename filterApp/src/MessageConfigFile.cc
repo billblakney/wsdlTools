@@ -31,10 +31,10 @@ MessageConfigFile::~MessageConfigFile()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MessageConfigFile::openConfiguration()
+void MessageConfigFile::openConfiguration(QString aDir)
 {
   QString fileName = QFileDialog::getOpenFileName(0,
-      QString("Open WSDL Config File"), "/tmp",
+      QString("Open WSDL Config File"), aDir,
       QString("WSDL Config Files (*.wcf *.wpf)"));
 
   QFile file(fileName);
@@ -203,11 +203,11 @@ void MessageConfigFile::skipUnknownElement()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MessageConfigFile::saveConfiguration()
+void MessageConfigFile::saveConfiguration(QString aDir)
 {
 
   QString tFileName = QFileDialog::getOpenFileName(0,
-      QString("Open WSDL Config File"), "/tmp", QString("WSDL Config Files (*.wcf *.wpf)"));
+      QString("Open WSDL Config File"), aDir, QString("WSDL Config Files (*.wcf *.wpf)"));
 
 //  std::cout << "selected " << tFileName.toStdString() << std::endl;
 

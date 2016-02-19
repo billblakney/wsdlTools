@@ -7,8 +7,8 @@ AppConfig::AppConfig()
 
 AppConfig::AppConfig(QString aOpenFilterDir,QString aSaveFilterDir,QString aDefaultOperateMode)
 {
-  _OpenFilterDir = aOpenFilterDir;
-  _SaveFilterDir = aSaveFilterDir;
+  _DefaultFiltersDir = aOpenFilterDir;
+  _CustomFiltersDir = aSaveFilterDir;
   _DefaultOperateMode = aDefaultOperateMode;
 }
 
@@ -16,24 +16,24 @@ AppConfig::~AppConfig()
 {
 }
 
-const QString& AppConfig::getOpenFilterDir() const
+const QString& AppConfig::getDefaultFiltersDir() const
 {
-  return _OpenFilterDir;
+  return _DefaultFiltersDir;
 }
 
-void AppConfig::SetOpenFilterDir(const QString& id)
+void AppConfig::SetDefaultFiltersDir(const QString& id)
 {
-  _OpenFilterDir = id;
+  _DefaultFiltersDir = id;
 }
 
-const QString& AppConfig::getSaveFilterDir() const
+const QString& AppConfig::getCustomFiltersDir() const
 {
-  return _SaveFilterDir;
+  return _CustomFiltersDir;
 }
 
-void AppConfig::SetSaveFilterDir(const QString& structName)
+void AppConfig::SetCustomFiltersDir(const QString& structName)
 {
-  _SaveFilterDir = structName;
+  _CustomFiltersDir = structName;
 }
 
 const QString& AppConfig::getDefaultOperateMode() const
@@ -59,8 +59,8 @@ void AppConfig::SetDefaultDelimitMode(const QString& header)
 QString AppConfig::toQString()
 {
   QString tStr;
-  tStr += "open_filter_dir: " + _OpenFilterDir + "\n";
-  tStr += "save_filter_dir: " + _SaveFilterDir + "\n";
+  tStr += "default_filters_dir: " + _DefaultFiltersDir + "\n";
+  tStr += "custom_filters_dir: " + _CustomFiltersDir + "\n";
   tStr += "default_operate_mode: " + _DefaultOperateMode + "\n";
   tStr += "default_delimit_mode: " + _DefaultDelimitMode;
   return tStr;

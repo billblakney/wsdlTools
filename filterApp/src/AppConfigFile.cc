@@ -7,8 +7,8 @@
 
 const char *AppConfigFile::kWsdlFilterConfigTag = "wsdlfilterconfig";
 const char *AppConfigFile::kConfigTag = "config";
-const char *AppConfigFile::kOpenFilterDirTag = "open_filter_dir";
-const char *AppConfigFile::kSaveFilterDirTag = "save_filter_dir";
+const char *AppConfigFile::kDefaultFiltersDirTag = "default_filters_dir";
+const char *AppConfigFile::kCustomFiltersDirTag = "custom_filters_dir";
 const char *AppConfigFile::kDefaultOperateModeTag = "default_operate_mode";
 const char *AppConfigFile::kDefaultDelimitModeTag = "default_delimit_mode";
 const char *AppConfigFile::kMessagesTag = "messages";
@@ -104,15 +104,15 @@ void AppConfigFile::readDefaultsElements()
   {
     if (reader.isStartElement())
     {
-      if (reader.name() == kOpenFilterDirTag)
+      if (reader.name() == kDefaultFiltersDirTag)
       {
         QString tStr = reader.readElementText();
-        _AppConfig.SetOpenFilterDir(tStr);
+        _AppConfig.SetDefaultFiltersDir(tStr);
       }
-      else if (reader.name() == kSaveFilterDirTag)
+      else if (reader.name() == kCustomFiltersDirTag)
       {
         QString tStr = reader.readElementText();
-        _AppConfig.SetSaveFilterDir(tStr);
+        _AppConfig.SetCustomFiltersDir(tStr);
       }
       else if (reader.name() == kDefaultOperateModeTag)
       {

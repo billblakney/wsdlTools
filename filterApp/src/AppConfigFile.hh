@@ -13,8 +13,8 @@ public:
 
   static const char *kWsdlFilterConfigTag;
   static const char *kConfigTag;
-  static const char *kOpenFilterDirTag;
-  static const char *kSaveFilterDirTag;
+  static const char *kDefaultFiltersDirTag;
+  static const char *kCustomFiltersDirTag;
   static const char *kDefaultOperateModeTag;
   static const char *kDefaultDelimitModeTag;
   static const char *kMessagesTag;

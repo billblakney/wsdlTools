@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdlfilterconfig>
     <config>
-        <open_filter_dir>/home/bill/workspace/IEC_APB_FA_REALSIM/APB/toolbox/utilities/wsdlTools/config</open_filter_dir>
-        <save_filter_dir>/tmp</save_filter_dir>
+        <default_filters_dir>/home/bill/workspace/IEC_APB_FA_REALSIM/APB/toolbox/utilities/wsdlTools/config</default_filters_dir>
+        <custom_filters_dir>/tmp</custom_filters_dir>
         <default_operate_mode>go</default_operate_mode>
         <default_delimit_mode>on_out</default_delimit_mode>
     </config>

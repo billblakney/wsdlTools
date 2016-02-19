@@ -13,6 +13,8 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 
 static bool _BrowseMode = false;
 
+AppConfig _AppConfig;
+
 static std::string _InitialStruct;
 
 QString _ConfigFile("/opt/idp/cots/iec/rtf/static/wsdlTools/wsdlFilter.conf");
@@ -86,7 +88,7 @@ void parseHeaderFile()
  *----------------------------------------------------------------------------*/
 void runBrowseMode(QApplication &app)
 {
-  MainWindow *window = new MainWindow(app,0,_StructorBuilder);
+  MainWindow *window = new MainWindow(app,0,_AppConfig,_StructorBuilder);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
   window->setupView(_InitialStruct);
@@ -111,7 +113,7 @@ void runStreamReaderMode(QApplication &app)
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(app,0,_StructorBuilder,
+  MainWindow *tMainWindow = new MainWindow(app,0,_AppConfig,_StructorBuilder,
       true,tStreamReader,tRecordProcessor);
   // tMainWindow->setGeometry(1920 + 530,135,625,900);
   // tMainWindow->setGeometry(1920      ,135,900,900);
@@ -174,9 +176,9 @@ int main(int argc, char *argv[])
     std::cout << " struct: " << qPrintable(tSpec.getStructName());
     std::cout << " header: " << qPrintable(tSpec.getHeader()) << std::endl;
   }
-  AppConfig tAppConfig = tAppConfigFile.appConfig();
+  _AppConfig = tAppConfigFile.appConfig();
   std::cout << "settings:" << std::endl;
-  std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
+  std::cout << qPrintable(_AppConfig.toQString()) << std::endl;
 
   /*
    * Must have a header file specified.
