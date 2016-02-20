@@ -29,7 +29,7 @@ RecordProcessor::~RecordProcessor()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-QStringList RecordProcessor::getFormats()
+QStringList RecordProcessor::getFormatModeStringList()
 {
   QStringList tList;
 
@@ -39,6 +39,13 @@ QStringList RecordProcessor::getFormats()
   }
 
   return tList;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QString RecordProcessor::getFormatModeString(FormatMode aMode)
+{
+  return _Formats[aMode];
 }
 
 //-----------------------------------------------------------------------------

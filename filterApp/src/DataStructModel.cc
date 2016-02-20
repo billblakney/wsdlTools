@@ -21,7 +21,6 @@ DataStructModel::DataStructModel(
 {
   kArrayFont.setItalic(true);
 
-  setupFormats();
   setupPostfixes();
 
   // root item
@@ -91,13 +90,6 @@ FieldItem *DataStructModel::getNode(std::string aKey)
 std::vector<std::string> DataStructModel::getTestNodes()
 {
   return _TestScopes;
-}
-
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-std::vector<std::string> DataStructModel::getFormats()
-{
-  return _Formats;
 }
 
 //-------------------------------------------------------------------------------
@@ -654,9 +646,10 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
     {
       if (index.column() == eColFormat)
       {
-        uint tFormatEnum = item->data(eColFormat).toInt();
-        std::string tFormatName = _Formats.at(tFormatEnum);
-        return tFormatName.c_str();
+        RecordProcessor::FormatMode tFormatEnum =
+            static_cast<RecordProcessor::FormatMode>(
+                item->data(eColFormat).toInt());
+        return RecordProcessor::getFormatModeString(tFormatEnum);
       }
       return item->data(index.column());
       break;
@@ -1020,17 +1013,6 @@ uint DataStructModel::getStringVectorIndex(
 uint DataStructModel::getTestScopeIndex(std::string &aTestScope) const
 {
   return getStringVectorIndex(_TestScopes,aTestScope);
-}
-
-//-------------------------------------------------------------------------------
-// Loads the _Formats field with the types of output formats.
-//-------------------------------------------------------------------------------
-void DataStructModel::setupFormats()
-{
-  _Formats.push_back("as-is");           // eAsIs
-  _Formats.push_back("name: value");     // eNameValue
-  _Formats.push_back("longname: value"); // eLongnameValue
-  _Formats.push_back("value");           // eValue
 }
 
 //-------------------------------------------------------------------------------

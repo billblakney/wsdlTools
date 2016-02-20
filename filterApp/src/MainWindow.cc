@@ -644,7 +644,7 @@ StructTreeView *MainWindow::createTreeView(QWidget *aParent)
 
   ComboBoxDelegate *tFormatDelegate =
 //      new ComboBoxDelegate(_DataStructModel->getFormats(),this);TODO rm
-      new ComboBoxDelegate(RecordProcessor::getFormatOptionStrings(),this);
+      new ComboBoxDelegate(RecordProcessor::getFormatModeStringList(),this);
   tTreeView->setItemDelegateForColumn(
       DataStructModel::eColFormat,tFormatDelegate);
 
