@@ -42,11 +42,14 @@ void printUsage()
 {
   std::cout << "Filter mode:" << std::endl;
   std::cout << "app_iec_wsdlFilter [-a <app_config_file>]" << std::endl;
-  std::cout << "   where -a overrides the default value as well as the" << std::endl;
-  std::cout << "   environment variable WSDL_FILTER_CONFIG_FILE" << std::endl;
+  std::cout << "   where <app_config_file> is the application configuration file," << std::endl;
+  std::cout << "   which takes its default value from the environment variable" << std::endl;
+  std::cout << "   WSDL_FILTER_CONFIG_FILE" << std::endl;
   std::cout << "Browse mode:" << std::endl;
-  std::cout << "app_iec_wsdlFilter -b -f <header_file> [-s <struct_name>]" << std::endl;
-  std::cout << "   where <header_file> is header file to be browsed" << std::endl;
+  std::cout << "app_iec_wsdlFilter -b [-f <header_file>] [-s <struct_name>]" << std::endl;
+  std::cout << "   where <header_file> is header file to be browsed," << std::endl;
+  std::cout << "   which takes its default value from the environment variable" << std::endl;
+  std::cout << "   CLIRCAR_H" << std::endl;
   std::cout << "   where <struct_name> is initial struct to be browsed" << std::endl;
 }
 
