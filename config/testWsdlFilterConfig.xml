@@ -7,6 +7,11 @@
         <default_delimit_mode>on_out</default_delimit_mode>
     </config>
     <messages>
-        <message id="ssifg_STUDENT_MSG_ID" struct="STUDENT_T" header="test.H" default_filter="test.wcf"/>
+        <message>
+            <id>ssifg_STUDENT_MSG_ID</id>
+            <struct>STUDENT_T</struct>
+            <header>test.H</header>
+            <default_filter>test.wcf<default_filter/>
+        </message>
     </messages>
 </wsdlfilterconfig>

@@ -1,0 +1,11 @@
+* try changing xml format to tags for all message attributes
+* routine to identify structure with single top-level array node,
+  and set test scopes accordingly - consider this generally
+* get rid of required header file spec (main.cc)
+
+* add needed icon files
+* ENTER operate menu option
+* toolbar organization
+* Save options (in addition to current Save As options
+
+* Selecte display columns

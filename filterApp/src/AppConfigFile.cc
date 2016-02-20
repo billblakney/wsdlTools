@@ -32,6 +32,7 @@ AppConfigFile::~AppConfigFile()
 }
 
 //-----------------------------------------------------------------------------
+// Open an application configuration file and process its contents.
 //-----------------------------------------------------------------------------
 void AppConfigFile::openConfiguration()
 {
@@ -69,6 +70,7 @@ void AppConfigFile::openConfiguration()
 }
 
 //-----------------------------------------------------------------------------
+// Looks for the top-level elements of the app config file.
 //-----------------------------------------------------------------------------
 void AppConfigFile::readWsdlFilterConfigElement()
 {
@@ -96,6 +98,7 @@ void AppConfigFile::readWsdlFilterConfigElement()
 }
 
 //-----------------------------------------------------------------------------
+// Reads the defaults section of the app config file.
 //-----------------------------------------------------------------------------
 void AppConfigFile::readDefaultsElements()
 {
@@ -135,7 +138,41 @@ void AppConfigFile::readDefaultsElements()
 }
 
 //-----------------------------------------------------------------------------
+// Reads the messages section of the app config file.
 //-----------------------------------------------------------------------------
+void AppConfigFile::readMessagesElements()
+{
+  reader.readNext();
+
+  while (!reader.atEnd() && !reader.isEndElement())
+  {
+    if (reader.isStartElement())
+    {
+      if (reader.name() == kMessageTag)
+      {
+        MessageSpec tSpec;
+        readMessageElements(tSpec);
+        if (tSpec.getId().length()!=0)
+        {
+          _MessageMap[tSpec.getId()] = tSpec;
+        }
+        else
+        {
+          std::cout << "WARNING: app config file specifies message without id"
+              << std::endl;
+        }
+
+        reader.readElementText();
+      }
+      else
+      {
+        skipUnknownElement();
+      }
+    }
+    reader.readNext();
+  }
+}
+#if 0 // old format using attributes instead of sub-elements
 void AppConfigFile::readMessagesElements()
 {
   reader.readNext();
@@ -155,6 +192,47 @@ void AppConfigFile::readMessagesElements()
         _MessageMap[tId] = tSpec;
 
         reader.readElementText();
+      }
+      else
+      {
+        skipUnknownElement();
+      }
+    }
+    reader.readNext();
+  }
+}
+#endif
+
+//-----------------------------------------------------------------------------
+// Reads the message section of the app config file.
+//-----------------------------------------------------------------------------
+void AppConfigFile::readMessageElements(MessageSpec &aMessageSpec)
+{
+  reader.readNext();
+
+  while (!reader.atEnd() && !reader.isEndElement())
+  {
+    if (reader.isStartElement())
+    {
+      if (reader.name() == kAttrIdTag)
+      {
+        QString tStr = reader.readElementText();
+        aMessageSpec.SetId(tStr);
+      }
+      else if (reader.name() == kAttrStructTag)
+      {
+        QString tStr = reader.readElementText();
+        aMessageSpec.SetStructName(tStr);
+      }
+      else if (reader.name() == kAttrHeaderTag)
+      {
+        QString tStr = reader.readElementText();
+        aMessageSpec.SetHeader(tStr);
+      }
+      else if (reader.name() == kAttrDefaultFilterTag)
+      {
+        QString tStr = reader.readElementText();
+        aMessageSpec.SetFilter(tStr);
       }
       else
       {

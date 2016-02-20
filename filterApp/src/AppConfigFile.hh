@@ -42,6 +42,7 @@ protected:
   void readWsdlFilterConfigElement();
   void readDefaultsElements();
   void readMessagesElements();
+  void readMessageElements(MessageSpec &aMessageSpec);
   void skipUnknownElement();
 
 #if 0
