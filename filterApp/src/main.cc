@@ -2,6 +2,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <QApplication>
+#include <QFile>
 #include <QSettings>
 #include "AppConfigFile.hh"
 #include "MainWindow.hh"
@@ -13,15 +14,24 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 
 static bool _BrowseMode = false;
 
-AppConfigFile *_AppConfigFile;
-
 static std::string _InitialStruct;
 
 QString _ConfigFile("/opt/idp/cots/iec/rtf/static/wsdlTools/wsdlFilter.conf");
 
-std::string _HeaderFile("/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H");
+QString _HeaderFile("/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H");
 
 StructorBuilder *_StructorBuilder(0);
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void printUsage()
+{
+  std::cout << "Filter mode:" << std::endl;
+  std::cout << "   app_iec_wsdlFilter [-a <app_config_file>]" << std::endl;
+  std::cout << "   where -a overrides the environment variable WSDL_FILTER_CONFIG_FILE" << std::endl;
+  std::cout << "Browse mode:" << std::endl;
+  std::cout << "   app_iec_wsdlFilter -b -f <header_file>" << std::endl;
+}
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
@@ -29,6 +39,11 @@ void processCommandLine(int argc,char *argv[])
 {
   for (int tIdx = 0; tIdx < argc; tIdx++)
   {
+    if (!strcmp(argv[tIdx],"-h"))
+    {
+      printUsage();
+      exit(0);
+    }
     if (!strcmp(argv[tIdx],"-b"))
     {
       _BrowseMode = true;
@@ -74,21 +89,18 @@ void readEnvironmentVariables()
   }
 }
 
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void parseHeaderFile()
-{
-  std::cout << "parsing header file " << _HeaderFile << std::endl;
-  _StructorBuilder = lex_main((char *) _HeaderFile.c_str());
-  //   _StructorBuilder->printSummary();
-  //   _StructorBuilder->postProcess();
-}
-
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void runBrowseMode(QApplication &app)
+void runBrowseMode(QApplication &app,AppConfigFile *aAppConfigFile)
 {
-  MainWindow *window = new MainWindow(app,0,_AppConfigFile,_StructorBuilder);
+  std::cout << "Running in browse mode..." << std::endl;
+
+  // Parse the header file to get _StructBuilder.
+  StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(_HeaderFile);
+
+  // create and launch main window
+  std::cout << "Launching main window..." << std::endl;
+  MainWindow *window = new MainWindow(app,0,aAppConfigFile,tStructorBuilder);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
   window->setupView(_InitialStruct);
@@ -97,8 +109,10 @@ void runBrowseMode(QApplication &app)
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void runStreamReaderMode(QApplication &app)
+void runStreamReaderMode(QApplication &app,AppConfigFile *aAppConfigFile)
 {
+  std::cout << "Running in filter mode..." << std::endl;
+
   /*
    * Create the record processor.
    */
@@ -113,8 +127,8 @@ void runStreamReaderMode(QApplication &app)
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(app,0,_AppConfigFile,_StructorBuilder,
-      true,tStreamReader,tRecordProcessor);
+  MainWindow *tMainWindow = new MainWindow(app,0,aAppConfigFile,
+      tStreamReader,tRecordProcessor);
   // tMainWindow->setGeometry(1920 + 530,135,625,900);
   // tMainWindow->setGeometry(1920      ,135,900,900);
   tMainWindow->setGeometry(1920      ,135,650,700);
@@ -143,6 +157,34 @@ void runStreamReaderMode(QApplication &app)
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
+AppConfigFile *readAppConfigFile(bool aDoPrintSummary)
+{
+  AppConfigFile *tAppConfigFile = new AppConfigFile(_ConfigFile);
+
+  std::cout << "Reading app config file " << qPrintable(_ConfigFile)
+            << "..." << std::endl;
+  tAppConfigFile->openConfiguration();
+
+  if (aDoPrintSummary)
+  {
+    std::map<QString,MessageSpec> &tMessageMap = tAppConfigFile->messageMap();
+
+    std::map<QString,MessageSpec>::iterator tIter;
+    for (tIter = tMessageMap.begin(); tIter != tMessageMap.end(); tIter++)
+    {
+      MessageSpec tSpec = tIter->second;
+      std::cout << qPrintable(tSpec.toQString()) << std::endl;
+    }
+    AppConfig tAppConfig = tAppConfigFile->appConfig();
+    std::cout << "settings:" << std::endl;
+    std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
+  }
+
+  return tAppConfigFile;
+}
+
+/*------------------------------------------------------------------------------
+ *----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
   ccl::Logger::initialize();
@@ -162,44 +204,16 @@ int main(int argc, char *argv[])
 
   processCommandLine(argc,argv);
 
-  _AppConfigFile = new AppConfigFile(_ConfigFile);
-  _AppConfigFile->openConfiguration();
-  std::map<QString,MessageSpec> &tMessageMap = _AppConfigFile->messageMap();
-
-  std::map<QString,MessageSpec>::iterator tIter;
-  for (tIter = tMessageMap.begin(); tIter != tMessageMap.end(); tIter++)
-  {
-    MessageSpec tSpec = tIter->second;
-    std::cout << qPrintable(tSpec.toQString()) << std::endl;
-  }
-  AppConfig tAppConfig = _AppConfigFile->appConfig();
-  std::cout << "settings:" << std::endl;
-  std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
-
-  /*
-   * Must have a header file specified.
-   */
-  if (!_HeaderFile.length())
-  {
-    std::cerr << "ERROR: CLIRCAR_H env var is not set!\n";
-    exit(1);
-  }
-  std::cerr << "using header file " << _HeaderFile << std::endl;
-
-  /*
-   * Parse the header file to get _StructBuilder.
-   */
-  parseHeaderFile();
-
-
   if (_BrowseMode)
   {
-    std::cout << "running in browse mode" << std::endl;
-    runBrowseMode(app);
+    AppConfigFile *tAppConfigFile = readAppConfigFile(false);
+    runBrowseMode(app,tAppConfigFile);
   }
   else
   {
-    runStreamReaderMode(app);
+    AppConfigFile *tAppConfigFile = readAppConfigFile(true);
+    runStreamReaderMode(app,tAppConfigFile);
   }
+
   return app.exec();
 }

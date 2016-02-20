@@ -7,6 +7,7 @@
 
 const char *AppConfigFile::kWsdlFilterConfigTag = "wsdlfilterconfig";
 const char *AppConfigFile::kConfigTag = "config";
+const char *AppConfigFile::kHeadersDirTag = "headers_dir";
 const char *AppConfigFile::kDefaultFiltersDirTag = "default_filters_dir";
 const char *AppConfigFile::kCustomFiltersDirTag = "custom_filters_dir";
 const char *AppConfigFile::kDefaultOperateModeTag = "default_operate_mode";
@@ -108,7 +109,12 @@ void AppConfigFile::readDefaultsElements()
   {
     if (reader.isStartElement())
     {
-      if (reader.name() == kDefaultFiltersDirTag)
+      if (reader.name() == kHeadersDirTag)
+      {
+        QString tStr = reader.readElementText();
+        _AppConfig.SetHeadersDir(tStr);
+      }
+      else if (reader.name() == kDefaultFiltersDirTag)
       {
         QString tStr = reader.readElementText();
         _AppConfig.SetDefaultFiltersDir(tStr);

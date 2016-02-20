@@ -16,6 +16,16 @@ AppConfig::~AppConfig()
 {
 }
 
+const QString& AppConfig::getHeadersDir() const
+{
+  return _HeadersDir;
+}
+
+void AppConfig::SetHeadersDir(const QString& id)
+{
+  _HeadersDir = id;
+}
+
 const QString& AppConfig::getDefaultFiltersDir() const
 {
   return _DefaultFiltersDir;

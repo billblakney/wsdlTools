@@ -10,6 +10,10 @@ public:
   AppConfig(QString aOpenFilterDir,QString aSaveFilterDir,QString aDefaultOperateMode);
   virtual ~AppConfig();
 
+  const QString& getHeadersDir() const;
+
+  void SetHeadersDir(const QString& id);
+
   const QString& getDefaultFiltersDir() const;
 
   void SetDefaultFiltersDir(const QString& id);
@@ -29,6 +33,7 @@ public:
   QString toQString();
 
 protected:
+  QString _HeadersDir;
   QString _DefaultFiltersDir;
   QString _CustomFiltersDir;
   QString _DefaultOperateMode;

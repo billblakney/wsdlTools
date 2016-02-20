@@ -22,8 +22,15 @@ class MainWindow: public QMainWindow
   Q_OBJECT
 public:
 
+  static StructorBuilder *parseHeaderFile(QString aHeaderFile);
+
+  // constructor for browse mode
   MainWindow(QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
-      StructorBuilder *_StructorBuilder,bool aIsFilterMode = false,
+      StructorBuilder *_StructorBuilder);
+
+  // constructor for filter mode //TODO remove 0 default values
+  MainWindow(QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
+//      StructorBuilder *_StructorBuilder,bool aIsFilterMode = false,TODO rm
       StreamReader *aStreamReader = 0,RecordProcessor *aRecordProcessor = 0);
 
   virtual ~MainWindow();

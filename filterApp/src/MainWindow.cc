@@ -5,6 +5,7 @@
 #include <QActionGroup>
 #include <QButtonGroup>
 #include <QDockWidget>
+#include <QFile>
 #include <QHeaderView>
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -20,17 +21,66 @@
 
 using namespace std;
 
+extern StructorBuilder *lex_main(char *aHeaderFile);
+
 //-----------------------------------------------------------------------------
+// Constructor for browse mode.
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
     QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
-    StructorBuilder *aStructorBuilder,bool aIsFilterMode,
-    StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
+    StructorBuilder *aStructorBuilder)
   : QMainWindow(aParent),
     _AppConfigFile(aAppConfigFile),
     _CentralWidget(0),
     _StructorBuilder(aStructorBuilder),
-    _IsFilterMode(aIsFilterMode),
+    _IsFilterMode(false),
+    _StreamReader(0),
+    _RecordProcessor(0),
+    _DataStructModel(0),
+    _StructComboBox(0),
+    _CustomFormatToolWidget(0),
+    _StructTree(0),
+    _PropagateCheckBox(0),
+    _CustomFormatToolDock(0),
+    _FormatAsIsButton(0),
+    _FormatLongnameButton(0),
+    _FormatTableButton(0),
+    _FormatCustomButton(0),
+    _OutputNormalButton(0),
+    _OutputBypassButton(0),
+    _OutputFreezeDropButton(0),
+    _OutputFreezeQueueButton(0),
+    _AsIsCheckBox(0),
+    _LongnameCheckBox(0),
+    _TableCheckBox(0),
+    _MessageConfigFile(0)
+{
+  Q_UNUSED(aApp);
+
+  setStyleSheet(
+      "QGroupBox { "
+      "border: 1px solid black; "
+      "margin-top: 0.5em "
+      "}"
+      "QGroupBox:title { "
+      "subcontrol-origin: margin; "
+      "left: 10px; "
+      "padding: 0 3px 0 3px"
+      "}"
+      );
+}
+
+//-----------------------------------------------------------------------------
+// Constructor for filter mode.
+//-----------------------------------------------------------------------------
+MainWindow::MainWindow(
+    QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
+    StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
+  : QMainWindow(aParent),
+    _AppConfigFile(aAppConfigFile),
+    _CentralWidget(0),
+    _StructorBuilder(0),
+    _IsFilterMode(true),
     _StreamReader(aStreamReader),
     _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
@@ -71,6 +121,41 @@ MainWindow::MainWindow(
 //-----------------------------------------------------------------------------
 MainWindow::~MainWindow()
 {
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+StructorBuilder *MainWindow::parseHeaderFile(QString aHeaderFile)
+{
+  QFile tHeaderFile(aHeaderFile);
+
+  // need the header file to be defined
+  if (!aHeaderFile.length())
+  {
+    std::cout << "ERROR: No header file specified." << std::endl;
+    std::cout << "       Use -f option or set CLIRCAR_H env var\n" << std::endl;
+    exit(1);
+  }
+  else if (!tHeaderFile.exists())
+  {
+    std::cout << "ERROR: Header file \"" << qPrintable(aHeaderFile) << "\""
+              << " does not exist" << std::endl;
+    exit(1);
+  }
+
+  std::cout << "Using header file " << qPrintable(aHeaderFile)
+            << "..." << std::endl;
+
+  std::cout << "Parsing header file " << qPrintable(aHeaderFile)
+            << "..." << std::endl;
+  StructorBuilder *tStructorBuilder = NULL;
+
+  std::string tString = aHeaderFile.toStdString();
+  tStructorBuilder = lex_main((char *)tString.c_str());
+  //   _StructorBuilder->printSummary();
+  //   _StructorBuilder->postProcess();
+
+  return tStructorBuilder;
 }
 
 //-------------------------------------------------------------------------------
@@ -801,6 +886,51 @@ QStringList MainWindow::convertToQStringList(std::vector<std::string> aStrings)
 void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
 {
   /*
+   * Lookup the message spec.
+   */
+  std::map<QString,MessageSpec> &tMessageMap = _AppConfigFile->messageMap();
+  std::map<QString,MessageSpec>::iterator tIter = tMessageMap.find(aMsgId);
+  if (tIter == tMessageMap.end())
+  {
+    std::cout << "ERROR: No message map for messageId "
+              << qPrintable(aMsgId) << std::endl;
+    exit(1);
+  }
+
+  MessageSpec &tMessageSpec = tIter->second;
+
+  /*
+   * Verify aStructName against the message map.
+   */
+  if (aStructName != tMessageSpec.getStructName())
+  {
+    std::cout << "ERROR: unexpected message id/structure combination"
+        << std::endl;
+  }
+
+  /*
+   * Construct the complete path to the header file.
+   */
+  QString tHeaderFilename = tMessageSpec.getHeader();
+  QString tHeadersDir = _AppConfigFile->appConfig().getHeadersDir();
+  QString tHeaderPath(tHeadersDir + "/" + tHeaderFilename);
+
+  std::cout << "Parsing header file " << qPrintable(tHeaderPath)
+            << "..." << std::endl;
+
+  /*
+   * Parse the header file to populate _StructorBuilder.
+   */
+  std::string tString = tHeaderPath.toStdString();
+  _StructorBuilder = lex_main((char *)tString.c_str());
+  if (_StructorBuilder == NULL)
+  {
+    std::cout << "ERROR: Failed to build structor builder for msgId "
+              << qPrintable(aMsgId) << std::endl;
+    exit(1);
+  }
+
+  /*
    * Need to set the structure name before setting up the view and launching
    * the window.
    */
@@ -815,27 +945,11 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
   /*
    * Apply default filter settings if found.
    */
-  std::map<QString,MessageSpec> &tMessageMap = _AppConfigFile->messageMap();
-  std::map<QString,MessageSpec>::iterator tIter;
-  tIter = tMessageMap.find(aMsgId);
-  QString tFilter;
-  if (tIter != tMessageMap.end())
+  QString tFilter = tMessageSpec.getFilter();
+  if (tFilter.length() > 0)
   {
-    MessageSpec tSpec = tIter->second;
-    if (aStructName == tSpec.getStructName())
-    {
-      if (tSpec.getFilter().length() > 0)
-      {
-        tFilter = tSpec.getFilter();
-        QString tDir = _AppConfigFile->appConfig().getDefaultFiltersDir();
-        _MessageConfigFile->openConfiguration(tDir,tFilter);
-      }
-    }
-    else
-    {
-      std::cout << "WARNING: unexpected message id/structure combination"
-          << std::endl;
-    }
+    QString tDir = _AppConfigFile->appConfig().getDefaultFiltersDir();
+    _MessageConfigFile->openConfiguration(tDir,tFilter);
   }
 
   /*
