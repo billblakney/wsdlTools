@@ -33,22 +33,30 @@ MessageConfigFile::~MessageConfigFile()
 //-----------------------------------------------------------------------------
 void MessageConfigFile::openConfiguration(QString aDir)
 {
-  QString fileName = QFileDialog::getOpenFileName(0,
+  QString tFilepath = QFileDialog::getOpenFileName(0,
       QString("Open WSDL Config File"), aDir,
       QString("WSDL Config Files (*.wcf *.wpf)"));
 
-  openConfiguration(aDir,fileName);
+  openConfiguration(QString(""),tFilepath);
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MessageConfigFile::openConfiguration(QString aDir,QString aFilename)
 {
-  QString aFilepath = aDir + "/" + aFilename;
+  QString aFilepath;
+  if (aDir.length())
+  {
+    aFilepath = aDir + "/" + aFilename;
+  }
+  else
+  {
+    aFilepath = aFilename;
+  }
   QFile file(aFilepath);
   if (!file.open(QFile::ReadOnly | QFile::Text))
   {
-    std::cout << "Error: Cannot read file " << qPrintable(aFilename)
+    std::cout << "Error: Cannot read file " << qPrintable(aFilepath)
               << ": " << qPrintable(file.errorString()) << std::endl;
     return;
   }
@@ -216,10 +224,12 @@ void MessageConfigFile::skipUnknownElement()
 void MessageConfigFile::saveConfiguration(QString aDir)
 {
 
-  QString tFileName = QFileDialog::getOpenFileName(0,
-      QString("Open WSDL Config File"), aDir, QString("WSDL Config Files (*.wcf *.wpf)"));
+  QString tFileName = QFileDialog::getSaveFileName(0,
+      QString("Open WSDL Config File"), aDir,
+      QString("WSDL Config Files (*.wcf *.wpf)"));
 
-//  std::cout << "selected " << tFileName.toStdString() << std::endl;
+  std::cout << "saving filter settings to " << tFileName.toStdString()
+      << std::endl;
 
 
   QXmlStreamWriter xmlWriter;

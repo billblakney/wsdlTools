@@ -23,7 +23,7 @@ public:
   MessageConfigFile(DataStructModel *aModel);
   virtual ~MessageConfigFile();
   void openConfiguration(QString aDir);
-  void openConfiguration(QString aDir,QString aFilename);
+  void openConfiguration(QString aDir,QString aFilter);
   void saveConfiguration(QString aDir);
 
 protected:
