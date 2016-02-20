@@ -1023,6 +1023,7 @@ uint DataStructModel::getTestScopeIndex(std::string &aTestScope) const
 }
 
 //-------------------------------------------------------------------------------
+// Loads the _Formats field with the types of output formats.
 //-------------------------------------------------------------------------------
 void DataStructModel::setupFormats()
 {
@@ -1142,9 +1143,7 @@ void DataStructModel::applyFormatMode(QVariant aFormat,QVariant aPostfix,
   for(int i=0; i< aSelectedList.count(); i++)
   {
       QModelIndex index = aSelectedList.at(i);
-std::cout << "row,col: " << index.row() << "," << index.column() << std::endl; //TODO rm
       FieldItem *tFieldItem = static_cast<FieldItem*>(index.internalPointer());
-std::cout << "hereitis: " << tFieldItem->getData().getKey() << std::endl; //TODO rm
 
       tFieldItem->setFieldFormat(aFormat);
       tFieldItem->setFieldPostfix(aPostfix);

@@ -9,6 +9,9 @@
 
 ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 
+const char *RecordProcessor::_Formats[] = {
+      "as-is", "name: value", "longname: value", "value"};
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 RecordProcessor::RecordProcessor(FormatMode aFormatMode)
@@ -22,6 +25,20 @@ RecordProcessor::RecordProcessor(FormatMode aFormatMode)
 //-----------------------------------------------------------------------------
 RecordProcessor::~RecordProcessor()
 {
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QStringList RecordProcessor::getFormats()
+{
+  QStringList tList;
+
+  for (size_t tIdx = 0; tIdx < sizeof(_Formats)/sizeof(const char*); tIdx++)
+  {
+    tList.append(_Formats[tIdx]);
+  }
+
+  return tList;
 }
 
 //-----------------------------------------------------------------------------

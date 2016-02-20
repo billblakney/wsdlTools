@@ -16,7 +16,18 @@ ComboBoxDelegate::ComboBoxDelegate(
 {
   for (size_t tIdx = 0; tIdx < aValues.size(); tIdx++)
   {
-    Items.push_back(aValues.at(tIdx).c_str());
+    _Items.push_back(aValues.at(tIdx).c_str());
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+ComboBoxDelegate::ComboBoxDelegate(QStringList aStringList,QObject *parent)
+  :QStyledItemDelegate(parent)
+{
+  for (int i = 0; i < aStringList.size(); i++)
+  {
+    _Items.push_back(aStringList.at(i));
   }
 }
 
@@ -29,9 +40,9 @@ QWidget *ComboBoxDelegate::createEditor(
     const QModelIndex &/* index */) const
 {
   QComboBox* editor = new QComboBox(parent);
-  for(unsigned int i = 0; i < Items.size(); ++i)
+  for(int i = 0; i < _Items.size(); ++i)
     {
-    editor->addItem(Items[i].c_str());
+    editor->addItem(_Items[i]);
     }
   return editor;
 }
