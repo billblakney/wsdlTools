@@ -31,7 +31,7 @@ public:
 
   enum FormatMode {eAsIs, eLongname, eTable, eCustom};
 
-  static const char *_Formats[];
+  static const char *_FormatModeNames[];
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
