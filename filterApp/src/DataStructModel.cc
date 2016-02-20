@@ -37,6 +37,94 @@ DataStructModel::DataStructModel(
   buildTree(_TopNodeItem,aStruct);
 
   appendToTreeItemVector(_TopNodeItem);
+
+  if (childCount(_TopNodeItem,FieldItemData::eStructArray) == 1)
+  {
+    std::cout << "TopNode HAS ONE STRUCT_ARRAY child" << std::endl;
+  }
+
+  tempContactDesignatorCheck();
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void DataStructModel::tempContactDesignatorCheck()
+{
+  std::vector<FieldItem *>::iterator tIter;
+  for (tIter = _TreeItems.begin(); tIter != _TreeItems.end(); tIter++)
+  {
+    FieldItem *tNode = *tIter;
+    if (tNode->getData().getType().compare(("CLIR_CAR_DESIGNATOR_T")) == 0)
+    {
+      FieldItem *tParent = findFirstAncestor(tNode,FieldItemData::eStructArray);
+      if (tParent != NULL)
+      {
+        std::cout << "CLIR_CAR_DESIGNATOR: " << tNode->getData().getKey().c_str()
+            << ", " << tParent->getData().getKey() << std::endl;
+        applyTestScope(tParent,tParent->getData().getKey() + ".Element");
+      }
+      else
+      {
+        std::cout << "CLIR_CAR_DESIGNATOR: " << tNode->getData().getKey().c_str()
+            << ", no struct array ancestor node" << std::endl;
+      }
+    }
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void DataStructModel::applyTestScope(FieldItem *aNode,std::string aTestScope)
+{
+  aNode->setTestScope(aTestScope.c_str());
+  for( int i = 0; i < aNode->childCount(); i++)
+  {
+    applyTestScope(aNode->child(i),aTestScope);
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+FieldItem *DataStructModel::findFirstAncestor(FieldItem *aNode,FieldItemData::NodeType aNodeType)
+{
+  FieldItem *tReturn = NULL;
+
+  FieldItem *tParent;
+  while ((tParent = aNode->parentItem()) != NULL)
+  {
+    if (tParent->getData().getNodeType() == aNodeType)
+    {
+      tReturn = tParent;
+      break;
+    }
+    aNode = tParent; // advance to next ancestor
+  }
+
+  return tReturn;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+int DataStructModel::childCount(FieldItem *aNode,FieldItemData::NodeType aType)
+{
+  int tCount = 0;
+
+  if (aType == FieldItemData::eNone)
+  {
+    tCount = aNode->childCount();
+  }
+  else
+  {
+    for (int i = 0; i < aNode->childCount(); i++)
+    {
+      if (aNode->child(i)->getData().getNodeType() == aType)
+      {
+        tCount++;
+      }
+    }
+  }
+
+  return tCount;
 }
 
 //-------------------------------------------------------------------------------

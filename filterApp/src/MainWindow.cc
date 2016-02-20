@@ -344,10 +344,10 @@ void MainWindow::setupView(std::string aStructName)
   if (!_IsFilterMode)
   {
     _StructTree->hideColumn(DataStructModel::eColFormat);
-    _StructTree->hideColumn(DataStructModel::eColMatchRegex);
+    _StructTree->hideColumn(DataStructModel::eColMatchRegex);//TODO restore!!!
     _StructTree->hideColumn(DataStructModel::eColPostfix);
     _StructTree->hideColumn(DataStructModel::eColTestRegex);
-    _StructTree->hideColumn(DataStructModel::eColTestScope);
+//    _StructTree->hideColumn(DataStructModel::eColTestScope);
   }
   else
   {
