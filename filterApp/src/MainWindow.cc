@@ -659,9 +659,9 @@ QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
   QPushButton *tTableButton =
       new QPushButton("Apply \"Table\" settings",tGroup);
 
-  _AsIsCheckBox = new QCheckBox("Checked fields only");
-  _LongnameCheckBox = new QCheckBox("Checked fields only");
-  _TableCheckBox = new QCheckBox("Checked fields only");
+  _AsIsCheckBox = new QCheckBox("Selected fields only");
+  _LongnameCheckBox = new QCheckBox("Selected fields only");
+  _TableCheckBox = new QCheckBox("Selected fields only");
 
   connect(tAsIsButton,SIGNAL(clicked(bool)),
       this,SLOT(onAsIsPushbuttonClicked(bool)));
@@ -670,8 +670,8 @@ QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
   connect(tTableButton,SIGNAL(clicked(bool)),
       this,SLOT(onTablePushbuttonClicked(bool)));
 
-  connect(this,SIGNAL(applyFormatMode(int,bool)),
-      _DataStructModel,SLOT(applyFormatMode(int,bool)));
+  connect(this,SIGNAL(applyFormatMode(int,bool,QModelIndexList)),
+      _DataStructModel,SLOT(applyFormatMode(int,bool,QModelIndexList)));
 
   QGridLayout *tGrid = new QGridLayout(aParent);
   tGrid->addWidget(tAsIsButton,0,0);
@@ -690,27 +690,30 @@ QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
 //-------------------------------------------------------------------------------
 void MainWindow::onAsIsPushbuttonClicked(bool)
 {
+  QModelIndexList tSelectedRows = _StructTree->selectionModel()->selectedRows();
   int tAsIsInt = (int)RecordProcessor::eAsIs;
   bool tChecked = (_AsIsCheckBox->isChecked() ? true: false);
-  emit applyFormatMode(tAsIsInt,tChecked);
+  emit applyFormatMode(tAsIsInt,tChecked,tSelectedRows);
 }
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 void MainWindow::onLongnamePushbuttonClicked(bool)
 {
+  QModelIndexList tSelectedRows = _StructTree->selectionModel()->selectedRows();
   int tLongnameInt = (int)RecordProcessor::eLongname;
   bool tChecked = (_LongnameCheckBox->isChecked() ? true: false);
-  emit applyFormatMode(tLongnameInt,tChecked);
+  emit applyFormatMode(tLongnameInt,tChecked,tSelectedRows);
 }
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 void MainWindow::onTablePushbuttonClicked(bool)
 {
+  QModelIndexList tSelectedRows = _StructTree->selectionModel()->selectedRows();
   int tTableInt = (int)RecordProcessor::eTable;
   bool tChecked = (_TableCheckBox->isChecked() ? true: false);
-  emit applyFormatMode(tTableInt,tChecked);
+  emit applyFormatMode(tTableInt,tChecked,tSelectedRows);
 }
 
 //-------------------------------------------------------------------------------

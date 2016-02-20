@@ -158,7 +158,8 @@ signals:
 
 public slots:
 
-  void applyFormatMode(int aFormatMode,bool aCheckedOnly);
+  void applyFormatMode(
+      int aFormatMode,bool aSelectedOnly,QModelIndexList aSelectList);
 
   void applyTestScope(QString aTestScope,bool aCheckedOnly);
 
@@ -209,8 +210,11 @@ protected:
   void applyTestScope(QVariant aTestScope,bool aCheckedOnly,
       FieldItem *aFieldItem);
 
-  void applyFormatMode(QVariant aFormat,QVariant aPostfix,bool aCheckedOnly,
-    FieldItem *aFieldItem);
+  void applyFormatMode(QVariant aFormat,QVariant aPostfix,
+      FieldItem *aFieldItem);
+
+  void applyFormatMode(QVariant aFormat,QVariant aPostfix,
+      QModelIndexList aSelectedList);
 
   void setChildrenCheckStates(
       const QModelIndex &aParentIndex,Qt::CheckState aCheckState);

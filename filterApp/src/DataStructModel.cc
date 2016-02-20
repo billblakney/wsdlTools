@@ -1075,7 +1075,8 @@ void DataStructModel::applyTestScope(QVariant aTestScope,
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
-void DataStructModel::applyFormatMode(int aFormatMode,bool aCheckedOnly)
+void DataStructModel::applyFormatMode(
+    int aFormatMode,bool aSelectedOnly,QModelIndexList aSelectList)
 {
   RecordProcessor::FormatMode tFormatMode =
       static_cast<RecordProcessor::FormatMode>(aFormatMode);
@@ -1084,19 +1085,40 @@ void DataStructModel::applyFormatMode(int aFormatMode,bool aCheckedOnly)
   {
     QVariant tFormat(FieldItemData::eAsIs);
     QVariant tPostfix("\\n");
-    applyFormatMode(tFormat,tPostfix,aCheckedOnly,_TopNodeItem);
+    if (aSelectedOnly)
+    {
+      applyFormatMode(tFormat,tPostfix,aSelectList);
+    }
+    else
+    {
+      applyFormatMode(tFormat,tPostfix,_TopNodeItem);
+    }
   }
   else if (tFormatMode == RecordProcessor::eLongname)
   {
     QVariant tFormat(FieldItemData::eLongnameValue);
     QVariant tPostfix("\\n");
-    applyFormatMode(tFormat,tPostfix,aCheckedOnly,_TopNodeItem);
+    if (aSelectedOnly)
+    {
+      applyFormatMode(tFormat,tPostfix,aSelectList);
+    }
+    else
+    {
+      applyFormatMode(tFormat,tPostfix,_TopNodeItem);
+    }
   }
   else if (tFormatMode == RecordProcessor::eTable)
   {
     QVariant tFormat(FieldItemData::eValue);
     QVariant tPostfix("\\t");
-    applyFormatMode(tFormat,tPostfix,aCheckedOnly,_TopNodeItem);
+    if (aSelectedOnly)
+    {
+      applyFormatMode(tFormat,tPostfix,aSelectList);
+    }
+    else
+    {
+      applyFormatMode(tFormat,tPostfix,_TopNodeItem);
+    }
   }
   else
   {
@@ -1115,17 +1137,31 @@ void DataStructModel::onPropogateToggled(bool aPropogateToChildren)
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 void DataStructModel::applyFormatMode(QVariant aFormat,QVariant aPostfix,
-    bool aCheckedOnly,FieldItem *aFieldItem)
+    QModelIndexList aSelectedList)
 {
-  if ((aCheckedOnly==false) || aFieldItem->getData().isChecked())
+  for(int i=0; i< aSelectedList.count(); i++)
   {
-    aFieldItem->setFieldFormat(aFormat);
-    aFieldItem->setFieldPostfix(aPostfix);
+      QModelIndex index = aSelectedList.at(i);
+std::cout << "row,col: " << index.row() << "," << index.column() << std::endl; //TODO rm
+      FieldItem *tFieldItem = static_cast<FieldItem*>(index.internalPointer());
+std::cout << "hereitis: " << tFieldItem->getData().getKey() << std::endl; //TODO rm
+
+      tFieldItem->setFieldFormat(aFormat);
+      tFieldItem->setFieldPostfix(aPostfix);
   }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void DataStructModel::applyFormatMode(QVariant aFormat,QVariant aPostfix,
+    FieldItem *aFieldItem)
+{
+  aFieldItem->setFieldFormat(aFormat);
+  aFieldItem->setFieldPostfix(aPostfix);
 
   for (int tIdx = 0; tIdx < aFieldItem->childCount(); tIdx++)
   {
-    applyFormatMode(aFormat,aPostfix,aCheckedOnly,aFieldItem->child(tIdx));
+    applyFormatMode(aFormat,aPostfix,aFieldItem->child(tIdx));
   }
 }
 

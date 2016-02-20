@@ -40,7 +40,8 @@ signals:
 
   void dataStructModelAvailable(void *aModel);
 
-  void applyFormatMode(int aFormatMode,bool aCheckedOnly);
+  void applyFormatMode(
+      int aFormatMode,bool aSelectedOnly,QModelIndexList aSelectList);
 
   void applyTestScope(QString aTestScope,bool aCheckedOnly);
 
