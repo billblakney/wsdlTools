@@ -37,11 +37,6 @@ DataStructModel::DataStructModel(
   buildTree(_TopNodeItem,aStruct);
 
   appendToTreeItemVector(_TopNodeItem);
-
-//DEBUG(sLogger,"CTOR getDotString: "
-//    << getDotString(aStructBuilder,aStructure->_Name,"aStruct"));
-//DEBUG(sLogger,"CTOR getMatchString: "
-//    << getMatchString(_TopNodeItem));
 }
 
 //-------------------------------------------------------------------------------
@@ -518,38 +513,6 @@ std::string DataStructModel::buildMatchForPrimitiveArrayLengthField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForField(aField,aIndentLevel);
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-std::string DataStructModel::getDotString(StructorBuilder *aStructBuilder,
-    std::string aName,std::string aPrefix)
-{
-  stringstream tReturn;
-
-  Structure *tStructure = aStructBuilder->getStructure(aName);
-
-  if (tStructure != NULL)
-  {
-    vector<Field>::iterator it;
-    for( it = tStructure->_Fields.begin(); it != tStructure->_Fields.end(); it++)
-    {
-      std::string tName = it->_Name;
-      std::string tType = it->_Type;
-      std::string tFieldString = aPrefix + "." + tName;
-      std::string tFieldDotString = getDotString(aStructBuilder,tType,tFieldString);
-      if( tFieldDotString.length() )
-      {
-        tReturn << tFieldDotString;
-      }
-      else
-      {
-        tReturn << tFieldString << endl;
-      }
-    }
-  }
-
-  return tReturn.str();
 }
 
 //-------------------------------------------------------------------------------

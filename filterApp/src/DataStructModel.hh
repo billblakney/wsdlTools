@@ -117,9 +117,6 @@ public:
 
   void printInLines();
 
-  std::string getDotString(StructorBuilder *aStructBuilder,
-    std::string aName,std::string aPrefix);
-
   std::string getMatchString(FieldItem *aFieldItem);
 
   std::string getMatchString();
