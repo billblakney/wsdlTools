@@ -135,10 +135,10 @@ protected:
   QComboBox *createStructComboBox(QWidget *aParent);
 
   QWidget *createTestScopeToolWidget(QWidget *aParent);
+  QGroupBox *createTestScopeToolGroup(QWidget *aParent);
 
-  QWidget *createCustomFormatWidget(QWidget *aParent);
-
-  QGroupBox *createCustomFormatGroup(QWidget *aParent);
+  QWidget *createCustomFormatToolWidget(QWidget *aParent);
+  QGroupBox *createCustomFormatToolGroup(QWidget *aParent);
 
 	QStringList convertToQStringList(std::vector<std::string> aStrings);
 

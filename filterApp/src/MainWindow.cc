@@ -603,55 +603,80 @@ QWidget *MainWindow::createTestScopeToolWidget(QWidget *aParent)
 {
   QWidget *tWidget = new QWidget(aParent);
 
-  _TestScopeComboBox = new QComboBox(tWidget);
-  std::vector<std::string> tTestScopes = _DataStructModel->getTestNodes();
-  _TestScopeComboBox->addItems(convertToQStringList(tTestScopes));
-
-  QPushButton *tPushButton = new QPushButton("Apply test scope",tWidget);
-
-  connect(tPushButton,SIGNAL(clicked(bool)),
-      this,SLOT(onApplyTestScopeClicked(bool)));
-
-  connect(this,SIGNAL(applyTestScope(QString,bool)),
-      _DataStructModel,SLOT(applyTestScope(QString,bool)));
+  QGroupBox *tGroup = createTestScopeToolGroup(tWidget);
+  tGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
   QVBoxLayout *tLayout = new QVBoxLayout;
-  tLayout->addWidget(_TestScopeComboBox);
-  tLayout->addWidget(tPushButton);
+  tLayout->addWidget(tGroup);
+  tLayout->setAlignment(tGroup,Qt::AlignTop);
 
   tWidget->setLayout(tLayout);
 
   return tWidget;
 }
 
+//-------------------------------------------------------------------------------
+// Note that tree view must be created before this is called. Otherwise,
+// _DataStructMode will be null, and so the connections won't be made.
+//-------------------------------------------------------------------------------
+QGroupBox *MainWindow::createTestScopeToolGroup(QWidget *aParent)
+{
+  QGroupBox *tGroup = new QGroupBox("Test Scope Utility",aParent);
+  tGroup->setFlat(true);
+
+  // widgets
+  _TestScopeComboBox = new QComboBox(aParent);
+  std::vector<std::string> tTestScopes = _DataStructModel->getTestNodes();
+  _TestScopeComboBox->addItems(convertToQStringList(tTestScopes));
+
+  QPushButton *tPushButton = new QPushButton("Apply test scope",aParent);
+
+  // layout
+  QVBoxLayout *tLayout = new QVBoxLayout;
+  tLayout->addWidget(_TestScopeComboBox);
+  tLayout->addWidget(tPushButton);
+
+  tGroup->setLayout(tLayout);
+
+  // connections
+  connect(tPushButton,SIGNAL(clicked(bool)),
+      this,SLOT(onApplyTestScopeClicked(bool)));
+
+  connect(this,SIGNAL(applyTestScope(QString,bool)),
+      _DataStructModel,SLOT(applyTestScope(QString,bool)));
+
+  return tGroup;
+}
+
 //-----------------------------------------------------------------------------
 // Creates the options widget.
 //-----------------------------------------------------------------------------
-QWidget *MainWindow::createCustomFormatWidget(QWidget *aParent)
+QWidget *MainWindow::createCustomFormatToolWidget(QWidget *aParent)
 {
-  QWidget *tConfigure = new QWidget(aParent);
+  QWidget *tWidget = new QWidget(aParent);
 
-  QGroupBox *tCustomFormatGroup = createCustomFormatGroup(tConfigure);
-  tCustomFormatGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+  QGroupBox *tGroup = createCustomFormatToolGroup(tWidget);
+  tGroup->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
   QHBoxLayout *tLayout = new QHBoxLayout;
-  tLayout->addWidget(tCustomFormatGroup);
-  tLayout->setAlignment(tCustomFormatGroup,Qt::AlignTop);
+  tLayout->addWidget(tGroup);
+  tLayout->setAlignment(tGroup,Qt::AlignTop);
 
-  tConfigure->setLayout(tLayout);
+  tWidget->setLayout(tLayout);
 
-  return tConfigure;
+  return tWidget;
 }
 
 //-------------------------------------------------------------------------------
 // Note that tree view must be created before this is called. Otherwise,
 // _DataStructMode will be null, and so the connections won't be made.
 //-------------------------------------------------------------------------------
-QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
+QGroupBox *MainWindow::createCustomFormatToolGroup(QWidget *aParent)
 {
-  QGroupBox *tGroup = new QGroupBox("Custom Format Utilities",aParent);
+  QGroupBox *tGroup = new QGroupBox("Custom Format Utility",aParent);
   tGroup->setFlat(true);
 
+  // widgets
   QPushButton *tAsIsButton =
       new QPushButton("Apply \"As-is\" settings",tGroup);
   QPushButton *tLongnameButton =
@@ -663,6 +688,18 @@ QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
   _LongnameCheckBox = new QCheckBox("Selected fields only");
   _TableCheckBox = new QCheckBox("Selected fields only");
 
+  // layout
+  QGridLayout *tLayout = new QGridLayout(aParent);
+  tLayout->addWidget(tAsIsButton,0,0);
+  tLayout->addWidget(tLongnameButton,1,0);
+  tLayout->addWidget(tTableButton,2,0);
+  tLayout->addWidget(_AsIsCheckBox,0,1);
+  tLayout->addWidget(_LongnameCheckBox,1,1);
+  tLayout->addWidget(_TableCheckBox,2,1);
+
+  tGroup->setLayout(tLayout);
+
+  // connections
   connect(tAsIsButton,SIGNAL(clicked(bool)),
       this,SLOT(onAsIsPushbuttonClicked(bool)));
   connect(tLongnameButton,SIGNAL(clicked(bool)),
@@ -672,16 +709,6 @@ QGroupBox *MainWindow::createCustomFormatGroup(QWidget *aParent)
 
   connect(this,SIGNAL(applyFormatMode(int,bool,QModelIndexList)),
       _DataStructModel,SLOT(applyFormatMode(int,bool,QModelIndexList)));
-
-  QGridLayout *tGrid = new QGridLayout(aParent);
-  tGrid->addWidget(tAsIsButton,0,0);
-  tGrid->addWidget(tLongnameButton,1,0);
-  tGrid->addWidget(tTableButton,2,0);
-  tGrid->addWidget(_AsIsCheckBox,0,1);
-  tGrid->addWidget(_LongnameCheckBox,1,1);
-  tGrid->addWidget(_TableCheckBox,2,1);
-
-  tGroup->setLayout(tGrid);
 
   return tGroup;
 }
@@ -728,7 +755,7 @@ void MainWindow::onApplyTestScopeClicked(bool)
 //-------------------------------------------------------------------------------
 void MainWindow::onCustomFormatToolAction()
 {
-    _CustomFormatToolWidget = createCustomFormatWidget(0);
+    _CustomFormatToolWidget = createCustomFormatToolWidget(0);
 
    _CustomFormatToolDock = new QDockWidget(0);
    _CustomFormatToolDock->setObjectName("customFormatToolDock");
