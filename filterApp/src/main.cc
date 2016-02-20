@@ -14,23 +14,40 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 
 static bool _BrowseMode = false;
 
-static std::string _InitialStruct;
-
+/*
+ * Application configuration file.
+ * Is used in filter mode, and value can be set by command-line or environment
+ * variable.
+ * Is not needed in browse mode if command-line args are used.
+ */
 QString _ConfigFile("/opt/idp/cots/iec/rtf/static/wsdlTools/wsdlFilter.conf");
 
+/*
+ * Default header file.
+ * Is used in browse mode. Value can be overridde by command-line arg.
+ * Is not used in filter mode.
+ */
 QString _HeaderFile("/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H");
 
-StructorBuilder *_StructorBuilder(0);
+/*
+ * Initial structure.
+ * Is optionally set via command-line in browse mode.
+ * Is not used in filter mode.
+ */
+static std::string _InitialStruct;
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 void printUsage()
 {
   std::cout << "Filter mode:" << std::endl;
-  std::cout << "   app_iec_wsdlFilter [-a <app_config_file>]" << std::endl;
-  std::cout << "   where -a overrides the environment variable WSDL_FILTER_CONFIG_FILE" << std::endl;
+  std::cout << "app_iec_wsdlFilter [-a <app_config_file>]" << std::endl;
+  std::cout << "   where -a overrides the default value as well as the" << std::endl;
+  std::cout << "   environment variable WSDL_FILTER_CONFIG_FILE" << std::endl;
   std::cout << "Browse mode:" << std::endl;
-  std::cout << "   app_iec_wsdlFilter -b -f <header_file>" << std::endl;
+  std::cout << "app_iec_wsdlFilter -b -f <header_file> [-s <struct_name>]" << std::endl;
+  std::cout << "   where <header_file> is header file to be browsed" << std::endl;
+  std::cout << "   where <struct_name> is initial struct to be browsed" << std::endl;
 }
 
 //-------------------------------------------------------------------------------
@@ -87,6 +104,34 @@ void readEnvironmentVariables()
   {
     _HeaderFile = getenv("CLIRCAR_H");
   }
+}
+
+/*------------------------------------------------------------------------------
+ *----------------------------------------------------------------------------*/
+AppConfigFile *readAppConfigFile(bool aDoPrintSummary)
+{
+  AppConfigFile *tAppConfigFile = new AppConfigFile(_ConfigFile);
+
+  std::cout << "Reading app config file " << qPrintable(_ConfigFile)
+            << "..." << std::endl;
+  tAppConfigFile->openConfiguration();
+
+  if (aDoPrintSummary)
+  {
+    std::map<QString,MessageSpec> &tMessageMap = tAppConfigFile->messageMap();
+
+    std::map<QString,MessageSpec>::iterator tIter;
+    for (tIter = tMessageMap.begin(); tIter != tMessageMap.end(); tIter++)
+    {
+      MessageSpec tSpec = tIter->second;
+      std::cout << qPrintable(tSpec.toQString()) << std::endl;
+    }
+    AppConfig tAppConfig = tAppConfigFile->appConfig();
+    std::cout << "settings:" << std::endl;
+    std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
+  }
+
+  return tAppConfigFile;
 }
 
 /*------------------------------------------------------------------------------
@@ -153,34 +198,6 @@ void runStreamReaderMode(QApplication &app,AppConfigFile *aAppConfigFile)
    * Run the stream reader.
    */
   tStreamReader->start();
-}
-
-/*------------------------------------------------------------------------------
- *----------------------------------------------------------------------------*/
-AppConfigFile *readAppConfigFile(bool aDoPrintSummary)
-{
-  AppConfigFile *tAppConfigFile = new AppConfigFile(_ConfigFile);
-
-  std::cout << "Reading app config file " << qPrintable(_ConfigFile)
-            << "..." << std::endl;
-  tAppConfigFile->openConfiguration();
-
-  if (aDoPrintSummary)
-  {
-    std::map<QString,MessageSpec> &tMessageMap = tAppConfigFile->messageMap();
-
-    std::map<QString,MessageSpec>::iterator tIter;
-    for (tIter = tMessageMap.begin(); tIter != tMessageMap.end(); tIter++)
-    {
-      MessageSpec tSpec = tIter->second;
-      std::cout << qPrintable(tSpec.toQString()) << std::endl;
-    }
-    AppConfig tAppConfig = tAppConfigFile->appConfig();
-    std::cout << "settings:" << std::endl;
-    std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
-  }
-
-  return tAppConfigFile;
 }
 
 /*------------------------------------------------------------------------------
