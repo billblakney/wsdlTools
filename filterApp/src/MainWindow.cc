@@ -410,12 +410,14 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
   aMenu->addAction(tGoAction);
   aMenu->addAction(tStopAction);
   aMenu->addAction(tBypassAction);
+  aMenu->addSeparator();
   aMenu->addAction(tEnterAction);
 
   // toolbar
   aToolBar->addAction(tGoAction);
   aToolBar->addAction(tStopAction);
   aToolBar->addAction(tBypassAction);
+  aToolBar->addSeparator();
   aToolBar->addAction(tEnterAction);
 
   //TODO ok here?
@@ -482,6 +484,7 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
   QPixmap tFormatLongname(":/fmt_longname.png");
   QPixmap tFormatTable(":/fmt_table.png");
   QPixmap tFormatCustom(":/fmt_custom.png");
+  QPixmap tCustomFormat(":/custom_fmt_tool.png");
 
   // actions
   QAction *tAsIsFormatAction = new QAction(QIcon(tFormatAsIs),
@@ -492,6 +495,8 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
       "&Table Format Mode", this);
   QAction *tCustomFormatAction = new QAction(QIcon(tFormatCustom),
       "&Custom Format Mode", this);
+  QAction *tCustomFormatToolAction = new QAction(QIcon(tCustomFormat),
+      "Custom Format Tool", this);
 
   // short-cuts
   tAsIsFormatAction->setShortcut(QKeySequence(Qt::Key_A));
@@ -504,6 +509,7 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
   tLongnameFormatAction->setCheckable(true);
   tTableFormatAction->setCheckable(true);
   tCustomFormatAction->setCheckable(true);
+  tCustomFormatToolAction->setCheckable(false);
 
   tCustomFormatAction->setChecked(true);
 
@@ -523,19 +529,25 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
   // action signal-slot
   connect(tFormatGroup, SIGNAL(triggered(QAction*)), _RecordProcessor,
       SLOT(onFormatModeAction(QAction*)));
+  connect(tCustomFormatToolAction,SIGNAL(triggered()),
+      this,SLOT(onCustomFormatToolAction()));
 
   // menu
-  aMenu = menuBar()->addMenu("&Format Mode");
+  aMenu = menuBar()->addMenu("&Format");
   aMenu->addAction(tAsIsFormatAction);
   aMenu->addAction(tLongnameFormatAction);
   aMenu->addAction(tTableFormatAction);
   aMenu->addAction(tCustomFormatAction);
+  aMenu->addSeparator();
+  aMenu->addAction(tCustomFormatToolAction);
 
   // toolbar
   aToolBar->addAction(tAsIsFormatAction);
   aToolBar->addAction(tLongnameFormatAction);
   aToolBar->addAction(tTableFormatAction);
   aToolBar->addAction(tCustomFormatAction);
+  aToolBar->addSeparator();
+  aToolBar->addAction(tCustomFormatToolAction);
 }
 
 //-----------------------------------------------------------------------------
@@ -543,32 +555,24 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
 void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
-  QPixmap tCustomFormat(":/custom_fmt_tool.png");
   QPixmap tTestScopeToolPixmap(":/filter_tool.png");
 
   // actions
-  QAction *tCustomFormatAction =
-      new QAction(QIcon(tCustomFormat),"Custom Format Tool", this);
   QAction *tTestScopeToolAction =
       new QAction(QIcon(tTestScopeToolPixmap),"Filter Scope Tool", this);
 
   // check boxes
-  tCustomFormatAction->setCheckable(false);
   tTestScopeToolAction->setCheckable(false);
 
   // action signal-slot
-  connect(tCustomFormatAction,SIGNAL(triggered()),
-      this,SLOT(onCustomFormatToolAction()));
   connect(tTestScopeToolAction,SIGNAL(triggered()),
       this,SLOT(onTestScopeToolAction()));
 
   // menu
   aMenu = menuBar()->addMenu("&Tools");
-  aMenu->addAction(tCustomFormatAction);
   aMenu->addAction(tTestScopeToolAction);
 
   // toolbar
-  aToolBar->addAction(tCustomFormatAction);
   aToolBar->addAction(tTestScopeToolAction);
 }
 
@@ -622,8 +626,6 @@ void MainWindow::setupMenuAndToolbar()
 
   statusBar()->addWidget(_StatusLabel);
   statusBar()->addPermanentWidget(new QLabel("-counts-"));
-
-//  tToolBar->addSeparator();
 
   QToolBar *tFileToolBar = addToolBar("File Toolbar");
   setupFileActions(tMenu,tFileToolBar);
