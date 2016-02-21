@@ -3,6 +3,8 @@
 
 #include <string>
 #include <QCheckBox>
+#include <QString>
+#include <QStringList>
 #include "Logger.hh"
 
 /**
@@ -33,6 +35,8 @@ public:
     eFormatEnd
   };
 
+  static QStringList _FormatNames;
+
   FieldItemData();
 
   FieldItemData(
@@ -49,6 +53,12 @@ public:
       Qt::CheckState aTestCheckState = Qt::Unchecked);
 
   virtual ~FieldItemData();
+
+  static QStringList getFormatStringList();
+
+  static QString getFormatString(Format aMode);
+
+  static Format getFormat(QString aFormat);
 
   bool isChecked();
   bool isTestChecked();
@@ -80,6 +90,8 @@ public:
 protected:
 
 //  static ccl::Logger sLogger;
+
+  static QStringList formatNames();
 
   NodeType           _NodeType;
   std::string        _Key;

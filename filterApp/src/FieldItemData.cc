@@ -3,6 +3,8 @@
 
 //ccl::Logger FieldItemData::sLogger("FieldItemData");
 
+QStringList FieldItemData::_FormatNames = formatNames();
+
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 FieldItemData::FieldItemData()
@@ -45,14 +47,62 @@ FieldItemData::FieldItemData(
     _Postfix(aPostfix),
     _CheckState(aCheckState),
     _TestCheckState(aTestCheckState)
-  {
-
-  }
+{
+}
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 FieldItemData::~FieldItemData()
 {
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QStringList FieldItemData::getFormatStringList()
+{
+  return _FormatNames;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QString FieldItemData::getFormatString(Format aMode)
+{
+  if (aMode < _FormatNames.size())
+  {
+    return _FormatNames[aMode];
+  }
+  else
+  {
+    return QString();
+  }
+}
+
+//-------------------------------------------------------------------------------
+// Return format enum value represented by a string.
+// Returns eAsIs if no match is found.
+//-------------------------------------------------------------------------------
+FieldItemData::Format FieldItemData::getFormat(QString aFormat)
+{
+  for (int i = 0; i < _FormatNames.size(); i++)
+  {
+    if (aFormat == _FormatNames[i])
+    {
+      return static_cast<FieldItemData::Format>(i);
+    }
+  }
+  return eAsIs;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+QStringList FieldItemData::formatNames()
+{
+  QStringList tList;
+  tList.push_back("as-is");
+  tList.push_back("name: value");
+  tList.push_back("longname: value");
+  tList.push_back("value");
+  return tList;
 }
 
 //-------------------------------------------------------------------------------

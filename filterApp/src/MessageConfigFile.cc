@@ -13,6 +13,9 @@ const char *MessageConfigFile::kFieldsTag = "fields";
 const char *MessageConfigFile::kFieldTag = "field";
 const char *MessageConfigFile::kAttrKeyTag = "key";
 const char *MessageConfigFile::kAttrCheckedTag = "checked";
+const char *MessageConfigFile::kAttrFilterScopeTag = "filter_scope";
+const char *MessageConfigFile::kAttrFormatTag = "format";
+const char *MessageConfigFile::kAttrPostfixTag = "postfix";
 const char *MessageConfigFile::kValueChecked = "1";
 const char *MessageConfigFile::kValueNotChecked = "0";
 
@@ -158,28 +161,29 @@ void MessageConfigFile::readFieldElements()
       if (reader.name() == kFieldTag)
       {
         QString tKey = reader.attributes().value(kAttrKeyTag).toString();
+        QString tIsChecked = reader.attributes().value(kAttrCheckedTag).toString();
+        QString tTestScope = reader.attributes().value(kAttrFilterScopeTag).toString();
+        QString tFormat = reader.attributes().value(kAttrFormatTag).toString();
+        QString tPostfix = reader.attributes().value(kAttrPostfixTag).toString();
+
 //        std::cout << "key: " << qPrintable(tKey) << std::endl;
-        QString tCheckValue = reader.attributes().value(kAttrCheckedTag).toString();
 //        std::cout << "checked: " << qPrintable(tCheckValue) << std::endl;
 
-        bool tChecked = (tCheckValue.toStdString().compare(kValueChecked)?false:true);
-
         FieldItem *tFieldItem = _DataStructModel->getNode(tKey.toStdString());
+
         if (tFieldItem)
         {
           FieldItemData &tData = tFieldItem->getData();
-          bool tCurrentState = tData.isChecked();
-          if (tChecked != tCurrentState)
-          {
-            if (tChecked)
-            {
-              tData.setCheckState(Qt::Checked);
-            }
-            else
-            {
-              tData.setCheckState(Qt::Unchecked);
-            }
-          }
+          updateMessageIsChecked(tData,tIsChecked);
+
+          updateMessageTestScope(tFieldItem,tTestScope);
+          updateMessageFormat(tFieldItem,tFormat);
+          updateMessagePostfix(tFieldItem,tPostfix);
+        }
+        else
+        {
+          std::cout << "WARNING: couldn't find tree node for key "
+              << qPrintable(tKey) << std::endl;
         }
 
         reader.readElementText();
@@ -190,6 +194,66 @@ void MessageConfigFile::readFieldElements()
       }
     }
     reader.readNext();
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MessageConfigFile::updateMessageIsChecked(FieldItemData &aData,
+    QString aIsChecked)
+{
+  bool tNewIsChecked = (aIsChecked.toStdString().compare(kValueChecked)?false:true);
+  bool tOldIsChecked = aData.isChecked();
+  if (tNewIsChecked != tOldIsChecked)
+  {
+    if (tNewIsChecked)
+    {
+      aData.setCheckState(Qt::Checked);
+    }
+    else
+    {
+      aData.setCheckState(Qt::Unchecked);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MessageConfigFile::updateMessageTestScope(FieldItem *aItem,
+      QString aNewTestScope)
+{
+  QString tOldTestScope(aItem->getData().getTestScope().c_str());
+
+  if (tOldTestScope != aNewTestScope)
+  {
+    aItem->setTestScope(aNewTestScope.toStdString().c_str());
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MessageConfigFile::updateMessageFormat(FieldItem *aItem,
+    QString aNewFormat)
+{
+  FieldItemData::Format tOldFormatValue = aItem->getData().getFormat();
+  QString tOldFormat = aItem->getData().getFormatString(tOldFormatValue);
+  if (tOldFormat != aNewFormat)
+  {
+    FieldItemData::Format tNewFormatValue = FieldItemData::getFormat(aNewFormat);
+    aItem->setFieldFormat(tNewFormatValue);
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MessageConfigFile::updateMessagePostfix(FieldItem *aItem,
+    QString aNewPostfix)
+{
+  QString tOldPostfix(aItem->getData().getPostfix().c_str());
+
+  if (tOldPostfix != aNewPostfix)
+  {
+    aItem->setFieldPostfix(aNewPostfix.toStdString().c_str());
   }
 }
 
@@ -302,8 +366,17 @@ void MessageConfigFile::writeFieldElements(QXmlStreamWriter &aWriter)
     aWriter.writeStartElement(kFieldTag);
 
     // write attributes
-    aWriter.writeAttribute(kAttrKeyTag,tData.getKey().c_str());
-    aWriter.writeAttribute(kAttrCheckedTag, (tData.getCheckState()?kValueChecked:kValueNotChecked));
+    QString tKey = tData.getKey().c_str();
+    QString tChecked = (tData.getCheckState()?kValueChecked:kValueNotChecked);
+    QString tTestScope = tData.getTestScope().c_str();
+    QString tFormat = FieldItemData::getFormatString(tData.getFormat());
+    QString tPostfix = tData.getPostfix().c_str();
+
+    aWriter.writeAttribute(kAttrKeyTag,tKey);
+    aWriter.writeAttribute(kAttrCheckedTag,tChecked);
+    aWriter.writeAttribute(kAttrFilterScopeTag,tTestScope);
+    aWriter.writeAttribute(kAttrFormatTag,tFormat);
+    aWriter.writeAttribute(kAttrPostfixTag,tPostfix);
 
     // close tag field
     aWriter.writeEndElement();

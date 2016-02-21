@@ -17,6 +17,9 @@ public:
   static const char *kFieldTag;
   static const char *kAttrKeyTag;
   static const char *kAttrCheckedTag;
+  static const char *kAttrFilterScopeTag;
+  static const char *kAttrFormatTag;
+  static const char *kAttrPostfixTag;
   static const char *kValueChecked;
   static const char *kValueNotChecked;
 
@@ -32,6 +35,11 @@ protected:
 
   void readWsdlfilterElement();
   void readFieldElements();
+  void updateMessageIsChecked(FieldItemData &tData,QString aIsChecked);
+
+  void updateMessageTestScope(FieldItem *aItem,QString aTestScope);
+  void updateMessageFormat(FieldItem *aItem,QString aFormat);
+  void updateMessagePostfix(FieldItem *aItem,QString aPostfix);
   void readConfigElements();
   void skipUnknownElement();
 

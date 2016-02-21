@@ -133,7 +133,8 @@ StructorBuilder *MainWindow::parseHeaderFile(QString aHeaderFile)
   if (!aHeaderFile.length())
   {
     std::cout << "ERROR: No header file specified." << std::endl;
-    std::cout << "       Use -f option or set CLIRCAR_H env var\n" << std::endl;
+    std::cout << "       Use -f option or set CLIRCAR_H env var\n"
+              << std::endl;
     exit(1);
   }
   else if (!tHeaderFile.exists())
@@ -344,10 +345,10 @@ void MainWindow::setupView(std::string aStructName)
   if (!_IsFilterMode)
   {
     _StructTree->hideColumn(DataStructModel::eColFormat);
-    _StructTree->hideColumn(DataStructModel::eColMatchRegex);//TODO restore!!!
+    _StructTree->hideColumn(DataStructModel::eColMatchRegex);
     _StructTree->hideColumn(DataStructModel::eColPostfix);
     _StructTree->hideColumn(DataStructModel::eColTestRegex);
-//    _StructTree->hideColumn(DataStructModel::eColTestScope);
+//    _StructTree->hideColumn(DataStructModel::eColTestScope);//TODO restore!!!
   }
   else
   {
@@ -392,8 +393,10 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
   tRunGroup->addAction(tBypassAction);
 
   // action signal-slot
-  connect(tRunGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onOutputModeAction(QAction*)));
-  connect(tRunGroup, SIGNAL(triggered(QAction*)), this, SLOT(onOutputModeAction(QAction*)));
+  connect(tRunGroup, SIGNAL(triggered(QAction*)), _StreamReader,
+      SLOT(onOutputModeAction(QAction*)));
+  connect(tRunGroup, SIGNAL(triggered(QAction*)), this,
+      SLOT(onOutputModeAction(QAction*)));
 
   // menu
   aMenu = menuBar()->addMenu("&Operate");
@@ -406,7 +409,8 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
   aToolBar->addAction(tStopAction);
   aToolBar->addAction(tBypassAction);
 
-  onOutputModeAction(tGoAction); // initializes status label to the default //TODO ok here?
+  //TODO ok here?
+  onOutputModeAction(tGoAction); // initializes status label to the default
 }
 
 //-----------------------------------------------------------------------------
@@ -419,9 +423,12 @@ void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
   QPixmap tDelimNone(":/delim_none.png");
 
   // actions
-  QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),"&Delimit Output Records", this);
-  QAction *tDelimitNoneAction = new QAction(QIcon(tDelimNone),"&No Record Delimiters", this);
-  QAction *tDelimitAllAction = new QAction(QIcon(tDelimAll),"&Delimit All Records", this);
+  QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),
+      "&Delimit Output Records", this);
+  QAction *tDelimitNoneAction = new QAction(QIcon(tDelimNone),
+      "&No Record Delimiters", this);
+  QAction *tDelimitAllAction = new QAction(QIcon(tDelimAll),
+      "&Delimit All Records", this);
 
   // check boxes
   tDelimitAllAction->setCheckable(true);
@@ -442,7 +449,8 @@ void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
   tDelimitGroup->addAction(tDelimitAllAction);
 
   // action signal-slot
-  connect(tDelimitGroup, SIGNAL(triggered(QAction*)), _StreamReader, SLOT(onDelimitModeAction(QAction*)));
+  connect(tDelimitGroup, SIGNAL(triggered(QAction*)), _StreamReader,
+      SLOT(onDelimitModeAction(QAction*)));
 
   // menu
   aMenu = menuBar()->addMenu("&Delimit Records");
@@ -467,10 +475,14 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
   QPixmap tFormatCustom(":/fmt_custom.png");
 
   // actions
-  QAction *tAsIsFormatAction = new QAction(QIcon(tFormatAsIs),"&As-is", this);
-  QAction *tLongnameFormatAction = new QAction(QIcon(tFormatLongname),"&Long name", this);
-  QAction *tTableFormatAction = new QAction(QIcon(tFormatTable),"&Table", this);
-  QAction *tCustomFormatAction = new QAction(QIcon(tFormatCustom),"&Custom", this);
+  QAction *tAsIsFormatAction = new QAction(QIcon(tFormatAsIs),
+      "&As-is Format Mode", this);
+  QAction *tLongnameFormatAction = new QAction(QIcon(tFormatLongname),
+      "&Long-name Format Mode", this);
+  QAction *tTableFormatAction = new QAction(QIcon(tFormatTable),
+      "&Table Format Mode", this);
+  QAction *tCustomFormatAction = new QAction(QIcon(tFormatCustom),
+      "&Custom Format Mode", this);
 
   // short-cuts
   tAsIsFormatAction->setShortcut(QKeySequence(Qt::Key_A));
@@ -500,7 +512,8 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
   tFormatGroup->addAction(tCustomFormatAction);
 
   // action signal-slot
-  connect(tFormatGroup, SIGNAL(triggered(QAction*)), _RecordProcessor, SLOT(onFormatModeAction(QAction*)));
+  connect(tFormatGroup, SIGNAL(triggered(QAction*)), _RecordProcessor,
+      SLOT(onFormatModeAction(QAction*)));
 
   // menu
   aMenu = menuBar()->addMenu("&Format Mode");
@@ -526,9 +539,9 @@ void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 
   // actions
   QAction *tCustomFormatAction =
-      new QAction(QIcon(tCustomFormat),"Custom format tool", this);
+      new QAction(QIcon(tCustomFormat),"Custom Format Tool", this);
   QAction *tTestScopeToolAction =
-      new QAction(QIcon(tTestScopeToolPixmap),"Test scope tool", this);
+      new QAction(QIcon(tTestScopeToolPixmap),"Filter Scope Tool", this);
 
   // check boxes
   tCustomFormatAction->setCheckable(false);
@@ -845,7 +858,8 @@ void MainWindow::onCustomFormatToolAction()
    _CustomFormatToolDock = new QDockWidget(0);
    _CustomFormatToolDock->setObjectName("customFormatToolDock");
    _CustomFormatToolDock->setWidget(_CustomFormatToolWidget);
-   _CustomFormatToolDock->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
+   _CustomFormatToolDock->setAllowedAreas(
+       Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 
   addDockWidget(Qt::TopDockWidgetArea, _CustomFormatToolDock);
 }
@@ -859,7 +873,8 @@ void MainWindow::onTestScopeToolAction()
    _TestScopeToolDock = new QDockWidget(0);
    _TestScopeToolDock->setObjectName("testScopeToolDock");
    _TestScopeToolDock->setWidget(_TestScopeToolWidget);
-   _TestScopeToolDock->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
+   _TestScopeToolDock->setAllowedAreas(
+       Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 
   addDockWidget(Qt::TopDockWidgetArea, _TestScopeToolDock);
 }
