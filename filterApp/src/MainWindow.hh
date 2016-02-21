@@ -61,6 +61,12 @@ public slots:
   void onCustomFormatToolAction();
   void onTestScopeToolAction();
 
+  void onViewFileToolbarAction();
+  void onViewOperateToolbarAction();
+  void onViewDelimitToolbarAction();
+  void onViewFormatToolbarAction();
+  void onViewToolToolbarAction();
+
   // handle custom format tool pushbutton
   void onAsIsPushbuttonClicked(bool);
   void onLongnamePushbuttonClicked(bool);
@@ -80,6 +86,18 @@ public slots:
 
 protected:
   AppConfigFile      *_AppConfigFile;
+
+  QToolBar           *_FileToolBar;
+  QToolBar           *_OperateToolBar;
+  QToolBar           *_DelimitToolBar;
+  QToolBar           *_FormatToolBar;
+  QToolBar           *_ToolToolBar;
+
+  QAction             *_ViewFileToolbarAction;
+  QAction             *_ViewOperateToolbarAction;
+  QAction             *_ViewDelimitToolbarAction;
+  QAction             *_ViewFormatToolbarAction;
+  QAction             *_ViewToolToolbarAction;
 
   QWidget            *_CentralWidget;
   QLabel             *_StatusLabel;
@@ -132,6 +150,8 @@ protected:
   void setupFormatActions(QMenu *aMenu,QToolBar *aToolBar);
 
   void setupToolActions(QMenu *aMenu,QToolBar *aToolBar);
+
+  void setupToolBarMenu(QMenu *aMenu);
 
   void setDelimitMode(StreamReader::DelimitMode aMode);
 

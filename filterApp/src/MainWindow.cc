@@ -31,6 +31,16 @@ MainWindow::MainWindow(
     StructorBuilder *aStructorBuilder)
   : QMainWindow(aParent),
     _AppConfigFile(aAppConfigFile),
+    _FileToolBar(0),
+    _OperateToolBar(0),
+    _DelimitToolBar(0),
+    _FormatToolBar(0),
+    _ToolToolBar(0),
+    _ViewFileToolbarAction(0),
+    _ViewOperateToolbarAction(0),
+    _ViewDelimitToolbarAction(0),
+    _ViewFormatToolbarAction(0),
+    _ViewToolToolbarAction(0),
     _CentralWidget(0),
     _StructorBuilder(aStructorBuilder),
     _IsFilterMode(false),
@@ -78,6 +88,16 @@ MainWindow::MainWindow(
     StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
   : QMainWindow(aParent),
     _AppConfigFile(aAppConfigFile),
+    _FileToolBar(0),
+    _OperateToolBar(0),
+    _DelimitToolBar(0),
+    _FormatToolBar(0),
+    _ToolToolBar(0),
+    _ViewFileToolbarAction(0),
+    _ViewOperateToolbarAction(0),
+    _ViewDelimitToolbarAction(0),
+    _ViewFormatToolbarAction(0),
+    _ViewToolToolbarAction(0),
     _CentralWidget(0),
     _StructorBuilder(0),
     _IsFilterMode(true),
@@ -357,6 +377,44 @@ void MainWindow::setupView(std::string aStructName)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::setupFileActions(QMenu *aMenu,QToolBar *aToolBar)
+{
+  // pixamps
+  QPixmap tFileOpen(":/document_open.png");
+  QPixmap tFileSave(":/document_save.png");
+
+  // actions
+  QAction *tFileOpenAction =
+      new QAction(QIcon(tFileOpen),"Open &file", this);
+  QAction *tFileSaveAction =
+      new QAction(QIcon(tFileSave),"Save &file", this);
+
+  // short-cuts
+  tFileOpenAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
+  tFileSaveAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+
+  // check boxes
+  tFileOpenAction->setCheckable(false);
+  tFileSaveAction->setCheckable(false);
+
+  // action signal-slot
+  connect(tFileOpenAction,SIGNAL(triggered()),
+      this,SLOT(onFileOpenAction()));
+  connect(tFileSaveAction,SIGNAL(triggered()),
+      this,SLOT(onFileSaveAction()));
+
+  // menu
+  aMenu = menuBar()->addMenu("&File");
+  aMenu->addAction(tFileOpenAction);
+  aMenu->addAction(tFileSaveAction);
+
+  // toolbar
+  aToolBar->addAction(tFileOpenAction);
+  aToolBar->addAction(tFileSaveAction);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixmaps
@@ -577,42 +635,48 @@ void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 }
 
 //-----------------------------------------------------------------------------
-// TODO move
 //-----------------------------------------------------------------------------
-void MainWindow::setupFileActions(QMenu *aMenu,QToolBar *aToolBar)
+void MainWindow::setupToolBarMenu(QMenu *aMenu)
 {
-  // pixamps
-  QPixmap tFileOpen(":/document_open.png");
-  QPixmap tFileSave(":/document_save.png");
-
   // actions
-  QAction *tFileOpenAction =
-      new QAction(QIcon(tFileOpen),"Open &file", this);
-  QAction *tFileSaveAction =
-      new QAction(QIcon(tFileSave),"Save &file", this);
-
-  // short-cuts
-  tFileOpenAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
-  tFileSaveAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+  _ViewFileToolbarAction = new QAction("File ToolBar",this);
+  _ViewOperateToolbarAction = new QAction("Operate ToolBar",this);
+  _ViewDelimitToolbarAction = new QAction("Delimit ToolBar",this);
+  _ViewFormatToolbarAction = new QAction("Format ToolBar",this);
+  _ViewToolToolbarAction = new QAction("Tool ToolBar",this);
 
   // check boxes
-  tFileOpenAction->setCheckable(false);
-  tFileSaveAction->setCheckable(false);
+  _ViewFileToolbarAction->setCheckable(true);
+  _ViewOperateToolbarAction->setCheckable(true);
+  _ViewDelimitToolbarAction->setCheckable(true);
+  _ViewFormatToolbarAction->setCheckable(true);
+  _ViewToolToolbarAction->setCheckable(true);
+
+  _ViewFileToolbarAction->setChecked(false);
+  _ViewOperateToolbarAction->setChecked(true);
+  _ViewDelimitToolbarAction->setChecked(true);
+  _ViewFormatToolbarAction->setChecked(true);
+  _ViewToolToolbarAction->setChecked(true);
 
   // action signal-slot
-  connect(tFileOpenAction,SIGNAL(triggered()),
-      this,SLOT(onFileOpenAction()));
-  connect(tFileSaveAction,SIGNAL(triggered()),
-      this,SLOT(onFileSaveAction()));
+  connect(_ViewFileToolbarAction,SIGNAL(triggered()),
+      this,SLOT(onViewFileToolbarAction()));
+  connect(_ViewOperateToolbarAction,SIGNAL(triggered()),
+      this,SLOT(onViewOperateToolbarAction()));
+  connect(_ViewDelimitToolbarAction,SIGNAL(triggered()),
+      this,SLOT(onViewDelimitToolbarAction()));
+  connect(_ViewFormatToolbarAction,SIGNAL(triggered()),
+      this,SLOT(onViewFormatToolbarAction()));
+  connect(_ViewToolToolbarAction,SIGNAL(triggered()),
+      this,SLOT(onViewToolToolbarAction()));
 
   // menu
-  aMenu = menuBar()->addMenu("&File");
-  aMenu->addAction(tFileOpenAction);
-  aMenu->addAction(tFileSaveAction);
-
-  // toolbar
-  aToolBar->addAction(tFileOpenAction);
-  aToolBar->addAction(tFileSaveAction);
+  aMenu = menuBar()->addMenu("&ToolBars");
+  aMenu->addAction(_ViewFileToolbarAction);
+  aMenu->addAction(_ViewOperateToolbarAction);
+  aMenu->addAction(_ViewDelimitToolbarAction);
+  aMenu->addAction(_ViewFormatToolbarAction);
+  aMenu->addAction(_ViewToolToolbarAction);
 }
 
 //-----------------------------------------------------------------------------
@@ -627,22 +691,24 @@ void MainWindow::setupMenuAndToolbar()
   statusBar()->addWidget(_StatusLabel);
   statusBar()->addPermanentWidget(new QLabel("-counts-"));
 
-  QToolBar *tFileToolBar = addToolBar("File Toolbar");
-  setupFileActions(tMenu,tFileToolBar);
+  _FileToolBar = addToolBar("File Toolbar");
+  setupFileActions(tMenu,_FileToolBar);
 
-  QToolBar *tOperateToolBar = addToolBar("Operate Toolbar");
-  setupOperateActions(tMenu,tOperateToolBar);
+  _OperateToolBar = addToolBar("Operate Toolbar");
+  setupOperateActions(tMenu,_OperateToolBar);
 
-  QToolBar *tDelimitToolBar = addToolBar("Delimit Toolbar");
-  setupDelimitActions(tMenu,tDelimitToolBar);
+  _DelimitToolBar = addToolBar("Delimit Toolbar");
+  setupDelimitActions(tMenu,_DelimitToolBar);
 
-  QToolBar *tFormatToolBar = addToolBar("Format Toolbar");
-  setupFormatActions(tMenu,tFormatToolBar);
+  _FormatToolBar = addToolBar("Format Toolbar");
+  setupFormatActions(tMenu,_FormatToolBar);
 
-  QToolBar *tToolToolBar = addToolBar("Tool Toolbar");
-  setupToolActions(tMenu,tToolToolBar);
+  _ToolToolBar = addToolBar("Tool Toolbar");
+  setupToolActions(tMenu,_ToolToolBar);
 
-  tFileToolBar->hide();
+  setupToolBarMenu(tMenu);
+
+  _FileToolBar->hide();
 }
 
 //-----------------------------------------------------------------------------
@@ -896,6 +962,76 @@ void MainWindow::onTestScopeToolAction()
        Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 
   addDockWidget(Qt::TopDockWidgetArea, _TestScopeToolDock);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onViewFileToolbarAction()
+{
+  if (_ViewFileToolbarAction->isChecked())
+  {
+    _FileToolBar->show();
+  }
+  else
+  {
+    _FileToolBar->hide();
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onViewOperateToolbarAction()
+{
+  if (_ViewOperateToolbarAction->isChecked())
+  {
+    _OperateToolBar->show();
+  }
+  else
+  {
+    _OperateToolBar->hide();
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onViewDelimitToolbarAction()
+{
+  if (_ViewDelimitToolbarAction->isChecked())
+  {
+    _DelimitToolBar->show();
+  }
+  else
+  {
+    _DelimitToolBar->hide();
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onViewFormatToolbarAction()
+{
+  if (_ViewFormatToolbarAction->isChecked())
+  {
+    _FormatToolBar->show();
+  }
+  else
+  {
+    _FormatToolBar->hide();
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onViewToolToolbarAction()
+{
+  if (_ViewToolToolbarAction->isChecked())
+  {
+    _ToolToolBar->show();
+  }
+  else
+  {
+    _ToolToolBar->hide();
+  }
 }
 
 //-------------------------------------------------------------------------------
