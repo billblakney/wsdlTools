@@ -914,42 +914,91 @@ Qt::ItemFlags DataStructModel::flags(const QModelIndex &index) const
 QVariant DataStructModel::headerData(int section,Qt::Orientation orientation,
       int role) const
 {
-  if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+  switch (role)
   {
-    if (section == eColFieldName)
+  case Qt::DisplayRole:
+    if (orientation == Qt::Horizontal)
     {
-      return QVariant("Field Name");
+      if (section == eColFieldName)
+      {
+        return QVariant("Field Name");
+      }
+      else if (section == eColFieldKey)
+      {
+        return QVariant("Field Key");
+      }
+      else if (section == eColFieldType)
+      {
+        return QVariant("Field Type");
+      }
+      else if (section == eColMatchRegex)
+      {
+        return QVariant("Test Regex");
+      }
+      else if (section == eColTestRegex)
+      {
+        return QVariant("Test Filter");
+      }
+      else if (section == eColTestScope)
+      {
+        return QVariant("Filter Subtree");
+      }
+      else if (section == eColFormat)
+      {
+        return QVariant("Format");
+      }
+      else if (section == eColPostfix)
+      {
+        return QVariant("Postfix");
+      }
+      break;
+  case Qt::ToolTipRole:
+    if (orientation == Qt::Horizontal)
+    {
+      QString tTitle("");
+      switch (section)
+      {
+      case DataStructModel::eColFieldName:
+        break;
+      case DataStructModel::eColTestRegex:
+        static const char *kTestRegexToolTip =
+            "Regular expression to test<br>"
+            " field value. Can contain<br>"
+            "wildcards (\"*\").";
+        tTitle = QString(kTestRegexToolTip);
+        break;
+      case DataStructModel::eColTestScope:
+        static const char *kTestScopeToolTip =
+            "Branch to suppress when<br>"
+            "Test Regex fails";
+        tTitle = QString(kTestScopeToolTip);
+        break;
+      case DataStructModel::eColFormat:
+        tTitle = QString("Format applied to<br>field output");
+        break;
+      case DataStructModel::eColPostfix:
+        static const char *kPostfixToolTip =
+            "String to append to field<br>"
+            "output (to achieve desired format)";
+        tTitle = QString(kPostfixToolTip);
+        break;
+      case DataStructModel::eColFieldKey:
+        tTitle = QString(
+            "Key used to identify field. (Used in WSDL filter files.)");
+        break;
+      case DataStructModel::eColFieldType:
+        tTitle = QString("C++ type of field");
+        break;
+      case DataStructModel::eColMatchRegex:
+        tTitle = QString(
+            "Expression used to matching field on incoming stream");
+        break;
+      }
+      return tTitle;
     }
-    else if (section == eColFieldKey)
-    {
-      return QVariant("Field Key");
-    }
-    else if (section == eColFieldType)
-    {
-      return QVariant("Field Type");
-    }
-    else if (section == eColMatchRegex)
-    {
-      return QVariant("Match Regex");
-    }
-    else if (section == eColTestRegex)
-    {
-      return QVariant("Test Regex");
-    }
-    else if (section == eColTestScope)
-    {
-      return QVariant("Test Scope");
-    }
-    else if (section == eColFormat)
-    {
-      return QVariant("Format");
-    }
-    else if (section == eColPostfix)
-    {
-      return QVariant("Postfix");
+    break;
     }
   }
-
   return QVariant();
 }
 

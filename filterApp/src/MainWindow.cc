@@ -496,7 +496,7 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
   QAction *tCustomFormatAction = new QAction(QIcon(tFormatCustom),
       "&Custom Format Mode", this);
   QAction *tCustomFormatToolAction = new QAction(QIcon(tCustomFormat),
-      "Custom Format Tool", this);
+      "Custom Format Tool...", this);
 
   // short-cuts
   tAsIsFormatAction->setShortcut(QKeySequence(Qt::Key_A));
@@ -559,7 +559,7 @@ void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 
   // actions
   QAction *tTestScopeToolAction =
-      new QAction(QIcon(tTestScopeToolPixmap),"Filter Scope Tool", this);
+      new QAction(QIcon(tTestScopeToolPixmap),"Filter Scope Tool...", this);
 
   // check boxes
   tTestScopeToolAction->setCheckable(false);
