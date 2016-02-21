@@ -237,12 +237,12 @@ void MainWindow::onOutputModeAction(QAction *aAction)
     case StreamReader::eNormal:
       tPalette.setColor(QPalette::Window, Qt::white);
       tPalette.setColor(QPalette::WindowText, Qt::black);
-      setStatusLabel("Normal",tPalette);
+      setStatusLabel("Go",tPalette);
       break;
     case StreamReader::eFreezeDrop:
       tPalette.setColor(QPalette::Window, Qt::darkRed);
       tPalette.setColor(QPalette::WindowText, Qt::white);
-      setStatusLabel("Freeze",tPalette);
+      setStatusLabel("Stop",tPalette);
       break;
     case StreamReader::eBypass:
       tPalette.setColor(QPalette::Window, Qt::darkGray);
@@ -464,7 +464,7 @@ void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
       SLOT(onDelimitModeAction(QAction*)));
 
   // menu
-  aMenu = menuBar()->addMenu("&Delimit Records");
+  aMenu = menuBar()->addMenu("&Delimit");
   aMenu->addAction(tDelimitOutputAction);
   aMenu->addAction(tDelimitNoneAction);
   aMenu->addAction(tDelimitAllAction);
@@ -641,6 +641,8 @@ void MainWindow::setupMenuAndToolbar()
 
   QToolBar *tToolToolBar = addToolBar("Tool Toolbar");
   setupToolActions(tMenu,tToolToolBar);
+
+  tFileToolBar->hide();
 }
 
 //-----------------------------------------------------------------------------
