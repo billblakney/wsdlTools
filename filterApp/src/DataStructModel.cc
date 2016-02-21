@@ -43,12 +43,23 @@ DataStructModel::DataStructModel(
     std::cout << "TopNode HAS ONE STRUCT_ARRAY child" << std::endl;
   }
 
-  tempContactDesignatorCheck();
+  setFilterScopeForDesignator();
 }
 
 //-------------------------------------------------------------------------------
+// Apply special processing to filter scopes for contact designators.
+// For many data structures that contain a contact designator field, i.e. field
+// of type CLIR_CAR_DESIGNATOR, if the contact designator is the child of a
+// struct array node, it is usually more common to want to use the filter scope
+// corresponding to the struct array node element, than it is to use the default
+// filter scope of "root". This method automatically makes such settings. In
+// particular, the algorithm works as follows:
+// For any contact designator field, of type CLIR_CAR_DESIGNATOR, look for an
+// ancestor that is a struct array node. If one is found, then apply the test
+// scope that applies to the struct array node element to the entire tree of
+// that ancestor node.
 //-------------------------------------------------------------------------------
-void DataStructModel::tempContactDesignatorCheck()
+void DataStructModel::setFilterScopeForDesignator()
 {
   std::vector<FieldItem *>::iterator tIter;
   for (tIter = _TreeItems.begin(); tIter != _TreeItems.end(); tIter++)
@@ -73,6 +84,7 @@ void DataStructModel::tempContactDesignatorCheck()
 }
 
 //-------------------------------------------------------------------------------
+// For a tree node, apply a filter scope to its entire branch.
 //-------------------------------------------------------------------------------
 void DataStructModel::applyTestScope(FieldItem *aNode,std::string aTestScope)
 {
@@ -84,8 +96,11 @@ void DataStructModel::applyTestScope(FieldItem *aNode,std::string aTestScope)
 }
 
 //-------------------------------------------------------------------------------
+// For a tree node, find the first ancestor that matches a specified node type.
+// Returns a pointer to that ancestor node, or NULL if none is found.
 //-------------------------------------------------------------------------------
-FieldItem *DataStructModel::findFirstAncestor(FieldItem *aNode,FieldItemData::NodeType aNodeType)
+FieldItem *DataStructModel::findFirstAncestor(
+    FieldItem *aNode,FieldItemData::NodeType aNodeType)
 {
   FieldItem *tReturn = NULL;
 
@@ -104,6 +119,8 @@ FieldItem *DataStructModel::findFirstAncestor(FieldItem *aNode,FieldItemData::No
 }
 
 //-------------------------------------------------------------------------------
+// For a tree node, get the count of its children that match a specified node
+// type.
 //-------------------------------------------------------------------------------
 int DataStructModel::childCount(FieldItem *aNode,FieldItemData::NodeType aType)
 {

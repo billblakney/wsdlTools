@@ -484,7 +484,7 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
   tTableFormatAction->setCheckable(true);
   tCustomFormatAction->setCheckable(true);
 
-  tAsIsFormatAction->setChecked(true);
+  tCustomFormatAction->setChecked(true);
 
   // action data for action group trigger
   tAsIsFormatAction->setData(QVariant(RecordProcessor::eAsIs));

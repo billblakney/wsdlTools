@@ -46,18 +46,6 @@ public:
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
-  void tempContactDesignatorCheck();
-
-  //---------------------------------------------------------------------------
-  //---------------------------------------------------------------------------
-  FieldItem *findFirstAncestor(FieldItem *aNode,FieldItemData::NodeType aNodeType);
-
-  //---------------------------------------------------------------------------
-  //---------------------------------------------------------------------------
-  void applyTestScope(FieldItem *aNode,std::string aTestScope);
-
-  //---------------------------------------------------------------------------
-  //---------------------------------------------------------------------------
   int childCount(FieldItem *aNode,FieldItemData::NodeType aType);
 
   //---------------------------------------------------------------------------
@@ -91,42 +79,6 @@ public:
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
   std::string getFirstFieldMatch();
-
-  void buildTree(FieldItem *rootItem,Structure *aStructure,int aLevel = 0);
-
-  void buildStructNode(
-      Field &aField,FieldItem *aParentItem,int &aLevel);
-  void buildStructArrayNode(
-      Field &aField,FieldItem *aParentItem,int &aLevel);
-  void buildStructArrayLengthNode(
-      Field &aField,FieldItem *aParentItem,int &aLevel);
-  void buildPrimitiveArrayNode(
-      Field &aField,FieldItem *aParentItem,int &aLevel);
-  void buildPrimitiveArrayLengthNode(
-      Field &aField,FieldItem *aParentItem,int &aLevel);
-  void buildPrimitiveNode(
-      Field &aField,FieldItem *aParentItem,int &aLevel);
-
-  std::string buildKey(Field &aField,FieldItem *aParentItem,
-      bool aIsArrayType = false);
-  std::string buildArrayLengthKey(FieldItem *aParentItem);
-
-  std::string buildMatchForField(
-      const Field &aField,int aIndentLevel);
-  std::string buildMatchForArrayLengthField(
-      const Field &aField,int aIndentLevel);
-  std::string buildMatchForStructField(
-      const Field &aField,int aIndentLevel);
-  std::string buildMatchForStructArrayField(
-      const Field &aField,int aIndentLevel);
-  std::string buildMatchForStructArrayLengthField(
-      const Field &aField,int aIndentLevel);
-  std::string buildMatchForPrimitiveField(
-      const Field &aField,int aIndentLevel);
-  std::string buildMatchForPrimitiveArrayField(
-      const Field &aField,int aIndentLevel);
-  std::string buildMatchForPrimitiveArrayLengthField(
-      const Field &aField,int aIndentLevel);
 
   bool processStructLines(std::vector<std::string> &aLinesIn,
                           std::vector<std::string> &aLinesOut);
@@ -191,12 +143,51 @@ protected:
   // tree nodes
   std::vector<FieldItem *> _TreeItems;
 
-
   bool       _PropogateFieldChecks;
 
   // test nodes
   std::vector<std::string> _TestScopes;
   std::vector<std::string> _Postfixes;
+
+  void buildTree(FieldItem *rootItem,Structure *aStructure,int aLevel = 0);
+
+  void buildStructNode(
+      Field &aField,FieldItem *aParentItem,int &aLevel);
+  void buildStructArrayNode(
+      Field &aField,FieldItem *aParentItem,int &aLevel);
+  void buildStructArrayLengthNode(
+      Field &aField,FieldItem *aParentItem,int &aLevel);
+  void buildPrimitiveArrayNode(
+      Field &aField,FieldItem *aParentItem,int &aLevel);
+  void buildPrimitiveArrayLengthNode(
+      Field &aField,FieldItem *aParentItem,int &aLevel);
+  void buildPrimitiveNode(
+      Field &aField,FieldItem *aParentItem,int &aLevel);
+
+  std::string buildKey(Field &aField,FieldItem *aParentItem,
+      bool aIsArrayType = false);
+  std::string buildArrayLengthKey(FieldItem *aParentItem);
+
+  std::string buildMatchForField(
+      const Field &aField,int aIndentLevel);
+  std::string buildMatchForArrayLengthField(
+      const Field &aField,int aIndentLevel);
+  std::string buildMatchForStructField(
+      const Field &aField,int aIndentLevel);
+  std::string buildMatchForStructArrayField(
+      const Field &aField,int aIndentLevel);
+  std::string buildMatchForStructArrayLengthField(
+      const Field &aField,int aIndentLevel);
+  std::string buildMatchForPrimitiveField(
+      const Field &aField,int aIndentLevel);
+  std::string buildMatchForPrimitiveArrayField(
+      const Field &aField,int aIndentLevel);
+  std::string buildMatchForPrimitiveArrayLengthField(
+      const Field &aField,int aIndentLevel);
+
+  void setFilterScopeForDesignator();
+  FieldItem *findFirstAncestor(FieldItem *aNode,FieldItemData::NodeType aNodeType);
+  void applyTestScope(FieldItem *aNode,std::string aTestScope);
 
   void appendToTreeItemVector(FieldItem *aNode);
 
