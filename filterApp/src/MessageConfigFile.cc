@@ -166,16 +166,11 @@ void MessageConfigFile::readFieldElements()
         QString tFormat = reader.attributes().value(kAttrFormatTag).toString();
         QString tPostfix = reader.attributes().value(kAttrPostfixTag).toString();
 
-//        std::cout << "key: " << qPrintable(tKey) << std::endl;
-//        std::cout << "checked: " << qPrintable(tCheckValue) << std::endl;
-
         FieldItem *tFieldItem = _DataStructModel->getNode(tKey.toStdString());
 
         if (tFieldItem)
         {
-          FieldItemData &tData = tFieldItem->getData();
-          updateMessageIsChecked(tData,tIsChecked);
-
+          updateMessageIsChecked(tFieldItem,tIsChecked);
           updateMessageTestScope(tFieldItem,tTestScope);
           updateMessageFormat(tFieldItem,tFormat);
           updateMessagePostfix(tFieldItem,tPostfix);
@@ -199,20 +194,22 @@ void MessageConfigFile::readFieldElements()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MessageConfigFile::updateMessageIsChecked(FieldItemData &aData,
+void MessageConfigFile::updateMessageIsChecked(FieldItem *aItem,
     QString aIsChecked)
 {
-  bool tNewIsChecked = (aIsChecked.toStdString().compare(kValueChecked)?false:true);
-  bool tOldIsChecked = aData.isChecked();
-  if (tNewIsChecked != tOldIsChecked)
+  bool tNewIsCheckedValue =
+      (aIsChecked.toStdString().compare(kValueChecked)?false:true);
+  bool tOldIsCheckedValue = aItem->getData().isChecked();
+
+  if (tNewIsCheckedValue != tOldIsCheckedValue)
   {
-    if (tNewIsChecked)
+    if (tNewIsCheckedValue)
     {
-      aData.setCheckState(Qt::Checked);
+      aItem->setCheckState(Qt::Checked);
     }
     else
     {
-      aData.setCheckState(Qt::Unchecked);
+      aItem->setCheckState(Qt::Unchecked);
     }
   }
 }

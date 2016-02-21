@@ -35,8 +35,7 @@ protected:
 
   void readWsdlfilterElement();
   void readFieldElements();
-  void updateMessageIsChecked(FieldItemData &tData,QString aIsChecked);
-
+  void updateMessageIsChecked(FieldItem *aItem,QString aIsChecked);
   void updateMessageTestScope(FieldItem *aItem,QString aTestScope);
   void updateMessageFormat(FieldItem *aItem,QString aFormat);
   void updateMessagePostfix(FieldItem *aItem,QString aPostfix);
