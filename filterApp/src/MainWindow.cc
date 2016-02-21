@@ -544,7 +544,7 @@ void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
   QPixmap tCustomFormat(":/custom_fmt_tool.png");
-  QPixmap tTestScopeToolPixmap(":/custom_fmt_tool.png");
+  QPixmap tTestScopeToolPixmap(":/filter_tool.png");
 
   // actions
   QAction *tCustomFormatAction =
