@@ -2,6 +2,7 @@
 --- modify startup to use app config file settings in filter mode
 --- routine to identify structure with single top-level array node,
     and set test scopes accordingly - consider this generally
+--- add other tree columns to message filter files
 *** get rid of required header file spec (main.cc)
 
 *** add needed icon files

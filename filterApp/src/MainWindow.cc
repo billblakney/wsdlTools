@@ -363,21 +363,25 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
   QPixmap tGreenLight(":/green.png");
   QPixmap tRedLight(":/red.png");
   QPixmap tBypass(":/bypass_arrow.png");
+  QPixmap tEnter(":/enter.png");
 
   // actions
   QAction *tGoAction = new QAction(QIcon(tGreenLight),"&Go", this);
   QAction *tStopAction = new QAction(QIcon(tRedLight),"&Stop", this);
   QAction *tBypassAction = new QAction(QIcon(tBypass),"&Bypass", this);
+  QAction *tEnterAction = new QAction(QIcon(tEnter),"&Enter Space", this);
 
   // short-cuts
   tGoAction->setShortcut(QKeySequence(Qt::Key_G));
   tStopAction->setShortcut(QKeySequence(Qt::Key_S));
   tBypassAction->setShortcut(QKeySequence(Qt::Key_B));
+  tEnterAction->setShortcut(QKeySequence(Qt::Key_E));
 
   // check boxes
   tGoAction->setCheckable(true);
   tStopAction->setCheckable(true);
   tBypassAction->setCheckable(true);
+  tEnterAction->setCheckable(false);
 
   tGoAction->setChecked(true);
 
@@ -398,16 +402,21 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
   connect(tRunGroup, SIGNAL(triggered(QAction*)), this,
       SLOT(onOutputModeAction(QAction*)));
 
+  connect(tEnterAction,SIGNAL(triggered()),
+      _StreamReader,SLOT(onEnterSpaceAction()));
+
   // menu
   aMenu = menuBar()->addMenu("&Operate");
   aMenu->addAction(tGoAction);
   aMenu->addAction(tStopAction);
   aMenu->addAction(tBypassAction);
+  aMenu->addAction(tEnterAction);
 
   // toolbar
   aToolBar->addAction(tGoAction);
   aToolBar->addAction(tStopAction);
   aToolBar->addAction(tBypassAction);
+  aToolBar->addAction(tEnterAction);
 
   //TODO ok here?
   onOutputModeAction(tGoAction); // initializes status label to the default

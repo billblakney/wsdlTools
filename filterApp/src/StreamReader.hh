@@ -41,6 +41,8 @@ public slots:
 
   void onOutputModeAction(QAction* aAction);
 
+  void onEnterSpaceAction();
+
   void onDelimitModeAction(QAction* aAction);
 
 

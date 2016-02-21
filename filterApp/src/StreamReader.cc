@@ -114,6 +114,17 @@ void StreamReader::onOutputModeAction(QAction* aAction)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void StreamReader::onEnterSpaceAction()
+{
+  static const int kLineCount = 10;
+  for (int i = 0; i < kLineCount; i++)
+  {
+    std::cout << std::endl;
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 bool StreamReader::inDelimitRecordsMode()
 {
   bool tDelimitRecordsMode;
