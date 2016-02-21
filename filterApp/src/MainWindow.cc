@@ -616,7 +616,6 @@ void MainWindow::setupFileActions(QMenu *aMenu,QToolBar *aToolBar)
 void MainWindow::setupMenuAndToolbar()
 {
   QMenu *tMenu = new QMenu();
-  QToolBar *tToolBar = addToolBar("Main Toolbar");
 
   _StatusLabel = new QLabel();
   _StatusLabel->setAutoFillBackground(true);
@@ -624,15 +623,22 @@ void MainWindow::setupMenuAndToolbar()
   statusBar()->addWidget(_StatusLabel);
   statusBar()->addPermanentWidget(new QLabel("-counts-"));
 
-  setupFileActions(tMenu,tToolBar);
-  tToolBar->addSeparator();
-  setupOperateActions(tMenu,tToolBar);
-  tToolBar->addSeparator();
-  setupDelimitActions(tMenu,tToolBar);
-  tToolBar->addSeparator();
-  setupFormatActions(tMenu,tToolBar);
-  tToolBar->addSeparator();
-  setupToolActions(tMenu,tToolBar);
+//  tToolBar->addSeparator();
+
+  QToolBar *tFileToolBar = addToolBar("File Toolbar");
+  setupFileActions(tMenu,tFileToolBar);
+
+  QToolBar *tOperateToolBar = addToolBar("Operate Toolbar");
+  setupOperateActions(tMenu,tOperateToolBar);
+
+  QToolBar *tDelimitToolBar = addToolBar("Delimit Toolbar");
+  setupDelimitActions(tMenu,tDelimitToolBar);
+
+  QToolBar *tFormatToolBar = addToolBar("Format Toolbar");
+  setupFormatActions(tMenu,tFormatToolBar);
+
+  QToolBar *tToolToolBar = addToolBar("Tool Toolbar");
+  setupToolActions(tMenu,tToolToolBar);
 }
 
 //-----------------------------------------------------------------------------
