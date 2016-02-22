@@ -12,3 +12,6 @@ release/
 debug/
 app
 CLIR*
+test/home*.sh
+test/work*.sh
+wsdlToolsConfig/
