@@ -3,40 +3,41 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QXmlStreamWriter>
-#include "AppConfigFile.hh"
 
-const char *AppConfigFile::kWsdlFilterConfigTag = "wsdlfilterconfig";
-const char *AppConfigFile::kConfigTag = "config";
-const char *AppConfigFile::kHeadersDirTag = "headers_dir";
-const char *AppConfigFile::kDefaultHeaderTag = "default_header";
-const char *AppConfigFile::kDefaultFiltersDirTag = "default_filters_dir";
-const char *AppConfigFile::kCustomFiltersDirTag = "custom_filters_dir";
-const char *AppConfigFile::kDefaultOperateModeTag = "default_operate_mode";
-const char *AppConfigFile::kDefaultDelimitModeTag = "default_delimit_mode";
-const char *AppConfigFile::kMessagesTag = "messages";
-const char *AppConfigFile::kMessageTag = "message";
-const char *AppConfigFile::kAttrIdTag = "id";
-const char *AppConfigFile::kAttrStructTag = "struct";
-const char *AppConfigFile::kAttrHeaderTag = "header";
-const char *AppConfigFile::kAttrDefaultFilterTag = "default_filter";
+#include "AppConfigReader.hh"
+
+const char *AppConfigReader::kWsdlFilterConfigTag = "wsdlfilterconfig";
+const char *AppConfigReader::kConfigTag = "config";
+const char *AppConfigReader::kHeadersDirTag = "headers_dir";
+const char *AppConfigReader::kDefaultHeaderTag = "default_header";
+const char *AppConfigReader::kDefaultFiltersDirTag = "default_filters_dir";
+const char *AppConfigReader::kCustomFiltersDirTag = "custom_filters_dir";
+const char *AppConfigReader::kDefaultOperateModeTag = "default_operate_mode";
+const char *AppConfigReader::kDefaultDelimitModeTag = "default_delimit_mode";
+const char *AppConfigReader::kMessagesTag = "messages";
+const char *AppConfigReader::kMessageTag = "message";
+const char *AppConfigReader::kAttrIdTag = "id";
+const char *AppConfigReader::kAttrStructTag = "struct";
+const char *AppConfigReader::kAttrHeaderTag = "header";
+const char *AppConfigReader::kAttrDefaultFilterTag = "default_filter";
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-AppConfigFile::AppConfigFile(QString aConfigFilename)
+AppConfigReader::AppConfigReader(QString aConfigFilename)
 {
   _ConfigFilename = aConfigFilename;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-AppConfigFile::~AppConfigFile()
+AppConfigReader::~AppConfigReader()
 {
 }
 
 //-----------------------------------------------------------------------------
 // Open an application configuration file and process its contents.
 //-----------------------------------------------------------------------------
-void AppConfigFile::openConfiguration()
+void AppConfigReader::openConfiguration()
 {
   QFile file(_ConfigFilename);
   if (!file.open(QFile::ReadOnly | QFile::Text))
@@ -74,7 +75,7 @@ void AppConfigFile::openConfiguration()
 //-----------------------------------------------------------------------------
 // Looks for the top-level elements of the app config file.
 //-----------------------------------------------------------------------------
-void AppConfigFile::readWsdlFilterConfigElement()
+void AppConfigReader::readWsdlFilterConfigElement()
 {
   reader.readNext();
 
@@ -102,7 +103,7 @@ void AppConfigFile::readWsdlFilterConfigElement()
 //-----------------------------------------------------------------------------
 // Reads the defaults section of the app config file.
 //-----------------------------------------------------------------------------
-void AppConfigFile::readDefaultsElements()
+void AppConfigReader::readDefaultsElements()
 {
   reader.readNext();
 
@@ -152,7 +153,7 @@ void AppConfigFile::readDefaultsElements()
 //-----------------------------------------------------------------------------
 // Reads the messages section of the app config file.
 //-----------------------------------------------------------------------------
-void AppConfigFile::readMessagesElements()
+void AppConfigReader::readMessagesElements()
 {
   reader.readNext();
 
@@ -185,7 +186,7 @@ void AppConfigFile::readMessagesElements()
   }
 }
 #if 0 // old format using attributes instead of sub-elements
-void AppConfigFile::readMessagesElements()
+void AppConfigReader::readMessagesElements()
 {
   reader.readNext();
 
@@ -218,7 +219,7 @@ void AppConfigFile::readMessagesElements()
 //-----------------------------------------------------------------------------
 // Reads the message section of the app config file.
 //-----------------------------------------------------------------------------
-void AppConfigFile::readMessageElements(MessageSpec &aMessageSpec)
+void AppConfigReader::readMessageElements(MessageSpec &aMessageSpec)
 {
   reader.readNext();
 
@@ -263,7 +264,7 @@ void AppConfigFile::readMessageElements(MessageSpec &aMessageSpec)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void AppConfigFile::skipUnknownElement()
+void AppConfigReader::skipUnknownElement()
 {
   std::cout << "WARN: skipping unknown xml element" << std::endl;
 
@@ -289,14 +290,14 @@ void AppConfigFile::skipUnknownElement()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-std::map<QString,MessageSpec> &AppConfigFile::messageMap()
+std::map<QString,MessageSpec> &AppConfigReader::messageMap()
 {
   return _MessageMap;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-AppConfig &AppConfigFile::appConfig()
+AppConfig &AppConfigReader::appConfig()
 {
   return _AppConfig;
 }
@@ -304,7 +305,7 @@ AppConfig &AppConfigFile::appConfig()
 #if 0
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void AppConfigFile::saveConfiguration()
+void AppConfigReader::saveConfiguration()
 {
 
   QString tFileName = QFileDialog::getOpenFileName(0,
@@ -332,7 +333,7 @@ void AppConfigFile::saveConfiguration()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void AppConfigFile::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
+void AppConfigReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
 {
   // Writes a document start with the XML version number.
   aWriter.writeStartDocument();
@@ -351,7 +352,7 @@ void AppConfigFile::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void AppConfigFile::writeConfigElements(QXmlStreamWriter &aWriter)
+void AppConfigReader::writeConfigElements(QXmlStreamWriter &aWriter)
 {
   aWriter.writeStartElement(kConfigTag);
 
@@ -368,7 +369,7 @@ void AppConfigFile::writeConfigElements(QXmlStreamWriter &aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void AppConfigFile::writeMessageElements(QXmlStreamWriter &aWriter)
+void AppConfigReader::writeMessageElements(QXmlStreamWriter &aWriter)
 {
   std::vector<MessageItem *> &tTreeItems = _DataStructModel->getTreeItems();
 

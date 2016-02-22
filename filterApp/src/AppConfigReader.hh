@@ -1,12 +1,12 @@
-#ifndef APPCONFIGFILE_HH_
-#define APPCONFIGFILE_HH_
+#ifndef AppConfigReader_hh
+#define AppConfigReader_hh
 
 #include <map>
 #include <QXmlStreamReader>
 #include "AppConfig.hh"
 #include "MessageSpec.hh"
 
-class AppConfigFile
+class AppConfigReader
 {
 public:
   static std::string kTag;
@@ -26,8 +26,8 @@ public:
   static const char *kAttrHeaderTag;
   static const char *kAttrDefaultFilterTag;
 
-  AppConfigFile(QString aFilename);
-  virtual ~AppConfigFile();
+  AppConfigReader(QString aFilename);
+  virtual ~AppConfigReader();
   void openConfiguration();
 #if 0
   void saveConfiguration();
@@ -54,4 +54,4 @@ protected:
 #endif
 };
 
-#endif /* APPCONFIGFILE_HH_ */
+#endif /* AppConfigReader_hh */

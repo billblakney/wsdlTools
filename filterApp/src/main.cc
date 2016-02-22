@@ -4,7 +4,8 @@
 #include <QApplication>
 #include <QFile>
 #include <QSettings>
-#include "AppConfigFile.hh"
+
+#include "AppConfigReader.hh"
 #include "MainWindow.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
@@ -82,7 +83,7 @@ QString determineAppConfigFilename(CmdLineArgs aArgs)
 // 2. Use the value specified by the app config file.
 // 3. Use the hard-coded value.
 //-------------------------------------------------------------------------------
-QString determineHeaderFile(CmdLineArgs aArgs,AppConfigFile *aAppConfigFile)
+QString determineHeaderFile(CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
 {
   static const char *kHeaderFile ="/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H";
 
@@ -99,10 +100,10 @@ QString determineHeaderFile(CmdLineArgs aArgs,AppConfigFile *aAppConfigFile)
   /*
    * Use the value in the app config file, if available.
    */
-  if (aAppConfigFile)
+  if (aAppConfigReader)
   {
-    QString tHeadersDir = aAppConfigFile->appConfig().getHeadersDir();
-    QString tHeader = aAppConfigFile->appConfig().getDefaultHeader();
+    QString tHeadersDir = aAppConfigReader->appConfig().getHeadersDir();
+    QString tHeader = aAppConfigReader->appConfig().getDefaultHeader();
     if (tHeadersDir.length() > 0 && tHeader.length() > 0)
     {
       QString tHeaderFilePath(tHeadersDir + "/" + tHeader);
@@ -163,40 +164,29 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-AppConfigFile *readAppConfigFile(QString aFile,bool aDoPrintSummary)
+void printAppConfigFile(AppConfigReader *aAppConfigReader)
 {
-  AppConfigFile *tAppConfigFile = new AppConfigFile(aFile);
+  std::map<QString,MessageSpec> &tMessageMap = aAppConfigReader->messageMap();
 
-  std::cout << "Reading app config file " << qPrintable(aFile)
-            << "..." << std::endl;
-  tAppConfigFile->openConfiguration();
-
-  if (aDoPrintSummary)
+  std::map<QString,MessageSpec>::iterator tIter;
+  for (tIter = tMessageMap.begin(); tIter != tMessageMap.end(); tIter++)
   {
-    std::map<QString,MessageSpec> &tMessageMap = tAppConfigFile->messageMap();
-
-    std::map<QString,MessageSpec>::iterator tIter;
-    for (tIter = tMessageMap.begin(); tIter != tMessageMap.end(); tIter++)
-    {
-      MessageSpec tSpec = tIter->second;
-      std::cout << qPrintable(tSpec.toQString()) << std::endl;
-    }
-    AppConfig tAppConfig = tAppConfigFile->appConfig();
-    std::cout << "settings:" << std::endl;
-    std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
+    MessageSpec tSpec = tIter->second;
+    std::cout << qPrintable(tSpec.toQString()) << std::endl;
   }
-
-  return tAppConfigFile;
+  AppConfig tAppConfig = aAppConfigReader->appConfig();
+  std::cout << "settings:" << std::endl;
+  std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
 }
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
 void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
-    AppConfigFile *aAppConfigFile)
+    AppConfigReader *aAppConfigReader)
 {
   std::cout << "Running in browse mode..." << std::endl;
 
-  QString tHeaderFile = determineHeaderFile(aArgs,aAppConfigFile);
+  QString tHeaderFile = determineHeaderFile(aArgs,aAppConfigReader);
 
   // Parse the header file to get _StructBuilder.
   StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(tHeaderFile);
@@ -204,7 +194,7 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
   // create and launch main window
   std::cout << "Launching main window..." << std::endl;
   MainWindow *window = new MainWindow(
-      app,0,aAppConfigFile->appConfig(),aAppConfigFile->messageMap(),
+      app,0,aAppConfigReader->appConfig(),aAppConfigReader->messageMap(),
       tStructorBuilder);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
@@ -215,7 +205,7 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
 void runStreamReaderMode(
-    QApplication &app,CmdLineArgs aArgs,AppConfigFile *aAppConfigFile)
+    QApplication &app,CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
 {
   Q_UNUSED(aArgs);
 
@@ -235,8 +225,8 @@ void runStreamReaderMode(
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(app,0,aAppConfigFile->appConfig(),
-      aAppConfigFile->messageMap(),tStreamReader,tRecordProcessor);
+  MainWindow *tMainWindow = new MainWindow(app,0,aAppConfigReader->appConfig(),
+      aAppConfigReader->messageMap(),tStreamReader,tRecordProcessor);
   // tMainWindow->setGeometry(1920 + 530,135,625,900);
   // tMainWindow->setGeometry(1920      ,135,900,900);
   tMainWindow->setGeometry(1920      ,135,650,700);
@@ -282,16 +272,20 @@ int main(int argc, char *argv[])
 
   // read the app config file
   QString tFilename = determineAppConfigFilename(tArgs);
+  std::cout << "Reading app config file " << qPrintable(tFilename)
+            << "..." << std::endl;
+  AppConfigReader *tAppConfigReader = new AppConfigReader(tFilename);
+  tAppConfigReader->openConfiguration();
+  printAppConfigFile(tAppConfigReader);
 
-  AppConfigFile *tAppConfigFile = readAppConfigFile(tFilename,false);
-
+  // run app in specified mode
   if (tArgs.isBrowseMode)
   {
-    runBrowseMode(app,tArgs,tAppConfigFile);
+    runBrowseMode(app,tArgs,tAppConfigReader);
   }
   else
   {
-    runStreamReaderMode(app,tArgs,tAppConfigFile);
+    runStreamReaderMode(app,tArgs,tAppConfigReader);
   }
 
   return app.exec();

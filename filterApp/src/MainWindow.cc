@@ -126,7 +126,7 @@ void MainWindow::init()
     _AsIsCheckBox = 0;
     _LongnameCheckBox = 0;
     _TableCheckBox = 0;
-    _MessageConfigFile = 0;
+    _MessageSpecReader = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -226,7 +226,7 @@ void MainWindow::setInitialStructName(std::string aStructName)
 //-----------------------------------------------------------------------------
 void MainWindow::onFileOpenAction()
 {
-  _MessageConfigFile->openConfiguration(
+  _MessageSpecReader->openConfiguration(
       _AppConfig.getCustomFiltersDir());
 }
 
@@ -234,7 +234,7 @@ void MainWindow::onFileOpenAction()
 //-----------------------------------------------------------------------------
 void MainWindow::onFileSaveAction()
 {
-  _MessageConfigFile->saveConfiguration(
+  _MessageSpecReader->saveConfiguration(
       _AppConfig.getCustomFiltersDir());
 }
 
@@ -1174,7 +1174,7 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
   /*
    * Create the config file manager.
    */
-  _MessageConfigFile = new MessageConfigFile(_DataStructModel);
+  _MessageSpecReader = new MessageSpecReader(_DataStructModel);
 
   /*
    * Apply default filter settings if found.
@@ -1185,7 +1185,7 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
     if (tFilter.length() > 0)
     {
       QString tDir = _AppConfig.getDefaultFiltersDir();
-      _MessageConfigFile->openConfiguration(tDir,tFilter);
+      _MessageSpecReader->openConfiguration(tDir,tFilter);
     }
   }
 

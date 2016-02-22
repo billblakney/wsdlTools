@@ -1,10 +1,10 @@
-#ifndef MESSAGECONFIGFILE_HH_
-#define MESSAGECONFIGFILE_HH_
+#ifndef MessageSpecReader_hh
+#define MessageSpecReader_hh
 
 #include <QXmlStreamReader>
 #include "DataStructModel.hh"
 
-class MessageConfigFile
+class MessageSpecReader
 {
 public:
   static std::string kTag;
@@ -23,8 +23,8 @@ public:
   static const char *kValueChecked;
   static const char *kValueNotChecked;
 
-  MessageConfigFile(DataStructModel *aModel);
-  virtual ~MessageConfigFile();
+  MessageSpecReader(DataStructModel *aModel);
+  virtual ~MessageSpecReader();
   void openConfiguration(QString aDir);
   void openConfiguration(QString aDir,QString aFilter);
   void saveConfiguration(QString aDir);
@@ -47,4 +47,4 @@ protected:
   void writeFieldElements(QXmlStreamWriter &aWriter);
 };
 
-#endif /* MESSAGECONFIGFILE_HH_ */
+#endif /* MessageSpecReader_hh */

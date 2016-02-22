@@ -9,9 +9,9 @@
 #include <QStringList>
 #include <QWidget>
 #include <QMainWindow>
-#include "AppConfigFile.hh"
+#include "AppConfigReader.hh"
 #include "DataStructModel.hh"
-#include "MessageConfigFile.hh"
+#include "MessageSpecReader.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "StructorBuilder.hh"
@@ -146,7 +146,7 @@ protected:
   QCheckBox *_LongnameCheckBox;
   QCheckBox *_TableCheckBox;
 
-  MessageConfigFile *_MessageConfigFile;
+  MessageSpecReader *_MessageSpecReader;
 
   void init();
 
