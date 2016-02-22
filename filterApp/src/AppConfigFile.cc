@@ -222,6 +222,12 @@ void AppConfigFile::readMessageElements(MessageSpec &aMessageSpec)
 {
   reader.readNext();
 
+  /*
+   * Set the header of the message spec to the default header value.
+   * Then let any value read from the message spec supercede it, if there.
+   */
+  aMessageSpec.SetHeader(_AppConfig.getDefaultHeader());
+
   while (!reader.atEnd() && !reader.isEndElement())
   {
     if (reader.isStartElement())

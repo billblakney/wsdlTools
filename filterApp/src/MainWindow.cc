@@ -41,6 +41,7 @@ MainWindow::MainWindow(
     _ViewDelimitToolbarAction(0),
     _ViewFormatToolbarAction(0),
     _ViewToolToolbarAction(0),
+    _PropagateCheckAction(0),
     _CentralWidget(0),
     _StructorBuilder(aStructorBuilder),
     _IsFilterMode(false),
@@ -50,7 +51,6 @@ MainWindow::MainWindow(
     _StructComboBox(0),
     _CustomFormatToolWidget(0),
     _StructTree(0),
-    _PropagateCheckBox(0),
     _CustomFormatToolDock(0),
     _FormatAsIsButton(0),
     _FormatLongnameButton(0),
@@ -78,6 +78,8 @@ MainWindow::MainWindow(
       "padding: 0 3px 0 3px"
       "}"
       );
+
+  init();
 }
 
 //-----------------------------------------------------------------------------
@@ -98,6 +100,7 @@ MainWindow::MainWindow(
     _ViewDelimitToolbarAction(0),
     _ViewFormatToolbarAction(0),
     _ViewToolToolbarAction(0),
+    _PropagateCheckAction(0),
     _CentralWidget(0),
     _StructorBuilder(0),
     _IsFilterMode(true),
@@ -107,7 +110,6 @@ MainWindow::MainWindow(
     _StructComboBox(0),
     _CustomFormatToolWidget(0),
     _StructTree(0),
-    _PropagateCheckBox(0),
     _CustomFormatToolDock(0),
     _FormatAsIsButton(0),
     _FormatLongnameButton(0),
@@ -135,12 +137,21 @@ MainWindow::MainWindow(
       "padding: 0 3px 0 3px"
       "}"
       );
+
+  init();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 MainWindow::~MainWindow()
 {
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::init()
+{
+  setWindowTitle("app_iec_wsdlFilter");
 }
 
 //-----------------------------------------------------------------------------
@@ -209,6 +220,14 @@ void MainWindow::setTreeViewStruct(
 
   connect(_DataStructModel, SIGNAL(modelUpdated()),
       this,SLOT(onModelUpdate()));
+
+  static bool _IsPropogateCheckConnected = false;
+  if (_IsPropogateCheckConnected == false)
+  {
+    connect(this,SIGNAL(togglePropagateChecks(bool)),
+        _DataStructModel,SLOT(onPropogateToggled(bool)));
+    _IsPropogateCheckConnected = true;
+  }
 }
 
 //-------------------------------------------------------------------------------
@@ -320,7 +339,17 @@ void MainWindow::setupView(std::string aStructName)
   /*
    * Create structure dropdown list.
    */
-  _StructComboBox = createStructComboBox(_CentralWidget);
+  QLabel *tMessageLabel = NULL;
+  if (_IsFilterMode)
+  {
+    tMessageLabel = new QLabel(
+      "<b><i>" + _MessageId + "</i> : " + QString(_StructName.c_str()) + "</b>",
+        _CentralWidget);
+  }
+  else
+  {
+    _StructComboBox = createStructComboBox(_CentralWidget);
+  }
 
   /*
    * Create structure tree view.
@@ -331,28 +360,16 @@ void MainWindow::setupView(std::string aStructName)
   _StructTree = createTreeView(_CentralWidget);
 
   /*
-   * The options will only be populated when in filter mode.
-   */
-  if (_IsFilterMode)
-  {
-    /*
-     * Create bypass checkbox and connect it to the stream reader.
-     */
-    _PropagateCheckBox = new QCheckBox(
-        "Propagate check on field name node to children",_CentralWidget);
-
-    connect(_PropagateCheckBox,SIGNAL(toggled(bool)),
-        _DataStructModel,SLOT(onPropogateToggled(bool)));
-  }
-
-  /*
    * Put widgets in the dialog using box layout.
    */
   QVBoxLayout *tWindowLayout = new QVBoxLayout;
-  tWindowLayout->addWidget(_StructComboBox);
   if (_IsFilterMode)
   {
-    tWindowLayout->addWidget(_PropagateCheckBox);
+    tWindowLayout->addWidget(tMessageLabel);
+  }
+  else
+  {
+    tWindowLayout->addWidget(_StructComboBox);
   }
   tWindowLayout->addWidget(_StructTree);
 
@@ -610,6 +627,40 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
+{
+  // pixamps
+  QPixmap tPropagateCheckPixmap(":/propagate_check.png");
+
+  // actions
+  _PropagateCheckAction =
+      new QAction(QIcon(tPropagateCheckPixmap),
+          "Propagate check to descendants", this);
+
+  // check boxes
+  _PropagateCheckAction->setCheckable(true);
+
+  // action signal-slot
+  connect(_PropagateCheckAction,SIGNAL(triggered()),
+      this,SLOT(onPropagateCheckAction()));
+
+  /*
+   * Since data struct model is not available at this point, can't make a
+   * needed connection for the togglePropagateChecks signal. That connection
+   * is made in setTreeViewStruct.
+   */
+  // connect ... (see setTreeViewStruct)
+
+  // menu
+  aMenu = menuBar()->addMenu("&Tree");
+  aMenu->addAction(_PropagateCheckAction);
+
+  // toolbar
+  aToolBar->addAction(_PropagateCheckAction);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::setupToolActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
@@ -643,6 +694,7 @@ void MainWindow::setupToolBarMenu(QMenu *aMenu)
   _ViewOperateToolbarAction = new QAction("Operate ToolBar",this);
   _ViewDelimitToolbarAction = new QAction("Delimit ToolBar",this);
   _ViewFormatToolbarAction = new QAction("Format ToolBar",this);
+  _ViewTreeToolbarAction = new QAction("Tree ToolBar",this);
   _ViewToolToolbarAction = new QAction("Tool ToolBar",this);
 
   // check boxes
@@ -650,12 +702,14 @@ void MainWindow::setupToolBarMenu(QMenu *aMenu)
   _ViewOperateToolbarAction->setCheckable(true);
   _ViewDelimitToolbarAction->setCheckable(true);
   _ViewFormatToolbarAction->setCheckable(true);
+  _ViewTreeToolbarAction->setCheckable(true);
   _ViewToolToolbarAction->setCheckable(true);
 
   _ViewFileToolbarAction->setChecked(false);
   _ViewOperateToolbarAction->setChecked(true);
   _ViewDelimitToolbarAction->setChecked(true);
   _ViewFormatToolbarAction->setChecked(true);
+  _ViewTreeToolbarAction->setChecked(true);
   _ViewToolToolbarAction->setChecked(true);
 
   // action signal-slot
@@ -667,6 +721,8 @@ void MainWindow::setupToolBarMenu(QMenu *aMenu)
       this,SLOT(onViewDelimitToolbarAction()));
   connect(_ViewFormatToolbarAction,SIGNAL(triggered()),
       this,SLOT(onViewFormatToolbarAction()));
+  connect(_ViewFormatToolbarAction,SIGNAL(triggered()),
+      this,SLOT(onViewTreeToolbarAction()));
   connect(_ViewToolToolbarAction,SIGNAL(triggered()),
       this,SLOT(onViewToolToolbarAction()));
 
@@ -676,6 +732,7 @@ void MainWindow::setupToolBarMenu(QMenu *aMenu)
   aMenu->addAction(_ViewOperateToolbarAction);
   aMenu->addAction(_ViewDelimitToolbarAction);
   aMenu->addAction(_ViewFormatToolbarAction);
+  aMenu->addAction(_ViewTreeToolbarAction);
   aMenu->addAction(_ViewToolToolbarAction);
 }
 
@@ -702,6 +759,9 @@ void MainWindow::setupMenuAndToolbar()
 
   _FormatToolBar = addToolBar("Format Toolbar");
   setupFormatActions(tMenu,_FormatToolBar);
+
+  _TreeToolBar = addToolBar("Tree Toolbar");
+  setupTreeActions(tMenu,_TreeToolBar);
 
   _ToolToolBar = addToolBar("Tool Toolbar");
   setupToolActions(tMenu,_ToolToolBar);
@@ -951,6 +1011,20 @@ void MainWindow::onCustomFormatToolAction()
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
+void MainWindow::onPropagateCheckAction()
+{
+  if (_PropagateCheckAction->isChecked())
+  {
+    emit togglePropagateChecks(true);
+  }
+  else
+  {
+    emit togglePropagateChecks(false);
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 void MainWindow::onTestScopeToolAction()
 {
    _TestScopeToolWidget = createTestScopeToolWidget(0);
@@ -1022,6 +1096,20 @@ void MainWindow::onViewFormatToolbarAction()
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
+void MainWindow::onViewTreeToolbarAction()
+{
+  if (_ViewTreeToolbarAction->isChecked())
+  {
+    _TreeToolBar->show();
+  }
+  else
+  {
+    _TreeToolBar->hide();
+  }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 void MainWindow::onViewToolToolbarAction()
 {
   if (_ViewToolToolbarAction->isChecked())
@@ -1055,6 +1143,7 @@ QStringList MainWindow::convertToQStringList(std::vector<std::string> aStrings)
 //-------------------------------------------------------------------------------
 void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
 {
+  _MessageId = aMsgId;
   /*
    * Lookup the message spec.
    */

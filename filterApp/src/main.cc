@@ -215,6 +215,8 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
 void runStreamReaderMode(
     QApplication &app,CmdLineArgs aArgs,AppConfigFile *aAppConfigFile)
 {
+  Q_UNUSED(aArgs);
+
   std::cout << "Running in filter mode..." << std::endl;
 
   /*

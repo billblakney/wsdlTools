@@ -52,6 +52,8 @@ signals:
 
   void applyTestScope(QString aTestScope,bool aCheckedOnly);
 
+  void togglePropagateChecks(bool);
+
 public slots:
 
   // handle menu/toolbar actions
@@ -59,12 +61,14 @@ public slots:
   void onFileSaveAction();
   void onOutputModeAction(QAction *aAction);
   void onCustomFormatToolAction();
+  void onPropagateCheckAction();
   void onTestScopeToolAction();
 
   void onViewFileToolbarAction();
   void onViewOperateToolbarAction();
   void onViewDelimitToolbarAction();
   void onViewFormatToolbarAction();
+  void onViewTreeToolbarAction();
   void onViewToolToolbarAction();
 
   // handle custom format tool pushbutton
@@ -91,13 +95,17 @@ protected:
   QToolBar           *_OperateToolBar;
   QToolBar           *_DelimitToolBar;
   QToolBar           *_FormatToolBar;
+  QToolBar           *_TreeToolBar;
   QToolBar           *_ToolToolBar;
 
   QAction             *_ViewFileToolbarAction;
   QAction             *_ViewOperateToolbarAction;
   QAction             *_ViewDelimitToolbarAction;
   QAction             *_ViewFormatToolbarAction;
+  QAction             *_ViewTreeToolbarAction;
   QAction             *_ViewToolToolbarAction;
+
+  QAction             *_PropagateCheckAction;
 
   QWidget            *_CentralWidget;
   QLabel             *_StatusLabel;
@@ -107,6 +115,7 @@ protected:
   StreamReader       *_StreamReader;
   RecordProcessor    *_RecordProcessor;
 	std::string         _StructName;
+	QString             _MessageId;
 	DataStructModel    *_DataStructModel;
 	QComboBox          *_StructComboBox;
 	QComboBox          *_TestScopeComboBox;
@@ -114,7 +123,6 @@ protected:
 	QWidget            *_TestScopeToolWidget;
 	QWidget            *_OperateWidget;
 	StructTreeView     *_StructTree;
-	QCheckBox          *_PropagateCheckBox;
 	QDockWidget        *_CustomFormatToolDock;
 	QDockWidget        *_TestScopeToolDock;
 
@@ -139,6 +147,8 @@ protected:
 
   MessageConfigFile *_MessageConfigFile;
 
+  void init();
+
   void setupMenuAndToolbar();
 
   void setupFileActions(QMenu *aMenu,QToolBar *aToolBar);
@@ -148,6 +158,8 @@ protected:
   void setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar);
 
   void setupFormatActions(QMenu *aMenu,QToolBar *aToolBar);
+
+  void setupTreeActions(QMenu *aMenu,QToolBar *aToolBar);
 
   void setupToolActions(QMenu *aMenu,QToolBar *aToolBar);
 
