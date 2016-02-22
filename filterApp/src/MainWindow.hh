@@ -25,13 +25,13 @@ public:
   static StructorBuilder *parseHeaderFile(QString aHeaderFile);
 
   // constructor for browse mode
-  MainWindow(QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
-      StructorBuilder *_StructorBuilder);
+  MainWindow(QApplication &aApp,QWidget *aParent,AppConfig aAppConfig,
+      MessageSpecMap aMessageSpecMap,StructorBuilder *_StructorBuilder);
 
   // constructor for filter mode //TODO remove 0 default values
-  MainWindow(QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
-//      StructorBuilder *_StructorBuilder,bool aIsFilterMode = false,TODO rm
-      StreamReader *aStreamReader = 0,RecordProcessor *aRecordProcessor = 0);
+  MainWindow(QApplication &aApp,QWidget *aParent,AppConfig aAppConfig,
+      MessageSpecMap aMessageSpecMap,StreamReader *aStreamReader = 0,
+      RecordProcessor *aRecordProcessor = 0);
 
   virtual ~MainWindow();
 
@@ -89,7 +89,8 @@ public slots:
   void onModelUpdate();
 
 protected:
-  AppConfigFile      *_AppConfigFile;
+  AppConfig           _AppConfig;
+  MessageSpecMap      _MessageSpecMap;
 
   QToolBar           *_FileToolBar;
   QToolBar           *_OperateToolBar;
@@ -185,6 +186,8 @@ protected:
 
 	void setTreeViewStruct(
 	    StructTreeView *aStructTreeView,std::string aStructName);
+
+	std::string getHeaderPath(MessageSpec *aMessageSpec);
 };
 
 #endif /* MAINWINDOW_HH_ */

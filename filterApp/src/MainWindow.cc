@@ -27,43 +27,15 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 // Constructor for browse mode.
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
-    QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
-    StructorBuilder *aStructorBuilder)
+    QApplication &aApp,QWidget *aParent,AppConfig aAppConfig,
+      MessageSpecMap aMessageSpecMap,StructorBuilder *aStructorBuilder)
   : QMainWindow(aParent),
-    _AppConfigFile(aAppConfigFile),
-    _FileToolBar(0),
-    _OperateToolBar(0),
-    _DelimitToolBar(0),
-    _FormatToolBar(0),
-    _ToolToolBar(0),
-    _ViewFileToolbarAction(0),
-    _ViewOperateToolbarAction(0),
-    _ViewDelimitToolbarAction(0),
-    _ViewFormatToolbarAction(0),
-    _ViewToolToolbarAction(0),
-    _PropagateCheckAction(0),
-    _CentralWidget(0),
+    _AppConfig(aAppConfig),
+    _MessageSpecMap(aMessageSpecMap),
     _StructorBuilder(aStructorBuilder),
     _IsFilterMode(false),
     _StreamReader(0),
-    _RecordProcessor(0),
-    _DataStructModel(0),
-    _StructComboBox(0),
-    _CustomFormatToolWidget(0),
-    _StructTree(0),
-    _CustomFormatToolDock(0),
-    _FormatAsIsButton(0),
-    _FormatLongnameButton(0),
-    _FormatTableButton(0),
-    _FormatCustomButton(0),
-    _OutputNormalButton(0),
-    _OutputBypassButton(0),
-    _OutputFreezeDropButton(0),
-    _OutputFreezeQueueButton(0),
-    _AsIsCheckBox(0),
-    _LongnameCheckBox(0),
-    _TableCheckBox(0),
-    _MessageConfigFile(0)
+    _RecordProcessor(0)
 {
   Q_UNUSED(aApp);
 
@@ -86,43 +58,16 @@ MainWindow::MainWindow(
 // Constructor for filter mode.
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(
-    QApplication &aApp,QWidget *aParent,AppConfigFile *aAppConfigFile,
-    StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
+    QApplication &aApp,QWidget *aParent,AppConfig aAppConfig,
+      MessageSpecMap aMessageSpecMap,StreamReader *aStreamReader,
+      RecordProcessor *aRecordProcessor)
   : QMainWindow(aParent),
-    _AppConfigFile(aAppConfigFile),
-    _FileToolBar(0),
-    _OperateToolBar(0),
-    _DelimitToolBar(0),
-    _FormatToolBar(0),
-    _ToolToolBar(0),
-    _ViewFileToolbarAction(0),
-    _ViewOperateToolbarAction(0),
-    _ViewDelimitToolbarAction(0),
-    _ViewFormatToolbarAction(0),
-    _ViewToolToolbarAction(0),
-    _PropagateCheckAction(0),
-    _CentralWidget(0),
+    _AppConfig(aAppConfig),
+    _MessageSpecMap(aMessageSpecMap),
     _StructorBuilder(0),
     _IsFilterMode(true),
     _StreamReader(aStreamReader),
-    _RecordProcessor(aRecordProcessor),
-    _DataStructModel(0),
-    _StructComboBox(0),
-    _CustomFormatToolWidget(0),
-    _StructTree(0),
-    _CustomFormatToolDock(0),
-    _FormatAsIsButton(0),
-    _FormatLongnameButton(0),
-    _FormatTableButton(0),
-    _FormatCustomButton(0),
-    _OutputNormalButton(0),
-    _OutputBypassButton(0),
-    _OutputFreezeDropButton(0),
-    _OutputFreezeQueueButton(0),
-    _AsIsCheckBox(0),
-    _LongnameCheckBox(0),
-    _TableCheckBox(0),
-    _MessageConfigFile(0)
+    _RecordProcessor(aRecordProcessor)
 {
   Q_UNUSED(aApp);
 
@@ -152,6 +97,36 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
   setWindowTitle("app_iec_wsdlFilter");
+
+    _FileToolBar = 0;
+    _OperateToolBar = 0;
+    _DelimitToolBar = 0;
+    _FormatToolBar = 0;
+    _ToolToolBar = 0;
+    _ViewFileToolbarAction = 0;
+    _ViewOperateToolbarAction = 0;
+    _ViewDelimitToolbarAction = 0;
+    _ViewFormatToolbarAction = 0;
+    _ViewToolToolbarAction = 0;
+    _PropagateCheckAction = 0;
+    _CentralWidget = 0;
+    _DataStructModel = 0;
+    _StructComboBox = 0;
+    _CustomFormatToolWidget = 0;
+    _StructTree = 0;
+    _CustomFormatToolDock = 0;
+    _FormatAsIsButton = 0;
+    _FormatLongnameButton = 0;
+    _FormatTableButton = 0;
+    _FormatCustomButton = 0;
+    _OutputNormalButton = 0;
+    _OutputBypassButton = 0;
+    _OutputFreezeDropButton = 0;
+    _OutputFreezeQueueButton = 0;
+    _AsIsCheckBox = 0;
+    _LongnameCheckBox = 0;
+    _TableCheckBox = 0;
+    _MessageConfigFile = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -252,7 +227,7 @@ void MainWindow::setInitialStructName(std::string aStructName)
 void MainWindow::onFileOpenAction()
 {
   _MessageConfigFile->openConfiguration(
-      _AppConfigFile->appConfig().getCustomFiltersDir());
+      _AppConfig.getCustomFiltersDir());
 }
 
 //-----------------------------------------------------------------------------
@@ -260,7 +235,7 @@ void MainWindow::onFileOpenAction()
 void MainWindow::onFileSaveAction()
 {
   _MessageConfigFile->saveConfiguration(
-      _AppConfigFile->appConfig().getCustomFiltersDir());
+      _AppConfig.getCustomFiltersDir());
 }
 
 //-----------------------------------------------------------------------------
@@ -1144,44 +1119,44 @@ QStringList MainWindow::convertToQStringList(std::vector<std::string> aStrings)
 void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
 {
   _MessageId = aMsgId;
-  /*
-   * Lookup the message spec.
-   */
-  std::map<QString,MessageSpec> &tMessageMap = _AppConfigFile->messageMap();
-  std::map<QString,MessageSpec>::iterator tIter = tMessageMap.find(aMsgId);
-  if (tIter == tMessageMap.end())
-  {
-    std::cout << "ERROR: No message map for messageId "
-              << qPrintable(aMsgId) << std::endl;
-    exit(1);
-  }
 
-  MessageSpec &tMessageSpec = tIter->second;
+  MessageSpec *aMessageSpec = NULL;
+
+  /*
+   * Get the message spec for this message ID, if it exists.
+   */
+  MessageSpecMap::iterator tIter = _MessageSpecMap.find(aMsgId);
+  if (tIter != _MessageSpecMap.end())
+  {
+    aMessageSpec = new MessageSpec(tIter->second);
+  }
+  else
+  {
+    std::cout << "No message map for messageId "
+              << qPrintable(aMsgId) << std::endl;
+  }
 
   /*
    * Verify aStructName against the message map.
    */
-  if (aStructName != tMessageSpec.getStructName())
+  if (aMessageSpec && aMessageSpec->getStructName() != aStructName )
   {
-    std::cout << "ERROR: unexpected message id/structure combination"
+    std::cout << "WARNING: unexpected message id/structure combination"
         << std::endl;
   }
 
   /*
-   * Construct the complete path to the header file.
+   * Get the header file for the message ID.
    */
-  QString tHeaderFilename = tMessageSpec.getHeader();
-  QString tHeadersDir = _AppConfigFile->appConfig().getHeadersDir();
-  QString tHeaderPath(tHeadersDir + "/" + tHeaderFilename);
-
-  std::cout << "Parsing header file " << qPrintable(tHeaderPath)
-            << "..." << std::endl;
+  std::string tHeaderPath = getHeaderPath(aMessageSpec);
 
   /*
    * Parse the header file to populate _StructorBuilder.
    */
-  std::string tString = tHeaderPath.toStdString();
-  _StructorBuilder = lex_main((char *)tString.c_str());
+  std::cout << "Parsing header file " << tHeaderPath
+            << "..." << std::endl;
+
+  _StructorBuilder = lex_main((char *)tHeaderPath.c_str());
   if (_StructorBuilder == NULL)
   {
     std::cout << "ERROR: Failed to build structor builder for msgId "
@@ -1204,11 +1179,14 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
   /*
    * Apply default filter settings if found.
    */
-  QString tFilter = tMessageSpec.getFilter();
-  if (tFilter.length() > 0)
+  if (aMessageSpec)
   {
-    QString tDir = _AppConfigFile->appConfig().getDefaultFiltersDir();
-    _MessageConfigFile->openConfiguration(tDir,tFilter);
+    QString tFilter = aMessageSpec->getFilter();
+    if (tFilter.length() > 0)
+    {
+      QString tDir = _AppConfig.getDefaultFiltersDir();
+      _MessageConfigFile->openConfiguration(tDir,tFilter);
+    }
   }
 
   /*
@@ -1233,4 +1211,53 @@ void MainWindow::onStructComboBoxActivated(int index)
 {
   QString tString = _StructComboBox->itemText(index);
   setTreeViewStruct(tString.toStdString());
+}
+
+//-------------------------------------------------------------------------------
+// Get the full path to the header file corresponding to a message ID.
+// If a header file is specified in the message spec, then that header will be
+// used. Otherwise, the default header will be used.
+// Note: This method assumes that the app config specifies the default header
+// directory, and either a default header, or a message spec that specifies the
+// header for the message ID. If not, an empty string will be returned.
+//-------------------------------------------------------------------------------
+std::string MainWindow::getHeaderPath(MessageSpec *aMessageSpec)
+{
+  QString tHeaderPath;
+
+  /*
+   * Get header filename.
+   */
+  QString tHeaderFilename;
+  if (aMessageSpec)
+  {
+    tHeaderFilename = aMessageSpec->getHeader();
+  }
+  else
+  {
+    tHeaderFilename = _AppConfig.getDefaultHeader();
+  }
+
+  /*
+   * If a header filename was found, get the headers directory, and construct
+   * the full pathname to the header file.
+   */
+  if (tHeaderFilename.length() != 0)
+  {
+    QString tHeadersDir = _AppConfig.getHeadersDir();
+    if (tHeadersDir.length() != 0)
+    {
+      tHeaderPath = tHeadersDir + "/" + tHeaderFilename;
+    }
+    else
+    {
+      std::cout << "ERROR: no headers directory specified" << std::endl;
+    }
+  }
+  else
+  {
+    std::cout << "ERROR: no header file specified" << std::endl;
+  }
+
+  return tHeaderPath.toStdString();
 }

@@ -203,7 +203,9 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
 
   // create and launch main window
   std::cout << "Launching main window..." << std::endl;
-  MainWindow *window = new MainWindow(app,0,aAppConfigFile,tStructorBuilder);
+  MainWindow *window = new MainWindow(
+      app,0,aAppConfigFile->appConfig(),aAppConfigFile->messageMap(),
+      tStructorBuilder);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
   window->setupView(aArgs.initialStruct.toStdString());
@@ -233,8 +235,8 @@ void runStreamReaderMode(
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(app,0,aAppConfigFile,
-      tStreamReader,tRecordProcessor);
+  MainWindow *tMainWindow = new MainWindow(app,0,aAppConfigFile->appConfig(),
+      aAppConfigFile->messageMap(),tStreamReader,tRecordProcessor);
   // tMainWindow->setGeometry(1920 + 530,135,625,900);
   // tMainWindow->setGeometry(1920      ,135,900,900);
   tMainWindow->setGeometry(1920      ,135,650,700);

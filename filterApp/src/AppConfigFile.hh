@@ -33,13 +33,13 @@ public:
   void saveConfiguration();
 #endif
   AppConfig &appConfig();
-  std::map<QString,MessageSpec> &messageMap();
+  MessageSpecMap &messageMap();
 
 protected:
   QXmlStreamReader reader;
   QString _ConfigFilename;
   AppConfig _AppConfig;
-  std::map<QString,MessageSpec> _MessageMap;
+  MessageSpecMap _MessageMap;
 
   void readWsdlFilterConfigElement();
   void readDefaultsElements();

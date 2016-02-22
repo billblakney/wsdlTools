@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdlfilterconfig>
     <config>
-        <headers_dir>/home/bill/workspace/wsdlTools/test</headers_dir>
+        <!--<headers_dir>/home/bill/workspace/wsdlTools/test</headers_dir>-->
+        <headers_dir>/home/bill/workspace/IEC_APB_FA_REALSIM/APB/toolbox/utilities/wsdlTools/test</headers_dir>
         <default_header>student.H</default_header>
         <!--<default_header>CLIR_CAR_cxsd.H</default_header>-->
         <default_filters_dir>/tmp</default_filters_dir>
@@ -13,7 +14,7 @@
         <message>
             <id>ssifg_STUDENT_MSG_ID</id>
             <struct>STUDENT_T</struct>
-            <default_filter>test.wcf<default_filter/>
+<!--            <default_filter>test.wcf<default_filter/>-->
         </message>
     </messages>
 </wsdlfilterconfig>

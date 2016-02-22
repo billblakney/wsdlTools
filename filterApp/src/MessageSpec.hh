@@ -1,6 +1,7 @@
 #ifndef MESSAGESPEC_H
 #define MESSAGESPEC_H
 
+#include <map>
 #include <QString>
 
 class MessageSpec
@@ -35,5 +36,7 @@ protected:
   QString _Header;
   QString _Filter;
 };
+
+typedef std::map<QString,MessageSpec> MessageSpecMap;
 
 #endif /* MESSAGESPEC_H */
