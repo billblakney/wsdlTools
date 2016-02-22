@@ -2,6 +2,7 @@
 <wsdlfilterconfig>
     <config>
         <headers_dir>/home/bill/workspace/wsdlTools/test</headers_dir>
+        <default_header>student.H</default_header>
         <default_filters_dir>/tmp</default_filters_dir>
         <custom_filters_dir>/tmp</custom_filters_dir>
         <default_operate_mode>go</default_operate_mode>

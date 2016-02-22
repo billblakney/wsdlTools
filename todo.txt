@@ -7,7 +7,7 @@
 
 --- add needed icon files
 --- ENTER operate menu option
-*** toolbar organization
+--- toolbar organization
 *** Save options (in addition to current Save As options)
 
 *** Select display columns

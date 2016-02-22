@@ -12,51 +12,116 @@
 
 extern StructorBuilder *lex_main(char *aHeaderFile);
 
-static bool _BrowseMode = false;
-
-/*
- * Application configuration file.
- * Is used in filter mode, and value can be set by command-line or environment
- * variable.
- * Is not needed in browse mode if command-line args are used.
- */
-QString _ConfigFile("/opt/idp/cots/iec/rtf/static/wsdlTools/wsdlFilter.conf");
-
-/*
- * Default header file.
- * Is used in browse mode. Value can be overridde by command-line arg.
- * Is not used in filter mode.
- */
-QString _HeaderFile("/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H");
-
-/*
- * Initial structure.
- * Is optionally set via command-line in browse mode.
- * Is not used in filter mode.
- */
-static std::string _InitialStruct;
+typedef struct CmdLineArgs {
+  bool isBrowseMode;
+  QString appConfigFile;
+  QString headerFile;
+  QString initialStruct;
+} CmdLineArgs;
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 void printUsage()
 {
-  std::cout << "Filter mode:" << std::endl;
-  std::cout << "app_iec_wsdlFilter [-a <app_config_file>]" << std::endl;
-  std::cout << "   where <app_config_file> is the application configuration file," << std::endl;
-  std::cout << "   which takes its default value from the environment variable" << std::endl;
-  std::cout << "   WSDL_FILTER_CONFIG_FILE" << std::endl;
-  std::cout << "Browse mode:" << std::endl;
-  std::cout << "app_iec_wsdlFilter -b [-f <header_file>] [-s <struct_name>]" << std::endl;
-  std::cout << "   where <header_file> is header file to be browsed," << std::endl;
-  std::cout << "   which takes its default value from the environment variable" << std::endl;
-  std::cout << "   CLIRCAR_H" << std::endl;
-  std::cout << "   where <struct_name> is initial struct to be browsed" << std::endl;
+  static const char *tUsage =
+  "\nFilter mode:"
+  "app_iec_wsdlFilter [-a <app_config_file>]\n"
+  "   where <app_config_file> is the application configuration file, which\n"
+  "   takes its default value from the environment variable\n"
+  "   WSDL_FILTER_CONFIG_FILE\n"
+  "\nBrowse mode:\n"
+  "app_iec_wsdlFilter -b [-f <header_file>] [-s <struct_name>]\n"
+  "   where <header_file> is header file to be browsed, which takes its\n"
+  "   default value from the environment variable CLIRCAR_H\n"
+  "   where <struct_name> is initial struct to be browsed\n"
+  ;
+  std::cout << tUsage << std::endl;
 }
 
 //-------------------------------------------------------------------------------
+// Determine the name of the app config file to be used in filter mode.
+// The name of the app config file is set with the following precedence:
+// 1. Use value specified by the command-line argument.
+// 2. Use the value specified by the WSDL_FILTER_CONFIG_FILE.
+// 3. Use the hard-coded value.
 //-------------------------------------------------------------------------------
-void processCommandLine(int argc,char *argv[])
+QString determineAppConfigFilename(CmdLineArgs aArgs)
 {
+  static const char *kAppConfigFilename =
+      //"/opt/idp/cots/iec/rtf/static/wsdlTools/wsdlFilter.conf";
+      "/opt/idp/cots/iec/rtf/static/wsdlFilter.conf";
+
+  /*
+   * Default will be the hard-coded value.
+   */
+  QString tAppConfigFilename(kAppConfigFilename);
+
+  /*
+   * Use command line arg, if available.
+   */
+  if (aArgs.appConfigFile.length() > 0)
+  {
+    return aArgs.appConfigFile;
+  }
+
+  /*
+   * Use the WSDL_FILTER_CONFIG_FILE environment variable, if available.
+   */
+  if(getenv("WSDL_FILTER_CONFIG_FILE"))
+  {
+    return getenv("WSDL_FILTER_CONFIG_FILE");
+  }
+
+  return tAppConfigFilename;
+}
+
+//-------------------------------------------------------------------------------
+// Determine the header file to be used in browse mode.
+// The name of the header file is set with the following precedence:
+// 1. Use value specified by the command-line.
+// 2. Use the value specified by the app config file.
+// 3. Use the hard-coded value.
+//-------------------------------------------------------------------------------
+QString determineHeaderFile(CmdLineArgs aArgs,AppConfigFile *aAppConfigFile)
+{
+  static const char *kHeaderFile ="/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H";
+
+  QString tHeaderFile(kHeaderFile);
+
+  /*
+   * Use the command-line value, if available.
+   */
+  if (aArgs.headerFile.length() > 0)
+  {
+    return aArgs.headerFile;
+  }
+
+  /*
+   * Use the value in the app config file, if available.
+   */
+  if (aAppConfigFile)
+  {
+    QString tHeadersDir = aAppConfigFile->appConfig().getHeadersDir();
+    QString tHeader = aAppConfigFile->appConfig().getDefaultHeader();
+    if (tHeadersDir.length() > 0 && tHeader.length() > 0)
+    {
+      QString tHeaderFilePath(tHeadersDir + "/" + tHeader);
+      return tHeaderFilePath;
+    }
+  }
+
+  /*
+   * Use the hard-coded value.
+   */
+  return tHeaderFile;
+}
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+CmdLineArgs processCommandLine(int argc,char *argv[])
+{
+  CmdLineArgs tCmdLineArgs;
+  tCmdLineArgs.isBrowseMode = false;
+
   for (int tIdx = 0; tIdx < argc; tIdx++)
   {
     if (!strcmp(argv[tIdx],"-h"))
@@ -66,13 +131,13 @@ void processCommandLine(int argc,char *argv[])
     }
     if (!strcmp(argv[tIdx],"-b"))
     {
-      _BrowseMode = true;
+      tCmdLineArgs.isBrowseMode = true;
     }
     if (!strcmp(argv[tIdx],"-s"))
     {
       if (++tIdx < argc)
       {
-        _InitialStruct = argv[tIdx];
+        tCmdLineArgs.initialStruct = argv[tIdx];
       }
       else
       {
@@ -84,7 +149,7 @@ void processCommandLine(int argc,char *argv[])
     {
       if (++tIdx < argc)
       {
-        _HeaderFile = argv[tIdx];
+        tCmdLineArgs.headerFile = argv[tIdx];
       }
       else
       {
@@ -93,29 +158,16 @@ void processCommandLine(int argc,char *argv[])
       }
     }
   }
+  return tCmdLineArgs;
 }
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void readEnvironmentVariables()
+AppConfigFile *readAppConfigFile(QString aFile,bool aDoPrintSummary)
 {
-  if(getenv("WSDL_FILTER_CONFIG_FILE"))
-  {
-    _ConfigFile = getenv("WSDL_FILTER_CONFIG_FILE");
-  }
-  if(getenv("CLIRCAR_H"))
-  {
-    _HeaderFile = getenv("CLIRCAR_H");
-  }
-}
+  AppConfigFile *tAppConfigFile = new AppConfigFile(aFile);
 
-/*------------------------------------------------------------------------------
- *----------------------------------------------------------------------------*/
-AppConfigFile *readAppConfigFile(bool aDoPrintSummary)
-{
-  AppConfigFile *tAppConfigFile = new AppConfigFile(_ConfigFile);
-
-  std::cout << "Reading app config file " << qPrintable(_ConfigFile)
+  std::cout << "Reading app config file " << qPrintable(aFile)
             << "..." << std::endl;
   tAppConfigFile->openConfiguration();
 
@@ -139,25 +191,29 @@ AppConfigFile *readAppConfigFile(bool aDoPrintSummary)
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void runBrowseMode(QApplication &app,AppConfigFile *aAppConfigFile)
+void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
+    AppConfigFile *aAppConfigFile)
 {
   std::cout << "Running in browse mode..." << std::endl;
 
+  QString tHeaderFile = determineHeaderFile(aArgs,aAppConfigFile);
+
   // Parse the header file to get _StructBuilder.
-  StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(_HeaderFile);
+  StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(tHeaderFile);
 
   // create and launch main window
   std::cout << "Launching main window..." << std::endl;
   MainWindow *window = new MainWindow(app,0,aAppConfigFile,tStructorBuilder);
 //  window->setGeometry(1920 + 530,135,625,900);
   window->setGeometry(1920      ,135,900,900);
-  window->setupView(_InitialStruct);
+  window->setupView(aArgs.initialStruct.toStdString());
   window->show();
 }
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void runStreamReaderMode(QApplication &app,AppConfigFile *aAppConfigFile)
+void runStreamReaderMode(
+    QApplication &app,CmdLineArgs aArgs,AppConfigFile *aAppConfigFile)
 {
   std::cout << "Running in filter mode..." << std::endl;
 
@@ -207,32 +263,31 @@ void runStreamReaderMode(QApplication &app,AppConfigFile *aAppConfigFile)
  *----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
-  ccl::Logger::initialize();
-
   QApplication app(argc, argv);
 //  app.setApplicationDisplayName(QString("WSDL FIlter"));
 
+  // set the palette
 //  QPalette tPalette(Qt::lightGray);
 //  app.setPalette(tPalette);
 
-  /*
-   * Read the environment variables.
-   * Currently only one: CLIRCAR_H. It may optionally be set by command-line
-   * instead.
-   */
-  readEnvironmentVariables();
+  // read the command-line args
+  CmdLineArgs tArgs = processCommandLine(argc,argv);
 
-  processCommandLine(argc,argv);
+  // initialize logger
+  ccl::Logger::initialize();
 
-  if (_BrowseMode)
+  // read the app config file
+  QString tFilename = determineAppConfigFilename(tArgs);
+
+  AppConfigFile *tAppConfigFile = readAppConfigFile(tFilename,false);
+
+  if (tArgs.isBrowseMode)
   {
-    AppConfigFile *tAppConfigFile = readAppConfigFile(false);
-    runBrowseMode(app,tAppConfigFile);
+    runBrowseMode(app,tArgs,tAppConfigFile);
   }
   else
   {
-    AppConfigFile *tAppConfigFile = readAppConfigFile(true);
-    runStreamReaderMode(app,tAppConfigFile);
+    runStreamReaderMode(app,tArgs,tAppConfigFile);
   }
 
   return app.exec();

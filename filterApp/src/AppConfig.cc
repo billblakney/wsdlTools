@@ -5,13 +5,6 @@ AppConfig::AppConfig()
 {
 }
 
-AppConfig::AppConfig(QString aOpenFilterDir,QString aSaveFilterDir,QString aDefaultOperateMode)
-{
-  _DefaultFiltersDir = aOpenFilterDir;
-  _CustomFiltersDir = aSaveFilterDir;
-  _DefaultOperateMode = aDefaultOperateMode;
-}
-
 AppConfig::~AppConfig()
 {
 }
@@ -24,6 +17,16 @@ const QString& AppConfig::getHeadersDir() const
 void AppConfig::SetHeadersDir(const QString& id)
 {
   _HeadersDir = id;
+}
+
+const QString& AppConfig::getDefaultHeader() const
+{
+  return _DefaultHeader;
+}
+
+void AppConfig::SetDefaultHeader(const QString& id)
+{
+  _DefaultHeader = id;
 }
 
 const QString& AppConfig::getDefaultFiltersDir() const

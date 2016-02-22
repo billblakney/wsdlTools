@@ -7,12 +7,15 @@ class AppConfig
 {
 public:
   AppConfig();
-  AppConfig(QString aOpenFilterDir,QString aSaveFilterDir,QString aDefaultOperateMode);
   virtual ~AppConfig();
 
   const QString& getHeadersDir() const;
 
   void SetHeadersDir(const QString& id);
+
+  const QString& getDefaultHeader() const;
+
+  void SetDefaultHeader(const QString& id);
 
   const QString& getDefaultFiltersDir() const;
 
@@ -34,6 +37,7 @@ public:
 
 protected:
   QString _HeadersDir;
+  QString _DefaultHeader;
   QString _DefaultFiltersDir;
   QString _CustomFiltersDir;
   QString _DefaultOperateMode;
