@@ -16,7 +16,8 @@ INCLUDEPATH  += $(BOOST_INC)
 QMAKE_CXX = g++
 QMAKE_CC = g++
 
-QMAKE_POST_LINK = cp -f $(CLIRCAR_H) $(AXB_PROJECT_TOP)/config
+QMAKE_POST_LINK = mkdir -p $(WSDL_TOOLS_CONFIG)/headers;\
+                  cp -f $(CLIRCAR_H) $(WSDL_TOOLS_CONFIG)/headers
 
 LIBS = -L$(BOOST_DIR)/lib -lboost_regex
  

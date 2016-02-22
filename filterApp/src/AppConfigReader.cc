@@ -1,4 +1,6 @@
+#include <cstdlib>
 #include <iostream>
+#include <string>
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -32,6 +34,36 @@ AppConfigReader::AppConfigReader(QString aConfigFilename)
 //-----------------------------------------------------------------------------
 AppConfigReader::~AppConfigReader()
 {
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QString AppConfigReader::expandEnvVars(QString aStr)
+{
+  std::string tStr = aStr.toStdString();
+  std::string tNewStr = expandEnvVars(tStr);
+  return tNewStr.c_str();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+std::string AppConfigReader::expandEnvVars(std::string aStr)
+{
+  if( aStr.find( "${" ) == std::string::npos ) return aStr;
+
+  std::string pre  = aStr.substr( 0, aStr.find( "${" ) );
+  std::string post = aStr.substr( aStr.find( "${" ) + 2 );
+
+  if( post.find( '}' ) == std::string::npos ) return aStr;
+
+  std::string variable = post.substr( 0, post.find( '}' ) );
+  std::string value    = "";
+
+  post = post.substr( post.find( '}' ) + 1 );
+
+  if( getenv( variable.c_str() ) != NULL ) value = std::string( getenv( variable.c_str() ) );
+
+  return expandEnvVars(pre + value + post);
 }
 
 //-----------------------------------------------------------------------------
@@ -113,12 +145,12 @@ void AppConfigReader::readDefaultsElements()
     {
       if (reader.name() == kHeadersDirTag)
       {
-        QString tStr = reader.readElementText();
+        QString tStr = expandEnvVars(reader.readElementText());
         _AppConfig.SetHeadersDir(tStr);
       }
       else if (reader.name() == kDefaultHeaderTag)
       {
-        QString tStr = reader.readElementText();
+        QString tStr = expandEnvVars(reader.readElementText());
         _AppConfig.SetDefaultHeader(tStr);
       }
       else if (reader.name() == kDefaultFiltersDirTag)

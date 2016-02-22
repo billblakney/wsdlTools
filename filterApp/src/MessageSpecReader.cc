@@ -319,7 +319,9 @@ void MessageSpecReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
 
   aWriter.writeStartElement(kWsdlfilterconfigTag);
 
+  std::cout << "gonaawriteCONFIGelement" << std::endl;
   writeConfigElements(aWriter);
+  std::cout << "gonaawritefieldelements" << std::endl;
   writeFieldElements(aWriter);
 
   // end tag wsdlfilter
@@ -350,6 +352,8 @@ void MessageSpecReader::writeConfigElements(QXmlStreamWriter &aWriter)
 //-----------------------------------------------------------------------------
 void MessageSpecReader::writeFieldElements(QXmlStreamWriter &aWriter)
 {
+  std::cout << "XXXXXXXXXXXXXX" << std::endl;
+
   std::vector<FieldItem *> &tTreeItems = _DataStructModel->getTreeItems();
 
   aWriter.writeStartElement(kFieldsTag);

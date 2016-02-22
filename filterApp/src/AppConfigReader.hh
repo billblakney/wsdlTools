@@ -26,6 +26,9 @@ public:
   static const char *kAttrHeaderTag;
   static const char *kAttrDefaultFilterTag;
 
+  static QString expandEnvVars(QString aStr);
+  static std::string expandEnvVars(std::string aStr);
+
   AppConfigReader(QString aFilename);
   virtual ~AppConfigReader();
   void openConfiguration();

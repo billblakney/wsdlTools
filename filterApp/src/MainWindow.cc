@@ -193,6 +193,16 @@ void MainWindow::setTreeViewStruct(
   _StructTree->resizeColumnToContents(1);
 #endif
 
+  /*
+   * Create the config file manager. //TODO explain why here
+   */
+  if (_MessageSpecReader)
+  {
+    delete _MessageSpecReader;
+  }
+  _MessageSpecReader = new MessageSpecReader(_DataStructModel);
+std::cout << "created MSR: " << _MessageSpecReader << "," << _DataStructModel << std::endl;
+
   connect(_DataStructModel, SIGNAL(modelUpdated()),
       this,SLOT(onModelUpdate()));
 
@@ -287,10 +297,10 @@ void MainWindow::setStatusLabel(QString aStatus,QPalette aPalette)
 //-----------------------------------------------------------------------------
 void MainWindow::setupView(std::string aStructName)
 {
-  if (_IsFilterMode)
-  {
+//  if (_IsFilterMode)
+//  {
     setupMenuAndToolbar();
-  }
+//  }
 
    _CentralWidget = new QWidget(this);
    setCentralWidget(_CentralWidget);
@@ -356,10 +366,10 @@ void MainWindow::setupView(std::string aStructName)
 
   if (!_IsFilterMode)
   {
-    _StructTree->hideColumn(DataStructModel::eColFormat);
-    _StructTree->hideColumn(DataStructModel::eColMatchRegex);
-    _StructTree->hideColumn(DataStructModel::eColPostfix);
-    _StructTree->hideColumn(DataStructModel::eColTestRegex);
+//    _StructTree->hideColumn(DataStructModel::eColFormat);
+//    _StructTree->hideColumn(DataStructModel::eColMatchRegex);
+//    _StructTree->hideColumn(DataStructModel::eColPostfix);
+//    _StructTree->hideColumn(DataStructModel::eColTestRegex);
 //    _StructTree->hideColumn(DataStructModel::eColTestScope);//TODO restore!!!
   }
   else
@@ -1170,11 +1180,6 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
    */
   setInitialStructName(aStructName.toStdString());
   setupView(_StructName);
-
-  /*
-   * Create the config file manager.
-   */
-  _MessageSpecReader = new MessageSpecReader(_DataStructModel);
 
   /*
    * Apply default filter settings if found.
