@@ -23,6 +23,9 @@ using namespace std;
 
 extern StructorBuilder *lex_main(char *aHeaderFile);
 
+const QString MainWindow::kAppName("app_iec_wsdlFilter");
+const QString MainWindow::kTitle(kAppName);
+
 //-----------------------------------------------------------------------------
 // Constructor for browse mode.
 //-----------------------------------------------------------------------------
@@ -96,37 +99,37 @@ MainWindow::~MainWindow()
 //-----------------------------------------------------------------------------
 void MainWindow::init()
 {
-  setWindowTitle("app_iec_wsdlFilter");
+  updateWindowTitle();
 
-    _FileToolBar = 0;
-    _OperateToolBar = 0;
-    _DelimitToolBar = 0;
-    _FormatToolBar = 0;
-    _ToolToolBar = 0;
-    _ViewFileToolbarAction = 0;
-    _ViewOperateToolbarAction = 0;
-    _ViewDelimitToolbarAction = 0;
-    _ViewFormatToolbarAction = 0;
-    _ViewToolToolbarAction = 0;
-    _PropagateCheckAction = 0;
-    _CentralWidget = 0;
-    _DataStructModel = 0;
-    _StructComboBox = 0;
-    _CustomFormatToolWidget = 0;
-    _StructTree = 0;
-    _CustomFormatToolDock = 0;
-    _FormatAsIsButton = 0;
-    _FormatLongnameButton = 0;
-    _FormatTableButton = 0;
-    _FormatCustomButton = 0;
-    _OutputNormalButton = 0;
-    _OutputBypassButton = 0;
-    _OutputFreezeDropButton = 0;
-    _OutputFreezeQueueButton = 0;
-    _AsIsCheckBox = 0;
-    _LongnameCheckBox = 0;
-    _TableCheckBox = 0;
-    _MessageSpecReader = 0;
+  _FileToolBar = 0;
+  _OperateToolBar = 0;
+  _DelimitToolBar = 0;
+  _FormatToolBar = 0;
+  _ToolToolBar = 0;
+  _ViewFileToolbarAction = 0;
+  _ViewOperateToolbarAction = 0;
+  _ViewDelimitToolbarAction = 0;
+  _ViewFormatToolbarAction = 0;
+  _ViewToolToolbarAction = 0;
+  _PropagateCheckAction = 0;
+  _CentralWidget = 0;
+  _DataStructModel = 0;
+  _StructComboBox = 0;
+  _CustomFormatToolWidget = 0;
+  _StructTree = 0;
+  _CustomFormatToolDock = 0;
+  _FormatAsIsButton = 0;
+  _FormatLongnameButton = 0;
+  _FormatTableButton = 0;
+  _FormatCustomButton = 0;
+  _OutputNormalButton = 0;
+  _OutputBypassButton = 0;
+  _OutputFreezeDropButton = 0;
+  _OutputFreezeQueueButton = 0;
+  _AsIsCheckBox = 0;
+  _LongnameCheckBox = 0;
+  _TableCheckBox = 0;
+  _MessageSpecReader = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -324,14 +327,7 @@ void MainWindow::setupView(std::string aStructName)
   /*
    * Create structure dropdown list.
    */
-  QLabel *tMessageLabel = NULL;
-  if (_IsFilterMode)
-  {
-    tMessageLabel = new QLabel(
-      "<b><i>" + _MessageId + "</i> : " + QString(_StructName.c_str()) + "</b>",
-        _CentralWidget);
-  }
-  else
+  if (!_IsFilterMode)
   {
     _StructComboBox = createStructComboBox(_CentralWidget);
   }
@@ -348,11 +344,7 @@ void MainWindow::setupView(std::string aStructName)
    * Put widgets in the dialog using box layout.
    */
   QVBoxLayout *tWindowLayout = new QVBoxLayout;
-  if (_IsFilterMode)
-  {
-    tWindowLayout->addWidget(tMessageLabel);
-  }
-  else
+  if (!_IsFilterMode)
   {
     tWindowLayout->addWidget(_StructComboBox);
   }
@@ -731,7 +723,6 @@ void MainWindow::setupMenuAndToolbar()
   _StatusLabel->setAutoFillBackground(true);
 
   statusBar()->addWidget(_StatusLabel);
-  statusBar()->addPermanentWidget(new QLabel("-counts-"));
 
   _FileToolBar = addToolBar("File Toolbar");
   setupFileActions(tMenu,_FileToolBar);
@@ -1130,11 +1121,17 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
 {
   _MessageId = aMsgId;
 
-  MessageSpec *aMessageSpec = NULL;
+  /*
+   * Set window title and permanent widget.
+   */
+  updateWindowTitle(aMsgId,aStructName);
+  updatePermanentWidget(aMsgId,aStructName);
 
   /*
    * Get the message spec for this message ID, if it exists.
    */
+  MessageSpec *aMessageSpec = NULL;
+
   MessageSpecMap::iterator tIter = _MessageSpecMap.find(aMsgId);
   if (tIter != _MessageSpecMap.end())
   {
@@ -1216,6 +1213,33 @@ void MainWindow::onStructComboBoxActivated(int index)
 {
   QString tString = _StructComboBox->itemText(index);
   setTreeViewStruct(tString.toStdString());
+}
+
+//-------------------------------------------------------------------------------
+// Set the main window title.
+//-------------------------------------------------------------------------------
+void MainWindow::updateWindowTitle()
+{
+  QString tTitle(kAppName);
+  setWindowTitle(tTitle);
+}
+
+//-------------------------------------------------------------------------------
+// Set the main window title.
+//-------------------------------------------------------------------------------
+void MainWindow::updateWindowTitle(QString aMsgId,QString aStructName)
+{
+  QString tTitle(
+      kAppName + "   [" + aMsgId + " : " + aStructName + "]");
+  setWindowTitle(tTitle);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::updatePermanentWidget(QString aMsgId,QString aStructName)
+{
+  statusBar()->addPermanentWidget(
+      new QLabel("<i>" + aMsgId + "</i> : " + aStructName));
 }
 
 //-------------------------------------------------------------------------------

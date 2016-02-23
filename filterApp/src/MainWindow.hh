@@ -22,6 +22,9 @@ class MainWindow: public QMainWindow
   Q_OBJECT
 public:
 
+  static const QString kAppName;
+  static const QString kTitle;
+
   static StructorBuilder *parseHeaderFile(QString aHeaderFile);
 
   // constructor for browse mode
@@ -188,6 +191,10 @@ protected:
 	    StructTreeView *aStructTreeView,std::string aStructName);
 
 	std::string getHeaderPath(MessageSpec *aMessageSpec);
+
+	void updateWindowTitle();
+	void updateWindowTitle(QString aMsgId,QString aStructName);
+	void updatePermanentWidget(QString aMsgId,QString aStructName);
 };
 
 #endif /* MAINWINDOW_HH_ */
