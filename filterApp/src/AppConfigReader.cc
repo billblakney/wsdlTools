@@ -155,12 +155,12 @@ void AppConfigReader::readDefaultsElements()
       }
       else if (reader.name() == kDefaultFiltersDirTag)
       {
-        QString tStr = reader.readElementText();
+        QString tStr = expandEnvVars(reader.readElementText());
         _AppConfig.SetDefaultFiltersDir(tStr);
       }
       else if (reader.name() == kCustomFiltersDirTag)
       {
-        QString tStr = reader.readElementText();
+        QString tStr = expandEnvVars(reader.readElementText());
         _AppConfig.SetCustomFiltersDir(tStr);
       }
       else if (reader.name() == kDefaultOperateModeTag)

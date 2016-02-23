@@ -2,8 +2,8 @@
 <wsdlfilterconfig>
     <config>
         <headers_dir>${WSDL_HEADERS_DIR}</headers_dir>
-        <default_header>${DEFAULT_HEADER}</default_header>
-        <default_filters_dir>/tmp</default_filters_dir>
+        <default_header>${WSDL_DEFAULT_HEADER}</default_header>
+        <default_filters_dir>${WSDL_FILTERS_DIR}</default_filters_dir>
         <custom_filters_dir>/tmp</custom_filters_dir>
         <default_operate_mode>go</default_operate_mode>
         <default_delimit_mode>on_out</default_delimit_mode>
@@ -12,7 +12,7 @@
         <message>
             <id>ssifg_STUDENT_MSG_ID</id>
             <struct>STUDENT_T</struct>
-<!--            <default_filter>test.wcf<default_filter/>-->
+            <default_filter>student_grades.wcf<default_filter/>
         </message>
     </messages>
 </wsdlfilterconfig>
