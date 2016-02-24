@@ -11,7 +11,7 @@
 #include <QMainWindow>
 #include "AppConfigReader.hh"
 #include "DataStructModel.hh"
-#include "MessageSpecReader.hh"
+#include "FilterSpecReader.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "StructorBuilder.hh"
@@ -130,26 +130,11 @@ protected:
 	QDockWidget        *_CustomFormatToolDock;
 	QDockWidget        *_TestScopeToolDock;
 
-  QRadioButton       *_DelimitAllButton;
-  QRadioButton       *_DelimitOutputButton;
-  QRadioButton       *_DelimitNoneButton;
-
-  QRadioButton       *_FormatAsIsButton;
-  QRadioButton       *_FormatLongnameButton;
-  QRadioButton       *_FormatTableButton;
-  QRadioButton       *_FormatCustomButton;
-
-  QButtonGroup       *_OutputModeButtonGroup;
-  QRadioButton       *_OutputNormalButton;
-  QRadioButton       *_OutputBypassButton;
-  QRadioButton       *_OutputFreezeDropButton;
-  QRadioButton       *_OutputFreezeQueueButton;
-
   QCheckBox *_AsIsCheckBox;
   QCheckBox *_LongnameCheckBox;
   QCheckBox *_TableCheckBox;
 
-  MessageSpecReader *_MessageSpecReader;
+  FilterSpecReader *_FilterSpecReader;
 
   void init();
 

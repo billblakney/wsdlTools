@@ -4,7 +4,7 @@
 #include <QXmlStreamReader>
 #include "DataStructModel.hh"
 
-class MessageSpecReader
+class FilterSpecReader
 {
 public:
   static std::string kTag;
@@ -23,8 +23,8 @@ public:
   static const char *kValueChecked;
   static const char *kValueNotChecked;
 
-  MessageSpecReader(DataStructModel *aModel);
-  virtual ~MessageSpecReader();
+  FilterSpecReader(DataStructModel *aModel);
+  virtual ~FilterSpecReader();
   void openConfiguration(QString aDir);
   void openConfiguration(QString aDir,QString aFilter);
   void saveConfiguration(QString aDir);

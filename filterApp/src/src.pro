@@ -46,7 +46,7 @@ HEADERS += \
            LineMatcher.hh \
            MainWindow.hh \
            MessageSpec.hh \
-           MessageSpecReader.hh \
+           FilterSpecReader.hh \
            RecordLine.hh \
            RecordProcessor.hh \
            RecordWriter.hh \
@@ -67,7 +67,7 @@ SOURCES += \
            LineMatcher.cc \
            MainWindow.cc \
            MessageSpec.cc \
-           MessageSpecReader.cc \
+           FilterSpecReader.cc \
            RecordLine.cc \
            RecordProcessor.cc \
            RecordWriter.cc \

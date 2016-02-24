@@ -118,18 +118,10 @@ void MainWindow::init()
   _CustomFormatToolWidget = 0;
   _StructTree = 0;
   _CustomFormatToolDock = 0;
-  _FormatAsIsButton = 0;
-  _FormatLongnameButton = 0;
-  _FormatTableButton = 0;
-  _FormatCustomButton = 0;
-  _OutputNormalButton = 0;
-  _OutputBypassButton = 0;
-  _OutputFreezeDropButton = 0;
-  _OutputFreezeQueueButton = 0;
   _AsIsCheckBox = 0;
   _LongnameCheckBox = 0;
   _TableCheckBox = 0;
-  _MessageSpecReader = 0;
+  _FilterSpecReader = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -199,12 +191,12 @@ void MainWindow::setTreeViewStruct(
   /*
    * Create the config file manager. //TODO explain why here
    */
-  if (_MessageSpecReader)
+  if (_FilterSpecReader)
   {
-    delete _MessageSpecReader;
+    delete _FilterSpecReader;
   }
-  _MessageSpecReader = new MessageSpecReader(_DataStructModel);
-std::cout << "created MSR: " << _MessageSpecReader << "," << _DataStructModel << std::endl;
+  _FilterSpecReader = new FilterSpecReader(_DataStructModel);
+std::cout << "created MSR: " << _FilterSpecReader << "," << _DataStructModel << std::endl;
 
   connect(_DataStructModel, SIGNAL(modelUpdated()),
       this,SLOT(onModelUpdate()));
@@ -239,7 +231,7 @@ void MainWindow::setInitialStructName(std::string aStructName)
 //-----------------------------------------------------------------------------
 void MainWindow::onFileOpenAction()
 {
-  _MessageSpecReader->openConfiguration(
+  _FilterSpecReader->openConfiguration(
       _AppConfig.getCustomFiltersDir());
 }
 
@@ -247,7 +239,7 @@ void MainWindow::onFileOpenAction()
 //-----------------------------------------------------------------------------
 void MainWindow::onFileSaveAction()
 {
-  _MessageSpecReader->saveConfiguration(
+  _FilterSpecReader->saveConfiguration(
       _AppConfig.getCustomFiltersDir());
 }
 
@@ -1187,7 +1179,7 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
     if (tFilter.length() > 0)
     {
       QString tDir = _AppConfig.getDefaultFiltersDir();
-      _MessageSpecReader->openConfiguration(tDir,tFilter);
+      _FilterSpecReader->openConfiguration(tDir,tFilter);
     }
   }
 
