@@ -285,6 +285,10 @@ void AppConfigReader::readMessageElements(MessageSpec &aMessageSpec)
         QString tStr = reader.readElementText();
         aMessageSpec.SetFilter(tStr);
       }
+      else if (reader.isComment())
+      {
+        // do nothing
+      }
       else
       {
         skipUnknownElement();
