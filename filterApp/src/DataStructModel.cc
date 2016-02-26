@@ -38,10 +38,11 @@ DataStructModel::DataStructModel(
 
   appendToTreeItemVector(_TopNodeItem);
 
-  if (childCount(_TopNodeItem,FieldItemData::eStructArray) == 1)
-  {
-    std::cout << "TopNode HAS ONE STRUCT_ARRAY child" << std::endl;
-  }
+// Was going to be used at one time, but no longer. Can be removed.
+//  if (childCount(_TopNodeItem,FieldItemData::eStructArray) == 1)
+//  {
+//    std::cout << "TopNode HAS ONE STRUCT_ARRAY child" << std::endl;
+//  }
 
   setFilterScopeForDesignator();
 }

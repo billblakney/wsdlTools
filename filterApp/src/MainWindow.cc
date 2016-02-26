@@ -196,7 +196,6 @@ void MainWindow::setTreeViewStruct(
     delete _FilterSpecReader;
   }
   _FilterSpecReader = new FilterSpecReader(_DataStructModel);
-std::cout << "created MSR: " << _FilterSpecReader << "," << _DataStructModel << std::endl;
 
   connect(_DataStructModel, SIGNAL(modelUpdated()),
       this,SLOT(onModelUpdate()));
@@ -1114,7 +1113,7 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
   _MessageId = aMsgId;
 
   /*
-   * Set window title and permanent widget.
+   * Update the window title and permanent widget.
    */
   updateWindowTitle(aMsgId,aStructName);
   updatePermanentWidget(aMsgId,aStructName);

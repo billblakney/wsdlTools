@@ -168,17 +168,21 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
  *----------------------------------------------------------------------------*/
 void printAppConfigFile(AppConfigReader *aAppConfigReader)
 {
-  std::map<QString,MessageSpec> &tMessageMap = aAppConfigReader->messageMap();
+  AppConfig tAppConfig = aAppConfigReader->appConfig();
+  std::cout << endl;
+  std::cout << "app config settings:" << std::endl;
+  std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
+  std::cout << endl;
 
+  std::cout << "message map:" << std::endl;
+  std::map<QString,MessageSpec> &tMessageMap = aAppConfigReader->messageMap();
   std::map<QString,MessageSpec>::iterator tIter;
   for (tIter = tMessageMap.begin(); tIter != tMessageMap.end(); tIter++)
   {
     MessageSpec tSpec = tIter->second;
     std::cout << qPrintable(tSpec.toQString()) << std::endl;
   }
-  AppConfig tAppConfig = aAppConfigReader->appConfig();
-  std::cout << "settings:" << std::endl;
-  std::cout << qPrintable(tAppConfig.toQString()) << std::endl;
+  std::cout << endl;
 }
 
 /*------------------------------------------------------------------------------
