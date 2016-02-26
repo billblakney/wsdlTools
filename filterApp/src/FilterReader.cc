@@ -1,9 +1,9 @@
-#include "FilterReader.hh"
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QXmlStreamWriter>
 #include "DataStructModel.hh"
+#include "FilterReader.hh"
 
 const char *FilterReader::kWsdlfilterconfigTag = "wsdlfilter";
 const char *FilterReader::kDefaultsTag = "config";
@@ -21,9 +21,8 @@ const char *FilterReader::kValueNotChecked = "0";
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-FilterReader::FilterReader(DataStructModel *aModel)
+FilterReader::FilterReader()
 {
-  _DataStructModel = aModel;
 }
 
 //-----------------------------------------------------------------------------
@@ -34,19 +33,24 @@ FilterReader::~FilterReader()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::openFilter(QString aDir)
+FilterSpec FilterReader::openFilter(QString aDir)
 {
+  FilterSpec tFilterSpec;
+
   QString tFilepath = QFileDialog::getOpenFileName(0,
       QString("Open WSDL Config File"), aDir,
       QString("WSDL Config Files (*.wcf *.wpf)"));
 
-  openFilter(QString(""),tFilepath);
+  tFilterSpec = openFilter(QString(""),tFilepath);
+  return tFilterSpec;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::openFilter(QString aDir,QString aFilename)
+FilterSpec FilterReader::openFilter(QString aDir,QString aFilename)
 {
+  FilterSpec tFilterSpec;
+
   QString aFilepath;
   if (aDir.length())
   {
@@ -61,7 +65,8 @@ void FilterReader::openFilter(QString aDir,QString aFilename)
   {
     std::cout << "Error: Cannot read file " << qPrintable(aFilepath)
               << ": " << qPrintable(file.errorString()) << std::endl;
-    return;
+    tFilterSpec._HasErrors = true;
+    return tFilterSpec;
   }
 
   std::cout << "applying filter " << qPrintable(aFilepath) << std::endl;
@@ -75,7 +80,7 @@ void FilterReader::openFilter(QString aDir,QString aFilename)
     {
       if (reader.name() == kWsdlfilterconfigTag)
       {
-        readWsdlfilterElement();
+        readWsdlfilterElement(tFilterSpec);
       }
       else
       {
@@ -90,11 +95,13 @@ void FilterReader::openFilter(QString aDir,QString aFilename)
 
 //  std::cout << "done===============" << std::endl;
   file.close();
+
+  return tFilterSpec;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::readWsdlfilterElement()
+void FilterReader::readWsdlfilterElement(FilterSpec &aFilterSpec)
 {
   reader.readNext();
 
@@ -104,11 +111,11 @@ void FilterReader::readWsdlfilterElement()
     {
       if (reader.name() == kDefaultsTag)
       {
-        readConfigElements();
+        readConfigElements(aFilterSpec);
       }
       else if (reader.name() == kFieldsTag)
       {
-        readFieldElements();
+        readFieldElements(aFilterSpec);
       }
       else
       {
@@ -121,7 +128,7 @@ void FilterReader::readWsdlfilterElement()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::readConfigElements()
+void FilterReader::readConfigElements(FilterSpec &aFilterSpec)
 {
   reader.readNext();
 
@@ -132,11 +139,13 @@ void FilterReader::readConfigElements()
       if (reader.name() == kOperateModeTag)
       {
         QString tStr = reader.readElementText();
+        aFilterSpec._OperateMode = tStr;
 //        std::cout << "operate_mode: " << qPrintable(tStr) << std::endl;
       }
       else if (reader.name() == kDelimitModeTag)
       {
         QString tStr = reader.readElementText();
+        aFilterSpec._DelimitMode = tStr;
 //        std::cout << "delimit_mode: " << qPrintable(tStr) << std::endl;
       }
       else
@@ -150,7 +159,7 @@ void FilterReader::readConfigElements()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::readFieldElements()
+void FilterReader::readFieldElements(FilterSpec &aFilterSpec)
 {
   reader.readNext();
 
@@ -166,20 +175,13 @@ void FilterReader::readFieldElements()
         QString tFormat = reader.attributes().value(kAttrFormatTag).toString();
         QString tPostfix = reader.attributes().value(kAttrPostfixTag).toString();
 
-        FieldItem *tFieldItem = _DataStructModel->getNode(tKey.toStdString());
-
-        if (tFieldItem)
-        {
-          updateMessageIsChecked(tFieldItem,tIsChecked);
-          updateMessageTestScope(tFieldItem,tTestScope);
-          updateMessageFormat(tFieldItem,tFormat);
-          updateMessagePostfix(tFieldItem,tPostfix);
-        }
-        else
-        {
-          std::cout << "WARNING: couldn't find tree node for key "
-              << qPrintable(tKey) << std::endl;
-        }
+        FieldSpec tFieldSpec;
+        tFieldSpec.key = tKey;
+        tFieldSpec.isChecked = tIsChecked;
+        tFieldSpec.testScope = tTestScope;
+        tFieldSpec.format = tFormat;
+        tFieldSpec.postfix = tPostfix;
+        aFilterSpec._Fields.push_back(tFieldSpec);
 
         reader.readElementText();
       }
@@ -189,68 +191,6 @@ void FilterReader::readFieldElements()
       }
     }
     reader.readNext();
-  }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void FilterReader::updateMessageIsChecked(FieldItem *aItem,
-    QString aIsChecked)
-{
-  bool tNewIsCheckedValue =
-      (aIsChecked.toStdString().compare(kValueChecked)?false:true);
-  bool tOldIsCheckedValue = aItem->getData().isChecked();
-
-  if (tNewIsCheckedValue != tOldIsCheckedValue)
-  {
-    if (tNewIsCheckedValue)
-    {
-      aItem->setCheckState(Qt::Checked);
-    }
-    else
-    {
-      aItem->setCheckState(Qt::Unchecked);
-    }
-  }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void FilterReader::updateMessageTestScope(FieldItem *aItem,
-      QString aNewTestScope)
-{
-  QString tOldTestScope(aItem->getData().getTestScope().c_str());
-
-  if (tOldTestScope != aNewTestScope)
-  {
-    aItem->setTestScope(aNewTestScope.toStdString().c_str());
-  }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void FilterReader::updateMessageFormat(FieldItem *aItem,
-    QString aNewFormat)
-{
-  FieldItemData::Format tOldFormatValue = aItem->getData().getFormat();
-  QString tOldFormat = aItem->getData().getFormatString(tOldFormatValue);
-  if (tOldFormat != aNewFormat)
-  {
-    FieldItemData::Format tNewFormatValue = FieldItemData::getFormat(aNewFormat);
-    aItem->setFieldFormat(tNewFormatValue);
-  }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void FilterReader::updateMessagePostfix(FieldItem *aItem,
-    QString aNewPostfix)
-{
-  QString tOldPostfix(aItem->getData().getPostfix().c_str());
-
-  if (tOldPostfix != aNewPostfix)
-  {
-    aItem->setFieldPostfix(aNewPostfix.toStdString().c_str());
   }
 }
 
@@ -282,7 +222,7 @@ void FilterReader::skipUnknownElement()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::saveFilter(QString aDir)
+void FilterReader::saveFilter(QString aDir,DataStructModel *aModel)
 {
 
   QString tFileName = QFileDialog::getSaveFileName(0,
@@ -305,14 +245,15 @@ void FilterReader::saveFilter(QString aDir)
 
   xmlWriter.setDevice(&file);
 
-  writeWsdlfilterDocument(xmlWriter);
+  writeWsdlfilterDocument(xmlWriter,aModel);
 
   file.close();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
+void FilterReader::writeWsdlfilterDocument(
+    QXmlStreamWriter &aWriter,DataStructModel *aModel)
 {
   // Writes a document start with the XML version number.
   aWriter.writeStartDocument();
@@ -320,7 +261,7 @@ void FilterReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
   aWriter.writeStartElement(kWsdlfilterconfigTag);
 
   writeConfigElements(aWriter);
-  writeFieldElements(aWriter);
+  writeFieldElements(aWriter,aModel);
 
   // end tag wsdlfilter
   aWriter.writeEndElement(); //wsdlfilter
@@ -348,9 +289,10 @@ void FilterReader::writeConfigElements(QXmlStreamWriter &aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::writeFieldElements(QXmlStreamWriter &aWriter)
+void FilterReader::writeFieldElements(
+    QXmlStreamWriter &aWriter,DataStructModel *aModel)
 {
-  std::vector<FieldItem *> &tTreeItems = _DataStructModel->getTreeItems();
+  std::vector<FieldItem *> &tTreeItems = aModel->getTreeItems();
 
   aWriter.writeStartElement(kFieldsTag);
 

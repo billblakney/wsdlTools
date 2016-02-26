@@ -43,10 +43,12 @@ HEADERS += \
            DataStructModel.hh \
            FieldItem.hh \
            FieldItemData.hh \
+           FieldSpec.hh \
+           FilterReader.hh \
+           FilterSpec.hh \
            LineMatcher.hh \
            MainWindow.hh \
            MessageSpec.hh \
-           FilterReader.hh \
            RecordLine.hh \
            RecordProcessor.hh \
            RecordWriter.hh \
@@ -64,10 +66,12 @@ SOURCES += \
            DataStructModel.cc \
            FieldItem.cc \
            FieldItemData.cc \
+           FieldSpec.cc \
+           FilterReader.cc \
+           FilterSpec.cc \
            LineMatcher.cc \
            MainWindow.cc \
            MessageSpec.cc \
-           FilterReader.cc \
            RecordLine.cc \
            RecordProcessor.cc \
            RecordWriter.cc \

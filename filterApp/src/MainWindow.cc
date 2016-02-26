@@ -195,7 +195,7 @@ void MainWindow::setTreeViewStruct(
   {
     delete _FilterReader;
   }
-  _FilterReader = new FilterReader(_DataStructModel);
+  _FilterReader = new FilterReader();
 
   connect(_DataStructModel, SIGNAL(modelUpdated()),
       this,SLOT(onModelUpdate()));
@@ -230,8 +230,10 @@ void MainWindow::setInitialStructName(std::string aStructName)
 //-----------------------------------------------------------------------------
 void MainWindow::onFileOpenAction()
 {
-  _FilterReader->openFilter(
+  FilterSpec tSpec = _FilterReader->openFilter(
       _AppConfig.getCustomFiltersDir());
+
+  tSpec.apply(_DataStructModel);
 }
 
 //-----------------------------------------------------------------------------
@@ -239,7 +241,7 @@ void MainWindow::onFileOpenAction()
 void MainWindow::onFileSaveAction()
 {
   _FilterReader->saveFilter(
-      _AppConfig.getCustomFiltersDir());
+      _AppConfig.getCustomFiltersDir(),_DataStructModel);
 }
 
 //-----------------------------------------------------------------------------
@@ -1178,7 +1180,8 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
     if (tFilter.length() > 0)
     {
       QString tDir = _AppConfig.getDefaultFiltersDir();
-      _FilterReader->openFilter(tDir,tFilter);
+      FilterSpec tSpec = _FilterReader->openFilter(tDir,tFilter);
+      tSpec.apply(_DataStructModel);
     }
   }
 

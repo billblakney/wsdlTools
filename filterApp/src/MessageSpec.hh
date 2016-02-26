@@ -1,5 +1,5 @@
-#ifndef MESSAGESPEC_H
-#define MESSAGESPEC_H
+#ifndef MessageSpec_hh
+#define MessageSpec_hh
 
 #include <map>
 #include <QString>
@@ -39,4 +39,4 @@ protected:
 
 typedef std::map<QString,MessageSpec> MessageSpecMap;
 
-#endif /* MESSAGESPEC_H */
+#endif /* MessageSpec_hh */

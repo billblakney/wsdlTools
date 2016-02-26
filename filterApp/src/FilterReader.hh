@@ -3,6 +3,7 @@
 
 #include <QXmlStreamReader>
 #include "DataStructModel.hh"
+#include "FilterSpec.hh"
 
 class FilterReader
 {
@@ -23,28 +24,25 @@ public:
   static const char *kValueChecked;
   static const char *kValueNotChecked;
 
-  FilterReader(DataStructModel *aModel);
+  FilterReader();
   virtual ~FilterReader();
-  void openFilter(QString aDir);
-  void openFilter(QString aDir,QString aFilter);
-  void saveFilter(QString aDir);
+  FilterSpec openFilter(QString aDir);
+  FilterSpec openFilter(QString aDir,QString aFilterSpec);
+  void saveFilter(QString aDir,DataStructModel *aDataStructModel);
 
 protected:
   QXmlStreamReader reader;
-  DataStructModel *_DataStructModel;
 
-  void readWsdlfilterElement();
-  void readFieldElements();
-  void updateMessageIsChecked(FieldItem *aItem,QString aIsChecked);
-  void updateMessageTestScope(FieldItem *aItem,QString aTestScope);
-  void updateMessageFormat(FieldItem *aItem,QString aFormat);
-  void updateMessagePostfix(FieldItem *aItem,QString aPostfix);
-  void readConfigElements();
+  void readWsdlfilterElement(FilterSpec &aFilterSpec);
+  void readFieldElements(FilterSpec &aFilterSpec);
+  void readConfigElements(FilterSpec &aFilterSpec);
   void skipUnknownElement();
 
-  void writeWsdlfilterDocument(QXmlStreamWriter &aWriter);
+  void writeWsdlfilterDocument(
+      QXmlStreamWriter &aWriter,DataStructModel *aDataStructModel);
   void writeConfigElements(QXmlStreamWriter &aWriter);
-  void writeFieldElements(QXmlStreamWriter &aWriter);
+  void writeFieldElements(
+      QXmlStreamWriter &aWriter,DataStructModel *aDataStructModel);
 };
 
 #endif /* FilterReader_hh */
