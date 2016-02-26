@@ -60,8 +60,9 @@ signals:
 public slots:
 
   // handle menu/toolbar actions
-  void onFileOpenAction();
-  void onFileSaveAction();
+  void onOpenFilterAction();
+  void onOpenCustomFilterAction();
+  void onSaveCustomFilterAction();
   void onOutputModeAction(QAction *aAction);
   void onCustomFormatToolAction();
   void onPropagateCheckAction();

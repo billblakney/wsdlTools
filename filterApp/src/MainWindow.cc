@@ -226,9 +226,29 @@ void MainWindow::setInitialStructName(std::string aStructName)
   _StructName = aStructName;
 }
 
+#include <QDir>
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MainWindow::onFileOpenAction()
+void MainWindow::onOpenFilterAction()
+{
+  std::cout << "Reading filters for msgId " << _StructName << std::endl;
+  std::cout << "Using dir  " << qPrintable(_AppConfig.getDefaultFiltersDir()) << std::endl;
+  QDir tDir;
+
+  QStringList tFilters;
+  tFilters.push_back(QString(_StructName.c_str()) + ".*");
+
+  tDir.setCurrent(_AppConfig.getDefaultFiltersDir());
+  QStringList tList = tDir.entryList(tFilters);
+  for (int tIdx = 0; tIdx < tList.size(); tIdx++)
+  {
+    std::cout << "file: " << qPrintable(tList[tIdx]) << std::endl;
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void MainWindow::onOpenCustomFilterAction()
 {
   FilterSpec tSpec = _FilterReader->openFilter(
       _AppConfig.getCustomFiltersDir());
@@ -238,7 +258,7 @@ void MainWindow::onFileOpenAction()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void MainWindow::onFileSaveAction()
+void MainWindow::onSaveCustomFilterAction()
 {
   _FilterReader->saveFilter(
       _AppConfig.getCustomFiltersDir(),_DataStructModel);
@@ -371,33 +391,41 @@ void MainWindow::setupFileActions(QMenu *aMenu,QToolBar *aToolBar)
   QPixmap tFileSave(":/document_save.png");
 
   // actions
-  QAction *tFileOpenAction =
-      new QAction(QIcon(tFileOpen),"Open &file", this);
-  QAction *tFileSaveAction =
-      new QAction(QIcon(tFileSave),"Save &file", this);
+  QAction *tOpenFilterAction =
+      new QAction(QIcon(tFileOpen/*TODO icon*/),"Open filter", this);
+  QAction *tOpenCustomFilterAction =
+      new QAction(QIcon(tFileOpen),"Open custom filter", this);
+  QAction *tSaveCustomFilterAction =
+      new QAction(QIcon(tFileSave),"Save custom filter", this);
 
   // short-cuts
-  tFileOpenAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
-  tFileSaveAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+  tOpenFilterAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F));
+  tOpenCustomFilterAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
+  tSaveCustomFilterAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
 
   // check boxes
-  tFileOpenAction->setCheckable(false);
-  tFileSaveAction->setCheckable(false);
+  tOpenFilterAction->setCheckable(false);
+  tOpenCustomFilterAction->setCheckable(false);
+  tSaveCustomFilterAction->setCheckable(false);
 
   // action signal-slot
-  connect(tFileOpenAction,SIGNAL(triggered()),
-      this,SLOT(onFileOpenAction()));
-  connect(tFileSaveAction,SIGNAL(triggered()),
-      this,SLOT(onFileSaveAction()));
+  connect(tOpenFilterAction,SIGNAL(triggered()),
+      this,SLOT(onOpenFilterAction()));
+  connect(tOpenCustomFilterAction,SIGNAL(triggered()),
+      this,SLOT(onOpenCustomFilterAction()));
+  connect(tSaveCustomFilterAction,SIGNAL(triggered()),
+      this,SLOT(onSaveCustomFilterAction()));
 
   // menu
   aMenu = menuBar()->addMenu("&File");
-  aMenu->addAction(tFileOpenAction);
-  aMenu->addAction(tFileSaveAction);
+  aMenu->addAction(tOpenFilterAction);
+  aMenu->addAction(tOpenCustomFilterAction);
+  aMenu->addAction(tSaveCustomFilterAction);
 
   // toolbar
-  aToolBar->addAction(tFileOpenAction);
-  aToolBar->addAction(tFileSaveAction);
+  aToolBar->addAction(tOpenFilterAction);
+  aToolBar->addAction(tOpenCustomFilterAction);
+  aToolBar->addAction(tSaveCustomFilterAction);
 }
 
 //-----------------------------------------------------------------------------
