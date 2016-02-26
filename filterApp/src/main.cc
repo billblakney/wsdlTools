@@ -16,7 +16,7 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 typedef struct CmdLineArgs {
   bool isBrowseMode;
   QString appConfigFile;
-  QString headerFile;
+  QString headerFile; // specifies
   QString initialStruct;
 } CmdLineArgs;
 
@@ -26,10 +26,12 @@ void printUsage()
 {
   static const char *tUsage =
   "\nFilter mode:"
-  "app_iec_wsdlFilter [-a <app_config_file>]\n"
+  "app_iec_wsdlFilter [-a <app_config_file>] [-f <header_file>\n"
   "   where <app_config_file> is the application configuration file, which\n"
   "   takes its default value from the environment variable\n"
   "   WSDL_FILTER_CONFIG_FILE\n"
+  "   where <header_file> specifies a header file that overrides the\n"
+  "   default header file specifed in the application configuration file\n"
   "\nBrowse mode:\n"
   "app_iec_wsdlFilter -b [-f <header_file>] [-s <struct_name>]\n"
   "   where <header_file> is header file to be browsed, which takes its\n"
@@ -207,9 +209,17 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
 void runStreamReaderMode(
     QApplication &app,CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
 {
-  Q_UNUSED(aArgs);
-
   std::cout << "Running in filter mode..." << std::endl;
+
+  /*
+   * TODO test
+   * Make a call to determineHeadeFile to see if the user has used the -f
+   * command-line arg to override the default header file. If he has, then
+   * update the value in aAppConfigReader, which other code will use to find
+   * the default header file.
+   */
+  QString tDefaultHeaderFile = determineHeaderFile(aArgs,aAppConfigReader);
+  aAppConfigReader->appConfig().SetDefaultHeader(tDefaultHeaderFile);
 
   /*
    * Create the record processor.
