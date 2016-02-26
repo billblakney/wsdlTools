@@ -121,7 +121,7 @@ void MainWindow::init()
   _AsIsCheckBox = 0;
   _LongnameCheckBox = 0;
   _TableCheckBox = 0;
-  _FilterSpecReader = 0;
+  _FilterReader = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -191,11 +191,11 @@ void MainWindow::setTreeViewStruct(
   /*
    * Create the config file manager. //TODO explain why here
    */
-  if (_FilterSpecReader)
+  if (_FilterReader)
   {
-    delete _FilterSpecReader;
+    delete _FilterReader;
   }
-  _FilterSpecReader = new FilterSpecReader(_DataStructModel);
+  _FilterReader = new FilterReader(_DataStructModel);
 
   connect(_DataStructModel, SIGNAL(modelUpdated()),
       this,SLOT(onModelUpdate()));
@@ -230,7 +230,7 @@ void MainWindow::setInitialStructName(std::string aStructName)
 //-----------------------------------------------------------------------------
 void MainWindow::onFileOpenAction()
 {
-  _FilterSpecReader->openConfiguration(
+  _FilterReader->openFilter(
       _AppConfig.getCustomFiltersDir());
 }
 
@@ -238,7 +238,7 @@ void MainWindow::onFileOpenAction()
 //-----------------------------------------------------------------------------
 void MainWindow::onFileSaveAction()
 {
-  _FilterSpecReader->saveConfiguration(
+  _FilterReader->saveFilter(
       _AppConfig.getCustomFiltersDir());
 }
 
@@ -1178,7 +1178,7 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
     if (tFilter.length() > 0)
     {
       QString tDir = _AppConfig.getDefaultFiltersDir();
-      _FilterSpecReader->openConfiguration(tDir,tFilter);
+      _FilterReader->openFilter(tDir,tFilter);
     }
   }
 

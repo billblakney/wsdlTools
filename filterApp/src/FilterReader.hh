@@ -1,10 +1,10 @@
-#ifndef MessageSpecReader_hh
-#define MessageSpecReader_hh
+#ifndef FilterReader_hh
+#define FilterReader_hh
 
 #include <QXmlStreamReader>
 #include "DataStructModel.hh"
 
-class FilterSpecReader
+class FilterReader
 {
 public:
   static std::string kTag;
@@ -23,11 +23,11 @@ public:
   static const char *kValueChecked;
   static const char *kValueNotChecked;
 
-  FilterSpecReader(DataStructModel *aModel);
-  virtual ~FilterSpecReader();
-  void openConfiguration(QString aDir);
-  void openConfiguration(QString aDir,QString aFilter);
-  void saveConfiguration(QString aDir);
+  FilterReader(DataStructModel *aModel);
+  virtual ~FilterReader();
+  void openFilter(QString aDir);
+  void openFilter(QString aDir,QString aFilter);
+  void saveFilter(QString aDir);
 
 protected:
   QXmlStreamReader reader;
@@ -47,4 +47,4 @@ protected:
   void writeFieldElements(QXmlStreamWriter &aWriter);
 };
 
-#endif /* MessageSpecReader_hh */
+#endif /* FilterReader_hh */

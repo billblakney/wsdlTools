@@ -11,7 +11,7 @@
 #include <QMainWindow>
 #include "AppConfigReader.hh"
 #include "DataStructModel.hh"
-#include "FilterSpecReader.hh"
+#include "FilterReader.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "StructorBuilder.hh"
@@ -134,7 +134,7 @@ protected:
   QCheckBox *_LongnameCheckBox;
   QCheckBox *_TableCheckBox;
 
-  FilterSpecReader *_FilterSpecReader;
+  FilterReader *_FilterReader;
 
   void init();
 

@@ -1,51 +1,51 @@
-#include "FilterSpecReader.hh"
+#include "FilterReader.hh"
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QXmlStreamWriter>
 #include "DataStructModel.hh"
 
-const char *FilterSpecReader::kWsdlfilterconfigTag = "wsdlfilter";
-const char *FilterSpecReader::kDefaultsTag = "config";
-const char *FilterSpecReader::kOperateModeTag = "operate_mode";
-const char *FilterSpecReader::kDelimitModeTag = "delimit_mode";
-const char *FilterSpecReader::kFieldsTag = "fields";
-const char *FilterSpecReader::kFieldTag = "field";
-const char *FilterSpecReader::kAttrKeyTag = "key";
-const char *FilterSpecReader::kAttrCheckedTag = "checked";
-const char *FilterSpecReader::kAttrFilterScopeTag = "filter_scope";
-const char *FilterSpecReader::kAttrFormatTag = "format";
-const char *FilterSpecReader::kAttrPostfixTag = "postfix";
-const char *FilterSpecReader::kValueChecked = "1";
-const char *FilterSpecReader::kValueNotChecked = "0";
+const char *FilterReader::kWsdlfilterconfigTag = "wsdlfilter";
+const char *FilterReader::kDefaultsTag = "config";
+const char *FilterReader::kOperateModeTag = "operate_mode";
+const char *FilterReader::kDelimitModeTag = "delimit_mode";
+const char *FilterReader::kFieldsTag = "fields";
+const char *FilterReader::kFieldTag = "field";
+const char *FilterReader::kAttrKeyTag = "key";
+const char *FilterReader::kAttrCheckedTag = "checked";
+const char *FilterReader::kAttrFilterScopeTag = "filter_scope";
+const char *FilterReader::kAttrFormatTag = "format";
+const char *FilterReader::kAttrPostfixTag = "postfix";
+const char *FilterReader::kValueChecked = "1";
+const char *FilterReader::kValueNotChecked = "0";
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-FilterSpecReader::FilterSpecReader(DataStructModel *aModel)
+FilterReader::FilterReader(DataStructModel *aModel)
 {
   _DataStructModel = aModel;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-FilterSpecReader::~FilterSpecReader()
+FilterReader::~FilterReader()
 {
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::openConfiguration(QString aDir)
+void FilterReader::openFilter(QString aDir)
 {
   QString tFilepath = QFileDialog::getOpenFileName(0,
       QString("Open WSDL Config File"), aDir,
       QString("WSDL Config Files (*.wcf *.wpf)"));
 
-  openConfiguration(QString(""),tFilepath);
+  openFilter(QString(""),tFilepath);
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::openConfiguration(QString aDir,QString aFilename)
+void FilterReader::openFilter(QString aDir,QString aFilename)
 {
   QString aFilepath;
   if (aDir.length())
@@ -94,7 +94,7 @@ void FilterSpecReader::openConfiguration(QString aDir,QString aFilename)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::readWsdlfilterElement()
+void FilterReader::readWsdlfilterElement()
 {
   reader.readNext();
 
@@ -121,7 +121,7 @@ void FilterSpecReader::readWsdlfilterElement()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::readConfigElements()
+void FilterReader::readConfigElements()
 {
   reader.readNext();
 
@@ -150,7 +150,7 @@ void FilterSpecReader::readConfigElements()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::readFieldElements()
+void FilterReader::readFieldElements()
 {
   reader.readNext();
 
@@ -194,7 +194,7 @@ void FilterSpecReader::readFieldElements()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::updateMessageIsChecked(FieldItem *aItem,
+void FilterReader::updateMessageIsChecked(FieldItem *aItem,
     QString aIsChecked)
 {
   bool tNewIsCheckedValue =
@@ -216,7 +216,7 @@ void FilterSpecReader::updateMessageIsChecked(FieldItem *aItem,
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::updateMessageTestScope(FieldItem *aItem,
+void FilterReader::updateMessageTestScope(FieldItem *aItem,
       QString aNewTestScope)
 {
   QString tOldTestScope(aItem->getData().getTestScope().c_str());
@@ -229,7 +229,7 @@ void FilterSpecReader::updateMessageTestScope(FieldItem *aItem,
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::updateMessageFormat(FieldItem *aItem,
+void FilterReader::updateMessageFormat(FieldItem *aItem,
     QString aNewFormat)
 {
   FieldItemData::Format tOldFormatValue = aItem->getData().getFormat();
@@ -243,7 +243,7 @@ void FilterSpecReader::updateMessageFormat(FieldItem *aItem,
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::updateMessagePostfix(FieldItem *aItem,
+void FilterReader::updateMessagePostfix(FieldItem *aItem,
     QString aNewPostfix)
 {
   QString tOldPostfix(aItem->getData().getPostfix().c_str());
@@ -256,7 +256,7 @@ void FilterSpecReader::updateMessagePostfix(FieldItem *aItem,
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::skipUnknownElement()
+void FilterReader::skipUnknownElement()
 {
   std::cout << "WARN: skipping unknown xml element" << std::endl;
 
@@ -282,7 +282,7 @@ void FilterSpecReader::skipUnknownElement()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::saveConfiguration(QString aDir)
+void FilterReader::saveFilter(QString aDir)
 {
 
   QString tFileName = QFileDialog::getSaveFileName(0,
@@ -312,7 +312,7 @@ void FilterSpecReader::saveConfiguration(QString aDir)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
+void FilterReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
 {
   // Writes a document start with the XML version number.
   aWriter.writeStartDocument();
@@ -331,7 +331,7 @@ void FilterSpecReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::writeConfigElements(QXmlStreamWriter &aWriter)
+void FilterReader::writeConfigElements(QXmlStreamWriter &aWriter)
 {
   aWriter.writeStartElement(kDefaultsTag);
 
@@ -348,7 +348,7 @@ void FilterSpecReader::writeConfigElements(QXmlStreamWriter &aWriter)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterSpecReader::writeFieldElements(QXmlStreamWriter &aWriter)
+void FilterReader::writeFieldElements(QXmlStreamWriter &aWriter)
 {
   std::vector<FieldItem *> &tTreeItems = _DataStructModel->getTreeItems();
 
