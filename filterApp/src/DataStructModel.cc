@@ -715,10 +715,10 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
     {
       if (index.column() == eColFormat)
       {
-        RecordProcessor::FormatMode tFormatEnum =
-            static_cast<RecordProcessor::FormatMode>(
+        FieldItemData::Format tFormatEnum =
+            static_cast<FieldItemData::Format>(
                 item->data(eColFormat).toInt());
-        return RecordProcessor::getFormatModeString(tFormatEnum);
+        return FieldItemData::getFormatString(tFormatEnum);
       }
       return item->data(index.column());
       break;

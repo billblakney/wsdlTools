@@ -803,7 +803,7 @@ StructTreeView *MainWindow::createTreeView(QWidget *aParent)
       DataStructModel::eColTestScope,tTestScopeDelegate);
 
   ComboBoxDelegate *tFormatDelegate =
-      new ComboBoxDelegate(RecordProcessor::getFormatModeStringList(),this);
+      new ComboBoxDelegate(FieldItemData::getFormatStringList(),this);
   tTreeView->setItemDelegateForColumn(
       DataStructModel::eColFormat,tFormatDelegate);
 

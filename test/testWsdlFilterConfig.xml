@@ -9,11 +9,13 @@
         <custom_filters_dir>/tmp</custom_filters_dir>
     </config>
     <messages>
+<!--
         <message>
             <id>ssifg_STUDENT_MSG_ID</id>
             <struct>STUDENT_T</struct>
             <default_filter>STUDENT_T.student_grades.wcf</default_filter>
         </message>
+-->
         <message>
             <id>ssifg_FACULTY_MSG_ID</id>
             <struct>FACULTY_T</struct>

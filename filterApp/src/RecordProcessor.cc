@@ -198,16 +198,25 @@ void RecordProcessor::formatLines()
 //-----------------------------------------------------------------------------
 // TODO at this point, we are changing the referenced line. This may mess
 // things up if later more things are done with the original lines.
+// eAsIs
+// eNameValue
+// eLongnameValue
+// eValue
 //-----------------------------------------------------------------------------
 void RecordProcessor::applyFormat(RecordLine &aRecordLine,
     FieldItemData::Format aFormat)
 {
   switch (aFormat) {
-    case FieldItemData::eValue:
-      aRecordLine.line = aRecordLine.lineFieldValue;
+    case FieldItemData::eAsIs: // do nothing
+      break;
+    case FieldItemData::eNameValue:
+      aRecordLine.line = aRecordLine.nodeName + ": " + aRecordLine.lineFieldValue;
       break;
     case FieldItemData::eLongnameValue:
       aRecordLine.line = aRecordLine.lineDotString + ": " + aRecordLine.lineFieldValue;
+      break;
+    case FieldItemData::eValue:
+      aRecordLine.line = aRecordLine.lineFieldValue;
       break;
     default:
       break;
