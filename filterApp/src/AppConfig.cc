@@ -72,10 +72,12 @@ void AppConfig::SetDefaultDelimitMode(const QString& header)
 QString AppConfig::toQString()
 {
   QString tStr;
-  tStr += "default_filters_dir: " + _DefaultFiltersDir + "\n";
-  tStr += "custom_filters_dir: " + _CustomFiltersDir + "\n";
-  tStr += "default_operate_mode: " + _DefaultOperateMode + "\n";
-  tStr += "default_delimit_mode: " + _DefaultDelimitMode;
+  tStr += "default header......... " + _DefaultHeader + "\n";
+  tStr += "headers dir............ " + _HeadersDir + "\n";
+  tStr += "filters dir............ " + _DefaultFiltersDir + "\n";
+  tStr += "custom filters dir..... " + _CustomFiltersDir + "\n";
+  tStr += "default operate mode... " + _DefaultOperateMode + "\n";
+  tStr += "default delimit mode... " + _DefaultDelimitMode;
   return tStr;
 }
 

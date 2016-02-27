@@ -106,6 +106,8 @@ void MainWindow::init()
   _DelimitToolBar = 0;
   _FormatToolBar = 0;
   _ToolToolBar = 0;
+  _OperateActionGroup = 0;
+  _DelimitActionGroup = 0;
   _ViewFileToolbarAction = 0;
   _ViewOperateToolbarAction = 0;
   _ViewDelimitToolbarAction = 0;
@@ -253,7 +255,7 @@ void MainWindow::onOpenCustomFilterAction()
   FilterSpec tSpec = _FilterReader->openFilter(
       _AppConfig.getCustomFiltersDir());
 
-  tSpec.apply(_DataStructModel,this,_StreamReader,_RecordProcessor);//TODO
+  tSpec.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
 }
 
 //-----------------------------------------------------------------------------
@@ -456,15 +458,13 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
   tBypassAction->setCheckable(true);
   tEnterAction->setCheckable(false);
 
-  tGoAction->setChecked(true);
-
   // action data for action group trigger
   tGoAction->setData(QVariant(StreamReader::eGo));
   tStopAction->setData(QVariant(StreamReader::eStop));
   tBypassAction->setData(QVariant(StreamReader::eBypass));
 
   // action group
-  _OperateActionGroup = new QActionGroup(this);
+  _OperateActionGroup = new OperateActionGroup(this);
   _OperateActionGroup->addAction(tGoAction);
   _OperateActionGroup->addAction(tStopAction);
   _OperateActionGroup->addAction(tBypassAction);
@@ -493,28 +493,10 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
   aToolBar->addSeparator();
   aToolBar->addAction(tEnterAction);
 
-  //TODO ok here?
-  onOperateModeAction(tGoAction); // initializes status label to the default
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-QAction *MainWindow::getOperateAction(StreamReader::OperateMode aOperateMode)
-{
-  QAction *tAction = NULL;
-
-  QList<QAction *> tActions = _OperateActionGroup->actions();
-  for (int tIdx = 0; tIdx < tActions.size(); tIdx++)
-  {
-      if (aOperateMode ==
-          static_cast<StreamReader::OperateMode>(
-              tActions[tIdx]->data().toInt()))
-      {
-        tAction = tActions[tIdx];
-        break;
-      }
-  }
-  return tAction;
+  // activate the default action
+  QAction *tDefaultAction = _OperateActionGroup->getAction(
+      _StreamReader->getOperateMode());
+  tDefaultAction->setChecked(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -539,21 +521,19 @@ void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
   tDelimitOperateAction->setCheckable(true);
   tDelimitNoneAction->setCheckable(true);
 
-  tDelimitOperateAction->setChecked(true);
-
   // action data for action group trigger
   tDelimitAllAction->setData(QVariant(StreamReader::eAllRecords));
   tDelimitOperateAction->setData(QVariant(StreamReader::eOutputRecords));
   tDelimitNoneAction->setData(QVariant(StreamReader::eNoRecords));
 
   // action group
-  QActionGroup *tDelimitGroup = new QActionGroup(this);
-  tDelimitGroup->addAction(tDelimitOperateAction);
-  tDelimitGroup->addAction(tDelimitNoneAction);
-  tDelimitGroup->addAction(tDelimitAllAction);
+  _DelimitActionGroup = new DelimitActionGroup(this);
+  _DelimitActionGroup->addAction(tDelimitOperateAction);
+  _DelimitActionGroup->addAction(tDelimitNoneAction);
+  _DelimitActionGroup->addAction(tDelimitAllAction);
 
   // action signal-slot
-  connect(tDelimitGroup, SIGNAL(triggered(QAction*)), _StreamReader,
+  connect(_DelimitActionGroup, SIGNAL(triggered(QAction*)), _StreamReader,
       SLOT(onDelimitModeAction(QAction*)));
 
   // menu
@@ -566,6 +546,11 @@ void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
   aToolBar->addAction(tDelimitOperateAction);
   aToolBar->addAction(tDelimitNoneAction);
   aToolBar->addAction(tDelimitAllAction);
+
+  // activate the default action
+  QAction *tDefaultAction = _DelimitActionGroup->getAction(
+      _StreamReader->getDelimitMode());
+  tDefaultAction->setChecked(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -1229,7 +1214,7 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
     {
       QString tDir = _AppConfig.getDefaultFiltersDir();
       FilterSpec tSpec = _FilterReader->openFilter(tDir,tFilter);
-      tSpec.apply(_DataStructModel,this,_StreamReader,_RecordProcessor);
+      tSpec.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
     }
   }
 

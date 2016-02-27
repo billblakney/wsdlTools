@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdlfilterconfig>
     <config>
+        <default_operate_mode>eGo</default_operate_mode>
+        <default_delimit_mode>eAllRecords</default_delimit_mode>
         <headers_dir>${WSDL_HEADERS_DIR}</headers_dir>
         <default_header>${WSDL_DEFAULT_HEADER}</default_header>
         <default_filters_dir>${WSDL_FILTERS_DIR}</default_filters_dir>
         <custom_filters_dir>/tmp</custom_filters_dir>
-        <default_operate_mode>go</default_operate_mode>
-        <default_delimit_mode>on_out</default_delimit_mode>
     </config>
     <messages>
         <message>

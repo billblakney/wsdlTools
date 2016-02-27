@@ -11,14 +11,14 @@ QStringList StreamReader::_DelimitModeNames = delimitModeNames();
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-StreamReader::StreamReader(RecordProcessor *aRecordProcessor)
+StreamReader::StreamReader(RecordProcessor *aRecordProcessor,
+      OperateMode aOperateMode,DelimitMode aDelimitMode)
   : _NumRecordsTotal(0),
     _NumRecordsOutput(0),
     _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
-    _DelimitMode(eOutputRecords),
-    _OperateMode(eGo),
-    _InDelimitRecordsMode(true)
+    _OperateMode(aOperateMode),
+    _DelimitMode(aDelimitMode)
 {
 }
 

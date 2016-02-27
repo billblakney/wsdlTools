@@ -41,6 +41,7 @@ HEADERS += \
            AppConfigReader.hh \
            ComboBoxDelegate.hh \
            DataStructModel.hh \
+           DelimitActionGroup.hh \
            FieldItem.hh \
            FieldItemData.hh \
            FieldSpec.hh \
@@ -49,6 +50,7 @@ HEADERS += \
            LineMatcher.hh \
            MainWindow.hh \
            MessageSpec.hh \
+           OperateActionGroup.hh \
            RecordLine.hh \
            RecordProcessor.hh \
            RecordWriter.hh \
@@ -64,6 +66,7 @@ SOURCES += \
            AppConfigReader.cc \
            ComboBoxDelegate.cc \
            DataStructModel.cc \
+           DelimitActionGroup.cc \
            FieldItem.cc \
            FieldItemData.cc \
            FieldSpec.cc \
@@ -72,6 +75,7 @@ SOURCES += \
            LineMatcher.cc \
            MainWindow.cc \
            MessageSpec.cc \
+           OperateActionGroup.cc \
            RecordLine.cc \
            RecordProcessor.cc \
            RecordWriter.cc \

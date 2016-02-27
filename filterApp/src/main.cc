@@ -87,7 +87,8 @@ QString determineAppConfigFilename(CmdLineArgs aArgs)
 //-------------------------------------------------------------------------------
 QString determineHeaderFile(CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
 {
-  static const char *kHeaderFile ="/opt/idp/cots/iec/rtf/static/CLIR_CAR_cxsd.H";
+  static const char *kHeaderDir ="/opt/idp/cots/iec/rtf/static";//TODO header dir cmd arg
+  static const char *kHeaderFile ="CLIR_CAR_cxsd.H";
 
   QString tHeaderFile(kHeaderFile);
 
@@ -104,12 +105,10 @@ QString determineHeaderFile(CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
    */
   if (aAppConfigReader)
   {
-    QString tHeadersDir = aAppConfigReader->appConfig().getHeadersDir();
     QString tHeader = aAppConfigReader->appConfig().getDefaultHeader();
-    if (tHeadersDir.length() > 0 && tHeader.length() > 0)
+    if (tHeader.length() > 0)
     {
-      QString tHeaderFilePath(tHeadersDir + "/" + tHeader);
-      return tHeaderFilePath;
+      return tHeader;
     }
   }
 
@@ -215,6 +214,9 @@ void runStreamReaderMode(
 {
   std::cout << "Running in filter mode..." << std::endl;
 
+  AppConfig &aAppConfig = aAppConfigReader->appConfig();
+  MessageSpecMap &aMessageSpecMap = aAppConfigReader->messageMap();
+
   /*
    * TODO test
    * Make a call to determineHeadeFile to see if the user has used the -f
@@ -223,7 +225,7 @@ void runStreamReaderMode(
    * the default header file.
    */
   QString tDefaultHeaderFile = determineHeaderFile(aArgs,aAppConfigReader);
-  aAppConfigReader->appConfig().SetDefaultHeader(tDefaultHeaderFile);
+  aAppConfig.SetDefaultHeader(tDefaultHeaderFile);
 
   /*
    * Create the record processor.
@@ -233,14 +235,19 @@ void runStreamReaderMode(
   /*
    * Create the stream reader.
    */
-  StreamReader *tStreamReader = new StreamReader(tRecordProcessor);
+  StreamReader::OperateMode tOperateMode =
+      StreamReader::getOperateMode(aAppConfig.getDefaultOperateMode());
+  StreamReader::DelimitMode tDelimitMode =
+      StreamReader::getDelimitMode(aAppConfig.getDefaultDelimitMode());
+  StreamReader *tStreamReader = new StreamReader(
+      tRecordProcessor,tOperateMode,tDelimitMode);
 
   /*
    * Create the main window. It won't be launched until later though, after
    * the stream reader has determined which data structure type is being read.
    */
-  MainWindow *tMainWindow = new MainWindow(app,0,aAppConfigReader->appConfig(),
-      aAppConfigReader->messageMap(),tStreamReader,tRecordProcessor);
+  MainWindow *tMainWindow = new MainWindow(app,0,aAppConfig,aMessageSpecMap,
+      tStreamReader,tRecordProcessor);
   // tMainWindow->setGeometry(1920 + 530,135,625,900);
   // tMainWindow->setGeometry(1920      ,135,900,900);
   tMainWindow->setGeometry(1920      ,135,650,700);

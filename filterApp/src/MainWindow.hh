@@ -12,7 +12,9 @@
 #include <QMainWindow>
 #include "AppConfigReader.hh"
 #include "DataStructModel.hh"
+#include "DelimitActionGroup.hh"
 #include "FilterReader.hh"
+#include "OperateActionGroup.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "StructorBuilder.hh"
@@ -46,8 +48,6 @@ public:
 	void setTreeViewStruct(std::string aStructName); //TODO
 
 	DataStructModel *getDataStructModel(){return _DataStructModel;}//TODO
-QActionGroup *_OperateActionGroup;//TODO
-QAction *getOperateAction(StreamReader::OperateMode aOperateMode);
 
 signals:
 
@@ -105,6 +105,9 @@ protected:
   QToolBar           *_FormatToolBar;
   QToolBar           *_TreeToolBar;
   QToolBar           *_ToolToolBar;
+
+  OperateActionGroup *_OperateActionGroup;
+  DelimitActionGroup *_DelimitActionGroup;
 
   QAction             *_ViewFileToolbarAction;
   QAction             *_ViewOperateToolbarAction;

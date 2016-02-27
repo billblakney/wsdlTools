@@ -33,7 +33,9 @@ public:
   static QString getOperateModeString(OperateMode aOperateMode);
   static QStringList getOperateModeStringList();
 
-  StreamReader(RecordProcessor *aRecordProcessor);
+  StreamReader(RecordProcessor *aRecordProcessor,
+      OperateMode aOperateMode = eGo,
+      DelimitMode aDelimitMode = eOutputRecords);
   virtual ~StreamReader();
   void setRecordWriter(RecordWriter *aWriter);
 
@@ -76,9 +78,8 @@ protected:
   RecordProcessor             *_RecordProcessor;
   std::vector<RecordWriter *>  _Writers;
   DataStructModel             *_DataStructModel;
-  DelimitMode                  _DelimitMode;
   OperateMode                  _OperateMode;
-  bool                         _InDelimitRecordsMode;
+  DelimitMode                  _DelimitMode;
 
   QMutex _Mutex;
 

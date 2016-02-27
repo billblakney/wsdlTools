@@ -5,19 +5,20 @@
 #include <QActionGroup>
 
 #include "DataStructModel.hh"
+#include "DelimitActionGroup.hh"
+#include "OperateActionGroup.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
 #include "FieldSpec.hh"
-
-class MainWindow; //TODO remove when
 
 class FilterSpec
 {
 public:
   FilterSpec();
   virtual ~FilterSpec();
-  void apply(DataStructModel *aDataStructModel,MainWindow *aMainWindow,
-      StreamReader *aStreamReader,RecordProcessor *aRecordProcessor);
+  void apply(DataStructModel *aDataStructModel,
+      OperateActionGroup *aOperateActionGroup,
+      DelimitActionGroup *aDelimitActionGroup);
 
   bool _HasErrors;
   QString _OperateMode;
