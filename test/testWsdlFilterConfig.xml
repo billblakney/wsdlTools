@@ -12,7 +12,7 @@
         <message>
             <id>ssifg_STUDENT_MSG_ID</id>
             <struct>STUDENT_T</struct>
-            <default_filter>student_grades.wcf</default_filter>
+            <default_filter>STUDENT_T.student_grades.wcf</default_filter>
         </message>
         <message>
             <id>ssifg_FACULTY_MSG_ID</id>

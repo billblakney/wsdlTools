@@ -1,6 +1,8 @@
 #include "FilterReader.hh"
 #include "FilterSpec.hh"
 
+#include "MainWindow.hh" //TODO remove when...
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 FilterSpec::FilterSpec()
@@ -15,9 +17,35 @@ FilterSpec::~FilterSpec()
 }
 
 //-----------------------------------------------------------------------------
+//TODO _OperateMode _DelimitMode
 //-----------------------------------------------------------------------------
-void FilterSpec::apply(DataStructModel *aDataStructModel)
+void FilterSpec::apply(DataStructModel *aDataStructModel,MainWindow *aMainWindow,
+    StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
 {
+
+//  StreamReader::OperateMode aMode = StreamReader::eGo;
+//  QList<QAction *> tActions = aOperateGroup->actions();
+//  QAction *tOperateAction = NULL;
+//  for (int tIdx = 0; tIdx < tActions.size(); tIdx++)
+//  {
+//    aMode =
+//      static_cast<StreamReader::OperateMode>(tActions[tIdx]->data().toInt());
+//      if (aMode == StreamReader::getOperateMode(_OperateMode))
+//      {
+//        tOperateAction = tActions[tIdx];
+//        break;
+//      }
+//  }
+
+  StreamReader::OperateMode tOperateMode = StreamReader::getOperateMode(_OperateMode);
+  QAction *tOperateAction = aMainWindow->getOperateAction(tOperateMode);
+  tOperateAction->activate(QAction::Trigger);
+
+
+
+//  aStreamReader->setOperateMode(StreamReader::getOperateMode(_OperateMode));
+  aStreamReader->setDelimitMode(StreamReader::getDelimitMode(_DelimitMode));
+
   std::vector<FieldSpec>::iterator tIter;
 
   for (tIter = _Fields.begin(); tIter != _Fields.end(); tIter++ )

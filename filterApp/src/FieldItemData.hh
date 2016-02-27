@@ -1,5 +1,5 @@
-#ifndef FIELDITEMDATA_HH_
-#define FIELDITEMDATA_HH_
+#ifndef FieldItemData_hh
+#define FieldItemData_hh
 
 #include <string>
 #include <QCheckBox>
@@ -31,11 +31,11 @@ public:
     eAsIs,
     eNameValue,
     eLongnameValue,
-    eValue,
-    eFormatEnd
+    eValue
   };
-
-  static QStringList _FormatNames;
+  static Format getFormat(QString aFormat);
+  static QString getFormatString(Format aFormat);
+  static QStringList getFormatStringList();
 
   FieldItemData();
 
@@ -53,12 +53,6 @@ public:
       Qt::CheckState aTestCheckState = Qt::Unchecked);
 
   virtual ~FieldItemData();
-
-  static QStringList getFormatStringList();
-
-  static QString getFormatString(Format aMode);
-
-  static Format getFormat(QString aFormat);
 
   bool isChecked();
   bool isTestChecked();
@@ -91,6 +85,7 @@ protected:
 
 //  static ccl::Logger sLogger;
 
+  static QStringList _FormatNames;
   static QStringList formatNames();
 
   NodeType           _NodeType;
@@ -106,4 +101,4 @@ protected:
   Qt::CheckState     _TestCheckState;
 };
 
-#endif /* FIELDITEMDATA_HH_ */
+#endif /* FieldItemData_hh */

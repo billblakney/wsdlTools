@@ -9,8 +9,7 @@
 
 ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 
-const char *RecordProcessor::_FormatModeNames[] = {
-      "as-is", "name: value", "longname: value", "value"};
+QStringList RecordProcessor::_FormatModeNames = formatModeNames();
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -27,25 +26,53 @@ RecordProcessor::~RecordProcessor()
 {
 }
 
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-QStringList RecordProcessor::getFormatModeStringList()
+//-------------------------------------------------------------------------------
+// Return format enum value represented by a string.
+// Returns eAsIs if no match is found.
+//-------------------------------------------------------------------------------
+RecordProcessor::FormatMode RecordProcessor::getFormatMode(QString aFormatMode)
 {
-  QStringList tList;
-
-  for (size_t tIdx = 0; tIdx < sizeof(_FormatModeNames)/sizeof(const char*); tIdx++)
+  for (int i = 0; i < _FormatModeNames.size(); i++)
   {
-    tList.append(_FormatModeNames[tIdx]);
+    if (aFormatMode == _FormatModeNames[i])
+    {
+      return static_cast<RecordProcessor::FormatMode>(i);
+    }
   }
-
-  return tList;
+  return eAsIs;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-QString RecordProcessor::getFormatModeString(FormatMode aMode)
+QString RecordProcessor::getFormatModeString(FormatMode aFormatMode)
 {
-  return _FormatModeNames[aMode];
+  if (aFormatMode < _FormatModeNames.size())
+  {
+    return _FormatModeNames[aFormatMode];
+  }
+  else
+  {
+    return QString();
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QStringList RecordProcessor::getFormatModeStringList()
+{
+  return _FormatModeNames;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+QStringList RecordProcessor::formatModeNames()
+{
+  QStringList tList;
+  tList.push_back("eAsIs");
+  tList.push_back("eLongname");
+  tList.push_back("eTable");
+  tList.push_back("eCustom");
+  return tList;
 }
 
 //-----------------------------------------------------------------------------

@@ -6,6 +6,9 @@
 
 ccl::Logger StreamReader::sLogger("StreamReader");
 
+QStringList StreamReader::_OperateModeNames = operateModeNames();
+QStringList StreamReader::_DelimitModeNames = delimitModeNames();
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader(RecordProcessor *aRecordProcessor)
@@ -14,7 +17,7 @@ StreamReader::StreamReader(RecordProcessor *aRecordProcessor)
     _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
     _DelimitMode(eOutputRecords),
-    _OutputMode(eNormal),
+    _OperateMode(eGo),
     _InDelimitRecordsMode(true)
 {
 }
@@ -38,6 +41,102 @@ StreamReader::StreamReader(DataStructModel *aModel,RecordWriter *aWriter)
 //-----------------------------------------------------------------------------
 StreamReader::~StreamReader()
 {
+}
+
+//-------------------------------------------------------------------------------
+// Return operate mode enum value represented by a string.
+// Returns eGo if no match is found.
+//-------------------------------------------------------------------------------
+StreamReader::OperateMode StreamReader::getOperateMode(QString aOperateMode)
+{
+  for (int i = 0; i < _OperateModeNames.size(); i++)
+  {
+    if (aOperateMode == _OperateModeNames[i])
+    {
+      return static_cast<StreamReader::OperateMode>(i);
+    }
+  }
+  return eGo;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QString StreamReader::getOperateModeString(OperateMode aOperateMode)
+{
+  if (aOperateMode < _OperateModeNames.size())
+  {
+    return _OperateModeNames[aOperateMode];
+  }
+  else
+  {
+    return QString();
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QStringList StreamReader::getOperateModeStringList()
+{
+  return _OperateModeNames;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+QStringList StreamReader::operateModeNames()
+{
+  QStringList tList;
+  tList.push_back("eGo");
+  tList.push_back("eStop");
+  tList.push_back("eBypass");
+  return tList;
+}
+
+//-------------------------------------------------------------------------------
+// Return delimit mode enum value represented by a string.
+// Returns eGo if no match is found.
+//-------------------------------------------------------------------------------
+StreamReader::DelimitMode StreamReader::getDelimitMode(QString aDelimitMode)
+{
+  for (int i = 0; i < _DelimitModeNames.size(); i++)
+  {
+    if (aDelimitMode == _DelimitModeNames[i])
+    {
+      return static_cast<StreamReader::DelimitMode>(i);
+    }
+  }
+  return eOutputRecords;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QString StreamReader::getDelimitModeString(DelimitMode aDelimitMode)
+{
+  if (aDelimitMode < _DelimitModeNames.size())
+  {
+    return _DelimitModeNames[aDelimitMode];
+  }
+  else
+  {
+    return QString();
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QStringList StreamReader::getDelimitModeStringList()
+{
+  return _DelimitModeNames;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+QStringList StreamReader::delimitModeNames()
+{
+  QStringList tList;
+  tList.push_back("eAllRecords");
+  tList.push_back("eOutputRecords");
+  tList.push_back("eNoRecords");
+  return tList;
 }
 
 //-----------------------------------------------------------------------------
@@ -71,45 +170,88 @@ void StreamReader::onDataStructModelAvailable(void * aDataStructModel)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-StreamReader::OutputMode StreamReader::getOutputMode()
+void StreamReader::onOperateModeAction(QAction* aAction)
 {
-  OutputMode tOutputMode = eNormal;
-
-  _Mutex.lock();
-  tOutputMode = _OutputMode;
-  _Mutex.unlock();
-
-  return tOutputMode;
+  OperateMode tMode = static_cast<OperateMode>(aAction->data().toInt());
+  setOperateMode(tMode);
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StreamReader::setOutputMode(OutputMode aOutputMode)
+void StreamReader::setOperateMode(OperateMode aOperateMode)
 {
-  if (aOutputMode == eNormal)
+  if (aOperateMode == eGo)
   {
-    std::cout << "Output mode set to NORMAL" << std::endl;
+    std::cout << "Operate mode set to NORMAL" << std::endl;
   }
-  else if (aOutputMode == eBypass)
+  else if (aOperateMode == eStop)
   {
-    std::cout << "Output mode set to BYPASS" << std::endl;
+    std::cout << "Operate mode set to FREEZE" << std::endl;
   }
-  else if (aOutputMode == eFreezeDrop)
+  else if (aOperateMode == eBypass)
   {
-    std::cout << "Output mode set to FREEZE" << std::endl;
+    std::cout << "Operate mode set to BYPASS" << std::endl;
   }
 
   _Mutex.lock();
-  _OutputMode = aOutputMode;
+  _OperateMode = aOperateMode;
   _Mutex.unlock();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StreamReader::onOutputModeAction(QAction* aAction)
+StreamReader::OperateMode StreamReader::getOperateMode()
 {
-  OutputMode tMode = static_cast<OutputMode>(aAction->data().toInt());
-  setOutputMode(tMode);
+  OperateMode tOperateMode = eGo;
+
+  _Mutex.lock();
+  tOperateMode = _OperateMode;
+  _Mutex.unlock();
+
+  return tOperateMode;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::onDelimitModeAction(QAction* aAction)
+{
+  DelimitMode tDelimitMode = static_cast<DelimitMode>(aAction->data().toInt());
+  setDelimitMode(tDelimitMode);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StreamReader::setDelimitMode(DelimitMode aDelimitMode)
+{
+  if (aDelimitMode == eAllRecords)
+  {
+    std::cout << "Delimiting all records." << std::endl;
+  }
+  else if (aDelimitMode == eOutputRecords)
+  {
+    std::cout << "Delimiting output records only." << std::endl;
+  }
+  else if (aDelimitMode == eNoRecords)
+  {
+    std::cout << "Disabling record delimiting." << std::endl;
+  }
+
+  _Mutex.lock();
+  _DelimitMode = aDelimitMode;
+  _Mutex.unlock();
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+StreamReader::DelimitMode StreamReader::getDelimitMode()
+{
+  DelimitMode tDelimitRecordsMode;
+
+  _Mutex.lock();
+  tDelimitRecordsMode = _DelimitMode;
+  _Mutex.unlock();
+
+  return tDelimitRecordsMode;
 }
 
 //-----------------------------------------------------------------------------
@@ -121,43 +263,6 @@ void StreamReader::onEnterSpaceAction()
   {
     std::cout << std::endl;
   }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-bool StreamReader::inDelimitRecordsMode()
-{
-  bool tDelimitRecordsMode;
-
-  _Mutex.lock();
-  tDelimitRecordsMode = _InDelimitRecordsMode;
-  _Mutex.unlock();
-
-  return tDelimitRecordsMode;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void StreamReader::onDelimitModeAction(QAction* aAction)
-{
-  DelimitMode tDelimitMode = static_cast<DelimitMode>(aAction->data().toInt());
-
-  if (tDelimitMode == eAllRecords)
-  {
-    std::cout << "Delimiting all records." << std::endl;
-  }
-  else if (tDelimitMode == eOutputRecords)
-  {
-    std::cout << "Delimiting output records only." << std::endl;
-  }
-  else if (tDelimitMode == eNoRecords)
-  {
-    std::cout << "Disabling record delimiting." << std::endl;
-  }
-
-  _Mutex.lock();
-  _DelimitMode = tDelimitMode;
-  _Mutex.unlock();
 }
 
 //-----------------------------------------------------------------------------
@@ -284,21 +389,21 @@ void StreamReader::readAndProcessStructLines()
     /*
      * If in bypass mode, just echo lines.
      */
-    if (getOutputMode() == eBypass)
+    if (getOperateMode() == eBypass)
     {
       std::cout << tLineBuffer << std::endl;
       continue;
     }
     /*
-     * If in freeze-drop mode, just drop lines.
+     * If in stop mode, just drop lines.
      */
-    else if (getOutputMode() == eFreezeDrop)
+    else if (getOperateMode() == eStop)
     {
       continue;
     }
 
     /*
-     * Not in bypass or freeze-drop mode, so do normal processing.
+     * Not in bypass or stop mode, so do normal processing.
      *
      * At this point, we'll be in one of two modes: looking for the
      * start-of-record delimiter, or processing the other types of lines.

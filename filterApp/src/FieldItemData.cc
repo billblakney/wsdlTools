@@ -56,27 +56,6 @@ FieldItemData::~FieldItemData()
 {
 }
 
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-QStringList FieldItemData::getFormatStringList()
-{
-  return _FormatNames;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-QString FieldItemData::getFormatString(Format aMode)
-{
-  if (aMode < _FormatNames.size())
-  {
-    return _FormatNames[aMode];
-  }
-  else
-  {
-    return QString();
-  }
-}
-
 //-------------------------------------------------------------------------------
 // Return format enum value represented by a string.
 // Returns eAsIs if no match is found.
@@ -93,15 +72,36 @@ FieldItemData::Format FieldItemData::getFormat(QString aFormat)
   return eAsIs;
 }
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QString FieldItemData::getFormatString(Format aFormat)
+{
+  if (aFormat < _FormatNames.size())
+  {
+    return _FormatNames[aFormat];
+  }
+  else
+  {
+    return QString();
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+QStringList FieldItemData::getFormatStringList()
+{
+  return _FormatNames;
+}
+
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 QStringList FieldItemData::formatNames()
 {
   QStringList tList;
-  tList.push_back("as-is");
-  tList.push_back("name: value");
-  tList.push_back("longname: value");
-  tList.push_back("value");
+  tList.push_back("eAsIs");
+  tList.push_back("eNameValue");
+  tList.push_back("eLongnameValue");
+  tList.push_back("eValue");
   return tList;
 }
 

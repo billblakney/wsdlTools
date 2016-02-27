@@ -15,9 +15,23 @@ class StreamReader: public QThread
 
 public:
 
-  enum DelimitMode {eAllRecords, eOutputRecords, eNoRecords};
+  enum DelimitMode {
+    eAllRecords,
+    eOutputRecords,
+    eNoRecords
+  };
+  static DelimitMode getDelimitMode(QString aDelimitMode);
+  static QString getDelimitModeString(DelimitMode aDelimitMode);
+  static QStringList getDelimitModeStringList();
 
-  enum OutputMode {eNormal, eBypass, eFreezeDrop};
+  enum OperateMode {
+    eGo,
+    eStop,
+    eBypass
+  };
+  static OperateMode getOperateMode(QString aOperateMode);
+  static QString getOperateModeString(OperateMode aOperateMode);
+  static QStringList getOperateModeStringList();
 
   StreamReader(RecordProcessor *aRecordProcessor);
   virtual ~StreamReader();
@@ -25,10 +39,10 @@ public:
 
   RecordProcessor *getRecordProcessor();
 
-  OutputMode getOutputMode();
-  void setOutputMode(OutputMode aOutputMode);
+  OperateMode getOperateMode();
+  void setOperateMode(OperateMode aOperateMode);
 
-  bool inDelimitRecordsMode();
+  DelimitMode getDelimitMode();
   void setDelimitMode(DelimitMode aDelimitRecordsMode);
 
 signals:
@@ -39,7 +53,7 @@ public slots:
 
   void onDataStructModelAvailable(void * aDataStructModel);
 
-  void onOutputModeAction(QAction* aAction);
+  void onOperateModeAction(QAction* aAction);
 
   void onEnterSpaceAction();
 
@@ -51,13 +65,19 @@ public slots:
 protected:
   static ccl::Logger sLogger;
 
+  static QStringList _OperateModeNames;
+  static QStringList operateModeNames();
+
+  static QStringList _DelimitModeNames;
+  static QStringList delimitModeNames();
+
   int                          _NumRecordsTotal;
   int                          _NumRecordsOutput;
   RecordProcessor             *_RecordProcessor;
   std::vector<RecordWriter *>  _Writers;
   DataStructModel             *_DataStructModel;
   DelimitMode                  _DelimitMode;
-  OutputMode                   _OutputMode;
+  OperateMode                  _OperateMode;
   bool                         _InDelimitRecordsMode;
 
   QMutex _Mutex;

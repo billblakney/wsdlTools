@@ -2,6 +2,7 @@
 #define MAINWINDOW_HH_
 
 #include <string>
+#include <QActionGroup>
 #include <QComboBox>
 #include <QGroupBox>
 #include <QLabel>
@@ -45,6 +46,8 @@ public:
 	void setTreeViewStruct(std::string aStructName); //TODO
 
 	DataStructModel *getDataStructModel(){return _DataStructModel;}//TODO
+QActionGroup *_OperateActionGroup;//TODO
+QAction *getOperateAction(StreamReader::OperateMode aOperateMode);
 
 signals:
 
@@ -63,7 +66,7 @@ public slots:
   void onOpenFilterAction();
   void onOpenCustomFilterAction();
   void onSaveCustomFilterAction();
-  void onOutputModeAction(QAction *aAction);
+  void onOperateModeAction(QAction *aAction);
   void onCustomFormatToolAction();
   void onPropagateCheckAction();
   void onTestScopeToolAction();

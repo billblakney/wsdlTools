@@ -1,5 +1,5 @@
-#ifndef _RECORDPROCESSOR_HH_
-#define _RECORDPROCESSOR_HH_
+#ifndef RecordProcessor_hh
+#define RecordProcessor_hh
 
 #include <QAction>
 #include <QMutex>
@@ -29,9 +29,15 @@ class RecordProcessor : public QObject
 
 public:
 
-  enum FormatMode {eAsIs, eLongname, eTable, eCustom};
-
-  static const char *_FormatModeNames[];
+  enum FormatMode {
+    eAsIs,
+    eLongname,
+    eTable,
+    eCustom
+  };
+  static FormatMode getFormatMode(QString aFormatMode);
+  static QString getFormatModeString(FormatMode aFormatMode);
+  static QStringList getFormatModeStringList();
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
@@ -40,14 +46,6 @@ public:
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
   virtual ~RecordProcessor();
-
-  //---------------------------------------------------------------------------
-  //---------------------------------------------------------------------------
-  static QStringList getFormatModeStringList();
-
-  //---------------------------------------------------------------------------
-  //---------------------------------------------------------------------------
-  static QString getFormatModeString(FormatMode aMode);
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
@@ -76,6 +74,9 @@ public slots:
 protected:
 
   static ccl::Logger sLogger;
+
+  static QStringList _FormatModeNames;
+  static QStringList formatModeNames();
 
   QMutex _Mutex;
 
@@ -122,4 +123,4 @@ protected:
   void print(const std::string &s1,const std::string &s2);
 };
 
-#endif /* _RECORDPROCESSOR_HH_ */
+#endif /* RecordProcessor_hh */

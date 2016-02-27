@@ -222,7 +222,8 @@ void FilterReader::skipUnknownElement()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::saveFilter(QString aDir,DataStructModel *aModel)
+void FilterReader::saveFilter(QString aDir,DataStructModel *aModel,
+    StreamReader *aStreamReader)
 {
 
   QString tFileName = QFileDialog::getSaveFileName(0,
@@ -245,22 +246,22 @@ void FilterReader::saveFilter(QString aDir,DataStructModel *aModel)
 
   xmlWriter.setDevice(&file);
 
-  writeWsdlfilterDocument(xmlWriter,aModel);
+  writeWsdlfilterDocument(xmlWriter,aModel,aStreamReader);
 
   file.close();
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::writeWsdlfilterDocument(
-    QXmlStreamWriter &aWriter,DataStructModel *aModel)
+void FilterReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter,
+    DataStructModel *aModel,StreamReader *aStreamReader)
 {
   // Writes a document start with the XML version number.
   aWriter.writeStartDocument();
 
   aWriter.writeStartElement(kWsdlfilterconfigTag);
 
-  writeConfigElements(aWriter);
+  writeConfigElements(aWriter,aStreamReader);
   writeFieldElements(aWriter,aModel);
 
   // end tag wsdlfilter
@@ -272,16 +273,19 @@ void FilterReader::writeWsdlfilterDocument(
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void FilterReader::writeConfigElements(QXmlStreamWriter &aWriter)
+void FilterReader::writeConfigElements(QXmlStreamWriter &aWriter,
+    StreamReader *aStreamReader)
 {
   aWriter.writeStartElement(kDefaultsTag);
 
   aWriter.writeStartElement(kOperateModeTag);
-  aWriter.writeCharacters("go");
+  aWriter.writeCharacters(
+      StreamReader::getOperateModeString(aStreamReader->getOperateMode()));
   aWriter.writeEndElement();
 
   aWriter.writeStartElement(kDelimitModeTag);
-  aWriter.writeCharacters("on_out");
+  aWriter.writeCharacters(
+      StreamReader::getDelimitModeString(aStreamReader->getDelimitMode()));
   aWriter.writeEndElement();
 
   aWriter.writeEndElement(); // config

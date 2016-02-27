@@ -28,7 +28,8 @@ public:
   virtual ~FilterReader();
   FilterSpec openFilter(QString aDir);
   FilterSpec openFilter(QString aDir,QString aFilterSpec);
-  void saveFilter(QString aDir,DataStructModel *aDataStructModel);
+  void saveFilter(QString aDir,DataStructModel *aDataStructModel,
+      StreamReader *aStreamReader);
 
 protected:
   QXmlStreamReader reader;
@@ -39,8 +40,10 @@ protected:
   void skipUnknownElement();
 
   void writeWsdlfilterDocument(
-      QXmlStreamWriter &aWriter,DataStructModel *aDataStructModel);
-  void writeConfigElements(QXmlStreamWriter &aWriter);
+      QXmlStreamWriter &aWriter,DataStructModel *aDataStructModel,
+      StreamReader *aStreamReader);
+  void writeConfigElements(QXmlStreamWriter &aWriter,
+      StreamReader *aStreamReader);
   void writeFieldElements(
       QXmlStreamWriter &aWriter,DataStructModel *aDataStructModel);
 };

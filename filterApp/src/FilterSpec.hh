@@ -2,16 +2,22 @@
 #define FilterSpec_hh
 
 #include <vector>
+#include <QActionGroup>
 
 #include "DataStructModel.hh"
+#include "RecordProcessor.hh"
+#include "StreamReader.hh"
 #include "FieldSpec.hh"
+
+class MainWindow; //TODO remove when
 
 class FilterSpec
 {
 public:
   FilterSpec();
   virtual ~FilterSpec();
-  void apply(DataStructModel *aDataStructModel);
+  void apply(DataStructModel *aDataStructModel,MainWindow *aMainWindow,
+      StreamReader *aStreamReader,RecordProcessor *aRecordProcessor);
 
   bool _HasErrors;
   QString _OperateMode;
