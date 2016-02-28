@@ -45,7 +45,7 @@ public:
 
 	void setInitialStructName(std::string aStructName); //TODO
 
-	void setTreeViewStruct(std::string aStructName); //TODO
+	void setupDataStructModel(std::string aStructName); //TODO
 
 	DataStructModel *getDataStructModel(){return _DataStructModel;}//TODO
 
@@ -165,8 +165,6 @@ protected:
 
   void setStatusLabel(QString aStatus,QPalette aPalette);
 
-  StructTreeView *createTreeView(QWidget *aParent);
-
   QComboBox *createStructComboBox(QWidget *aParent);
 
   QWidget *createTestScopeToolWidget(QWidget *aParent);
@@ -178,9 +176,6 @@ protected:
 	QStringList convertToQStringList(std::vector<std::string> aStrings);
 
 	std::string getMatchString();
-
-	void setTreeViewStruct(
-	    StructTreeView *aStructTreeView,std::string aStructName);
 
 	std::string getHeaderPath(MessageSpec *aMessageSpec);
 

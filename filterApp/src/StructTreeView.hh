@@ -1,14 +1,27 @@
-#ifndef STRUCTTREEVIEW_HH_
-#define STRUCTTREEVIEW_HH_
+#ifndef StructTreeView_hh
+#define StructTreeView_hh
 
 #include <QTreeView>
+
+#include "ComboBoxDelegate.hh"
+
+#include "DataStructModel.hh"
 
 class StructTreeView: public QTreeView
 {
   Q_OBJECT
 public:
-  StructTreeView(QWidget *aParent);
+
+  StructTreeView(QWidget *aParent,DataStructModel *aDataStructModel);
+
   virtual ~StructTreeView();
+
+  void setDataStructModel(DataStructModel * aDataStructModel);
+
+protected:
+  ComboBoxDelegate *_TestScopeDelegate;
+
+  void setupView(DataStructModel *aDataStructModel);
 };
 
-#endif /* STRUCTTREEVIEW_HH_ */
+#endif /* StructTreeView_hh */

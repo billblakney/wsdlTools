@@ -6,7 +6,6 @@
 #include <QButtonGroup>
 #include <QDockWidget>
 #include <QFile>
-#include <QHeaderView>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -15,9 +14,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 #include <QVBoxLayout>
-#include "ComboBoxDelegate.hh"
 #include "PickFilterDialog.hh"
-#include "TestRegexDelegate.hh"
 #include "MainWindow.hh"
 
 using namespace std;
@@ -167,17 +164,7 @@ StructorBuilder *MainWindow::parseHeaderFile(QString aHeaderFile)
 // Create a struct data model for the specified struct name and load it in the
 // tree.
 //-------------------------------------------------------------------------------
-void MainWindow::setTreeViewStruct(std::string aStructName)
-{
-  setTreeViewStruct(_StructTree,aStructName);
-}
-
-//-------------------------------------------------------------------------------
-// Create a struct data model for the specified struct name and load it in the
-// tree.
-//-------------------------------------------------------------------------------
-void MainWindow::setTreeViewStruct(
-    StructTreeView *aStructTreeView,std::string aStructName)
+void MainWindow::setupDataStructModel(std::string aStructName)
 {
   Structure *tStructure = _StructorBuilder->getStructure(aStructName);
   if (!tStructure)
@@ -185,11 +172,6 @@ void MainWindow::setTreeViewStruct(
     std::cerr << "ERROR: couldn't find struct " << aStructName << std::endl;
   }
   _DataStructModel = new DataStructModel(tStructure, _StructorBuilder);
-  aStructTreeView->setModel(_DataStructModel);
-#if 0 //  seems to have no effect
-  _StructTree->resizeColumnToContents(0);
-  _StructTree->resizeColumnToContents(1);
-#endif
 
   /*
    * Create the config file manager. //TODO explain why here
@@ -325,14 +307,6 @@ void MainWindow::setStatusLabel(QString aStatus,QPalette aPalette)
 //-----------------------------------------------------------------------------
 void MainWindow::setupView(std::string aStructName)
 {
-//  if (_IsFilterMode)
-//  {
-    setupMenuAndToolbar();
-//  }
-
-   _CentralWidget = new QWidget(this);
-   setCentralWidget(_CentralWidget);
-
   /*
    * Set the name of the structure to be used for the tree view.
    * When running in the filter mode, aStructName should always have a value.
@@ -349,6 +323,16 @@ void MainWindow::setupView(std::string aStructName)
     _StructName = aStructName;
   }
 
+  setupDataStructModel(_StructName);
+
+//  if (_IsFilterMode)
+//  {
+    setupMenuAndToolbar();
+//  }
+
+   _CentralWidget = new QWidget(this);
+   setCentralWidget(_CentralWidget);
+
   /*
    * Create structure dropdown list.
    */
@@ -363,7 +347,7 @@ void MainWindow::setupView(std::string aStructName)
    * other methods used below rely on _DataStructModel being set before they
    * are called.
    */
-  _StructTree = createTreeView(_CentralWidget);
+  _StructTree = new StructTreeView(_CentralWidget,_DataStructModel);
 
   /*
    * Put widgets in the dialog using box layout.
@@ -668,9 +652,9 @@ void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
   /*
    * Since data struct model is not available at this point, can't make a
    * needed connection for the togglePropagateChecks signal. That connection
-   * is made in setTreeViewStruct.
+   * is made in setupDataStructModel.
    */
-  // connect ... (see setTreeViewStruct)
+  // connect ... (see setupDataStructModel)
 
   // menu
   aMenu = menuBar()->addMenu("&Tree");
@@ -789,55 +773,6 @@ void MainWindow::setupMenuAndToolbar()
   setupToolBarMenu(tMenu);
 
   _FileToolBar->hide();
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-StructTreeView *MainWindow::createTreeView(QWidget *aParent)
-{
-
-  StructTreeView *tTreeView = new StructTreeView(aParent);
-
-//  tTreeView->setSelectionMode(QAbstractItemView::MultiSelection);
-  tTreeView->setSelectionMode(QAbstractItemView::ContiguousSelection);
-
-  setTreeViewStruct(tTreeView,_StructName);
-  tTreeView->header()->resizeSection(DataStructModel::eColFieldName,225);
-  tTreeView->header()->resizeSection(DataStructModel::eColTestRegex,225);
-  tTreeView->header()->resizeSection(DataStructModel::eColTestScope,175);
-  tTreeView->header()->resizeSection(DataStructModel::eColFormat,100);
-  tTreeView->header()->resizeSection(DataStructModel::eColPostfix,75);
-
-  tTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
-
-  TestRegexDelegate *tTestRegexDelegate =
-      new TestRegexDelegate (_DataStructModel,this);
-  tTreeView->setItemDelegateForColumn(
-      DataStructModel::eColTestRegex,tTestRegexDelegate);
-
-  ComboBoxDelegate *tTestScopeDelegate =
-      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
-  tTreeView->setItemDelegateForColumn(
-      DataStructModel::eColTestScope,tTestScopeDelegate);
-
-  ComboBoxDelegate *tFormatDelegate =
-      new ComboBoxDelegate(FieldItemData::getFormatStringList(),this);
-  tTreeView->setItemDelegateForColumn(
-      DataStructModel::eColFormat,tFormatDelegate);
-
-  ComboBoxDelegate *tPostfixDelegate =
-      new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
-  tTreeView->setItemDelegateForColumn(
-      DataStructModel::eColPostfix,tPostfixDelegate);
-
-// TODO works form 4.8 on
-#ifdef EXPAND_ALL
-  tTreeView->expandAll();
-#else
-  tTreeView->expand(tTreeView->model()->index(0, 0, QModelIndex()));
-#endif
-
-  return tTreeView;
 }
 
 //-----------------------------------------------------------------------------
@@ -1257,7 +1192,8 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
 void MainWindow::onStructComboBoxActivated(int index)
 {
   QString tString = _StructComboBox->itemText(index);
-  setTreeViewStruct(tString.toStdString());
+  setupDataStructModel(tString.toStdString());
+  _StructTree->setDataStructModel(_DataStructModel);
 }
 
 //-------------------------------------------------------------------------------
