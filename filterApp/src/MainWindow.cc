@@ -504,8 +504,12 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
   aToolBar->addAction(tEnterAction);
 
   // activate the default action
-  QAction *tDefaultAction = _OperateActionGroup->getAction(
-      _StreamReader->getOperateMode());
+  QAction *tDefaultAction = tGoAction;
+  if (_StreamReader) // is available in filter mode
+  {
+    tDefaultAction = _OperateActionGroup->getAction(
+        _StreamReader->getOperateMode());
+  }
   tDefaultAction->setChecked(true);
 }
 
@@ -519,8 +523,8 @@ void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
   QPixmap tDelimNone(":/delim_none.png");
 
   // actions
-  QAction *tDelimitOperateAction = new QAction(QIcon(tDelimOut),
-      "&Delimit Operate Records", this);
+  QAction *tDelimitOutputAction = new QAction(QIcon(tDelimOut),
+      "&Delimit Output Records", this);
   QAction *tDelimitNoneAction = new QAction(QIcon(tDelimNone),
       "&No Record Delimiters", this);
   QAction *tDelimitAllAction = new QAction(QIcon(tDelimAll),
@@ -528,17 +532,17 @@ void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
 
   // check boxes
   tDelimitAllAction->setCheckable(true);
-  tDelimitOperateAction->setCheckable(true);
+  tDelimitOutputAction->setCheckable(true);
   tDelimitNoneAction->setCheckable(true);
 
   // action data for action group trigger
   tDelimitAllAction->setData(QVariant(StreamReader::eAllRecords));
-  tDelimitOperateAction->setData(QVariant(StreamReader::eOutputRecords));
+  tDelimitOutputAction->setData(QVariant(StreamReader::eOutputRecords));
   tDelimitNoneAction->setData(QVariant(StreamReader::eNoRecords));
 
   // action group
   _DelimitActionGroup = new DelimitActionGroup(this);
-  _DelimitActionGroup->addAction(tDelimitOperateAction);
+  _DelimitActionGroup->addAction(tDelimitOutputAction);
   _DelimitActionGroup->addAction(tDelimitNoneAction);
   _DelimitActionGroup->addAction(tDelimitAllAction);
 
@@ -548,18 +552,22 @@ void MainWindow::setupDelimitActions(QMenu *aMenu,QToolBar *aToolBar)
 
   // menu
   aMenu = menuBar()->addMenu("&Delimit");
-  aMenu->addAction(tDelimitOperateAction);
+  aMenu->addAction(tDelimitOutputAction);
   aMenu->addAction(tDelimitNoneAction);
   aMenu->addAction(tDelimitAllAction);
 
   // toolbar
-  aToolBar->addAction(tDelimitOperateAction);
+  aToolBar->addAction(tDelimitOutputAction);
   aToolBar->addAction(tDelimitNoneAction);
   aToolBar->addAction(tDelimitAllAction);
 
   // activate the default action
-  QAction *tDefaultAction = _DelimitActionGroup->getAction(
-      _StreamReader->getDelimitMode());
+  QAction *tDefaultAction = tDelimitOutputAction;
+  if (_StreamReader) // is available in filter mode
+  {
+    tDefaultAction = _DelimitActionGroup->getAction(
+        _StreamReader->getDelimitMode());
+  }
   tDefaultAction->setChecked(true);
 }
 
