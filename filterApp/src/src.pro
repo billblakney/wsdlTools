@@ -51,6 +51,7 @@ HEADERS += \
            MainWindow.hh \
            MessageSpec.hh \
            OperateActionGroup.hh \
+           PickFilterDialog.hh \
            RecordLine.hh \
            RecordProcessor.hh \
            RecordWriter.hh \
@@ -76,6 +77,7 @@ SOURCES += \
            MainWindow.cc \
            MessageSpec.cc \
            OperateActionGroup.cc \
+           PickFilterDialog.cc \
            RecordLine.cc \
            RecordProcessor.cc \
            RecordWriter.cc \

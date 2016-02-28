@@ -14,9 +14,11 @@ public:
   static const char *kDefaultsTag;
   static const char *kOperateModeTag;
   static const char *kDelimitModeTag;
+  static const char *kFilterDescriptionTag;
   static const char *kFieldsTag;
   static const char *kFieldTag;
   static const char *kAttrKeyTag;
+  static const char *kAttrDescriptionTag;
   static const char *kAttrCheckedTag;
   static const char *kAttrFilterScopeTag;
   static const char *kAttrFormatTag;

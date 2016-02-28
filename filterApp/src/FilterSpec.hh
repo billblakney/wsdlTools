@@ -21,6 +21,7 @@ public:
       DelimitActionGroup *aDelimitActionGroup);
 
   bool _HasErrors;
+  QString _Description;
   QString _OperateMode;
   QString _DelimitMode;
   std::vector<FieldSpec> _Fields;

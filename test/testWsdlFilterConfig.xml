@@ -6,7 +6,10 @@
         <headers_dir>${WSDL_HEADERS_DIR}</headers_dir>
         <default_header>${WSDL_DEFAULT_HEADER}</default_header>
         <default_filters_dir>${WSDL_FILTERS_DIR}</default_filters_dir>
+        <custom_filters_dir>/${WSDL_FILTERS_DIR}</custom_filters_dir>
+<!--
         <custom_filters_dir>/tmp</custom_filters_dir>
+-->
     </config>
     <messages>
 <!--

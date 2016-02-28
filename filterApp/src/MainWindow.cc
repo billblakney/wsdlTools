@@ -16,6 +16,7 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 #include "ComboBoxDelegate.hh"
+#include "PickFilterDialog.hh"
 #include "TestRegexDelegate.hh"
 #include "MainWindow.hh"
 
@@ -228,23 +229,32 @@ void MainWindow::setInitialStructName(std::string aStructName)
   _StructName = aStructName;
 }
 
-#include <QDir>
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MainWindow::onOpenFilterAction()
 {
-  std::cout << "Reading filters for msgId " << _StructName << std::endl;
-  std::cout << "Using dir  " << qPrintable(_AppConfig.getDefaultFiltersDir()) << std::endl;
-  QDir tDir;
+  PickFilterDialog *tDialog = new PickFilterDialog(
+      this,_StructName,_AppConfig,_FilterReader);
 
-  QStringList tFilters;
-  tFilters.push_back(QString(_StructName.c_str()) + ".*");
-
-  tDir.setCurrent(_AppConfig.getDefaultFiltersDir());
-  QStringList tList = tDir.entryList(tFilters);
-  for (int tIdx = 0; tIdx < tList.size(); tIdx++)
+  /*
+   * If user selected cancel, nothing to do.
+   */
+  if (tDialog->exec() == 0)
   {
-    std::cout << "file: " << qPrintable(tList[tIdx]) << std::endl;
+    return;
+  }
+
+  /*
+   * If user selected a filter, read it and apply it.
+   */
+  QString tFilter = tDialog->getSelectedFilter();
+  if (tFilter.length())
+  {
+//    std::cout << "User selected filter " <<  qPrintable(tFilter) << std::endl;
+    FilterSpec tFiter = _FilterReader->openFilter(
+        _AppConfig.getDefaultFiltersDir(),tFilter);
+
+    tFiter.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
   }
 }
 
@@ -252,10 +262,10 @@ void MainWindow::onOpenFilterAction()
 //-----------------------------------------------------------------------------
 void MainWindow::onOpenCustomFilterAction()
 {
-  FilterSpec tSpec = _FilterReader->openFilter(
+  FilterSpec tFiter = _FilterReader->openFilter(
       _AppConfig.getCustomFiltersDir());
 
-  tSpec.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
+  tFiter.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
 }
 
 //-----------------------------------------------------------------------------
@@ -1213,8 +1223,8 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
     if (tFilter.length() > 0)
     {
       QString tDir = _AppConfig.getDefaultFiltersDir();
-      FilterSpec tSpec = _FilterReader->openFilter(tDir,tFilter);
-      tSpec.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
+      FilterSpec tFiter = _FilterReader->openFilter(tDir,tFilter);
+      tFiter.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
     }
   }
 

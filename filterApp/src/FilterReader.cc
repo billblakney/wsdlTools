@@ -9,6 +9,7 @@ const char *FilterReader::kWsdlfilterconfigTag = "wsdlfilter";
 const char *FilterReader::kDefaultsTag = "config";
 const char *FilterReader::kOperateModeTag = "operate_mode";
 const char *FilterReader::kDelimitModeTag = "delimit_mode";
+const char *FilterReader::kFilterDescriptionTag = "description";
 const char *FilterReader::kFieldsTag = "fields";
 const char *FilterReader::kFieldTag = "field";
 const char *FilterReader::kAttrKeyTag = "key";
@@ -140,13 +141,16 @@ void FilterReader::readConfigElements(FilterSpec &aFilterSpec)
       {
         QString tStr = reader.readElementText();
         aFilterSpec._OperateMode = tStr;
-//        std::cout << "operate_mode: " << qPrintable(tStr) << std::endl;
       }
       else if (reader.name() == kDelimitModeTag)
       {
         QString tStr = reader.readElementText();
         aFilterSpec._DelimitMode = tStr;
-//        std::cout << "delimit_mode: " << qPrintable(tStr) << std::endl;
+      }
+      else if (reader.name() == kFilterDescriptionTag)
+      {
+        QString tStr = reader.readElementText();
+        aFilterSpec._Description = tStr;
       }
       else
       {
@@ -169,11 +173,16 @@ void FilterReader::readFieldElements(FilterSpec &aFilterSpec)
     {
       if (reader.name() == kFieldTag)
       {
-        QString tKey = reader.attributes().value(kAttrKeyTag).toString();
-        QString tIsChecked = reader.attributes().value(kAttrCheckedTag).toString();
-        QString tTestScope = reader.attributes().value(kAttrFilterScopeTag).toString();
-        QString tFormat = reader.attributes().value(kAttrFormatTag).toString();
-        QString tPostfix = reader.attributes().value(kAttrPostfixTag).toString();
+        QString tKey = reader.attributes().
+            value(kAttrKeyTag).toString();
+        QString tIsChecked = reader.attributes().
+            value(kAttrCheckedTag).toString();
+        QString tTestScope = reader.attributes().
+            value(kAttrFilterScopeTag).toString();
+        QString tFormat = reader.attributes().
+            value(kAttrFormatTag).toString();
+        QString tPostfix = reader.attributes().
+            value(kAttrPostfixTag).toString();
 
         FieldSpec tFieldSpec;
         tFieldSpec.key = tKey;

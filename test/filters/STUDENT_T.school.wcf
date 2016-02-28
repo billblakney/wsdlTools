@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilter>
+    <config>
+        <operate_mode>eGo</operate_mode>
+        <delimit_mode>eAllRecords</delimit_mode>
+        <description>List school</description>
+    </config>
+    <fields>
+        <field key="firstName" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="lastName" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="address" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="address.city" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="address.state" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="address.zipcode" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="grades" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="grades_size" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="grades.subject" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="grades.grade" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="grades.course" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="grades.course.code" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="grades.course.level" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="grades.scores" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="grades.scores_size" checked="0" filter_scope="root" format="eAsIs" postfix="\n"/>
+        <field key="school" checked="1" filter_scope="root" format="eAsIs" postfix="\n"/>
+    </fields>
+</wsdlfilter>
