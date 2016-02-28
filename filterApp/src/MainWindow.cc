@@ -97,8 +97,6 @@ MainWindow::~MainWindow()
 //-----------------------------------------------------------------------------
 void MainWindow::init()
 {
-  updateWindowTitle();
-
   _FileToolBar = 0;
   _OperateToolBar = 0;
   _DelimitToolBar = 0;
@@ -121,7 +119,8 @@ void MainWindow::init()
   _AsIsCheckBox = 0;
   _LongnameCheckBox = 0;
   _TableCheckBox = 0;
-  _FilterReader = 0;
+
+  _FilterReader = new FilterReader();
 }
 
 //-----------------------------------------------------------------------------
@@ -170,21 +169,36 @@ void MainWindow::setupDataStructModel(std::string aStructName)
   if (!tStructure)
   {
     std::cerr << "ERROR: couldn't find struct " << aStructName << std::endl;
+    exit(0);
   }
+
+  /*
+   * Create the data structure model for the specified data structure.
+   */
   _DataStructModel = new DataStructModel(tStructure, _StructorBuilder);
 
   /*
-   * Create the config file manager. //TODO explain why here
+   * Setup connection to monitor updates to the data struct model.
    */
-  if (_FilterReader)
-  {
-    delete _FilterReader;
-  }
-  _FilterReader = new FilterReader();
-
   connect(_DataStructModel, SIGNAL(modelUpdated()),
       this,SLOT(onModelUpdate()));
 
+  /*
+   * Set connection to apply test scope settings to data struct model.
+   */
+  connect(this,SIGNAL(applyTestScope(QString,bool)),
+      _DataStructModel,SLOT(applyTestScope(QString,bool)));
+
+  /*
+   * Set connection to apply format mode setting to data struct model.
+   */
+  connect(this,SIGNAL(applyFormatMode(int,bool,QModelIndexList)),
+      _DataStructModel,SLOT(applyFormatMode(int,bool,QModelIndexList)));
+
+  /*
+   * Set connection to inform the data struct model of the "propagate
+   * checkbox" status.
+   */
   static bool _IsPropogateCheckConnected = false;
   if (_IsPropogateCheckConnected == false)
   {
@@ -840,9 +854,6 @@ QGroupBox *MainWindow::createTestScopeToolGroup(QWidget *aParent)
   connect(tPushButton,SIGNAL(clicked(bool)),
       this,SLOT(onApplyTestScopeClicked(bool)));
 
-  connect(this,SIGNAL(applyTestScope(QString,bool)),
-      _DataStructModel,SLOT(applyTestScope(QString,bool)));
-
   return tGroup;
 }
 
@@ -904,9 +915,6 @@ QGroupBox *MainWindow::createCustomFormatToolGroup(QWidget *aParent)
       this,SLOT(onLongnamePushbuttonClicked(bool)));
   connect(tTableButton,SIGNAL(clicked(bool)),
       this,SLOT(onTablePushbuttonClicked(bool)));
-
-  connect(this,SIGNAL(applyFormatMode(int,bool,QModelIndexList)),
-      _DataStructModel,SLOT(applyFormatMode(int,bool,QModelIndexList)));
 
   return tGroup;
 }
