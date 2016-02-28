@@ -1,5 +1,5 @@
-#ifndef DATASTRUCTMODEL_HH_
-#define DATASTRUCTMODEL_HH_
+#ifndef DataStructModel_hh
+#define DataStructModel_hh
 
 #include <vector>
 #include <QAbstractItemModel>
@@ -222,4 +222,4 @@ protected:
       const QModelIndex &aChildIndex,Qt::CheckState aNewState);
 };
 
-#endif /* DATASTRUCTMODEL_HH_ */
+#endif /* DataStructModel_hh */

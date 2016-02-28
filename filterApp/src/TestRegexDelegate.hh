@@ -1,5 +1,5 @@
-#ifndef TESTREGEXDELEGATE_H
-#define TESTREGEXDELEGATE_H
+#ifndef TestRegexDelegate_hh
+#define TestRegexDelegate_hh
 
 #include <string>
 #include <vector>
@@ -49,6 +49,6 @@ private:
   DataStructModel          *_DataStructModel;
   std::vector<std::string>   Items;
 };
-#endif
+#endif /* TestRegexDelegate_hh */
 
 

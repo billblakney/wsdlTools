@@ -1,5 +1,5 @@
-#ifndef _RECORDLINE_HH_
-#define _RECORDLINE_HH_
+#ifndef RecordLine_hh
+#define RecordLine_hh
 
 #include <string>
 #include "FieldItemData.hh"
@@ -48,4 +48,4 @@ protected:
   void initResultFields();
 };
 
-#endif /* _RECORDLINE_HH_ */
+#endif /* RecordLine_hh */

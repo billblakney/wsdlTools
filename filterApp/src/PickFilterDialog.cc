@@ -144,6 +144,7 @@ QString PickFilterDialog::getSelectedFilter()
 void PickFilterDialog::onCurrentRowChanged(
     QModelIndex aCurrentIndex,QModelIndex aPreviousIndex)
 {
+  Q_UNUSED(aPreviousIndex);
   QString tSelection = _Table->item(aCurrentIndex.row(),0)->text();
   _SelectedFiter = QString(_StructName.c_str()) + QString(".") + tSelection;
 }

@@ -1,5 +1,5 @@
-#ifndef APPCONFIG_H
-#define APPCONFIG_H
+#ifndef AppConfig_hh
+#define AppConfig_hh
 
 #include <QString>
 
@@ -44,4 +44,4 @@ protected:
   QString _DefaultDelimitMode;
 };
 
-#endif /* APPCONFIG_H */
+#endif /* AppConfig_hh */

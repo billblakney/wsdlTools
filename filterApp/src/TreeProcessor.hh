@@ -1,5 +1,5 @@
-#ifndef _TREEPROCESSOR_HH_
-#define _TREEPROCESSOR_HH_
+#ifndef TreeProcessor_hh
+#define TreeProcessor_hh
 
 #include "FieldItem.hh"
 #include "Logger.hh"
@@ -22,4 +22,4 @@ protected:
   virtual bool processChildren(FieldItem *aNode,void *aData = NULL);
 };
 
-#endif /* _TREEPROCESSOR_HH_ */
+#endif /* TreeProcessor_hh */

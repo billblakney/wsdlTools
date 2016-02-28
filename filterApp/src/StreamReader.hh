@@ -1,5 +1,5 @@
-#ifndef STREAMREADER_HH_
-#define STREAMREADER_HH_
+#ifndef StreamReader_hh
+#define StreamReader_hh
 
 #include <QApplication>
 #include <QMutex>
@@ -90,4 +90,4 @@ protected:
   void setDataStructModel(DataStructModel *aModel);
 };
 
-#endif /* STREAMREADER_HH_ */
+#endif /* StreamReader_hh */

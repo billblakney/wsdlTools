@@ -1,5 +1,5 @@
-#ifndef SIMPLELINEMATCHER_HH_
-#define SIMPLELINEMATCHER_HH_
+#ifndef SimpleLineMatcher_hh
+#define SimpleLineMatcher_hh
 
 #include <boost/regex.hpp>
 #include "LineMatcher.hh"
@@ -21,4 +21,4 @@ protected:
 //  std::string _What; //TODO
 };
 
-#endif /* SIMPLELINEMATCHER_HH_ */
+#endif /* SimpleLineMatcher_hh */

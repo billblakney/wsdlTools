@@ -1,5 +1,5 @@
-#ifndef FIELDITEM_HH_
-#define FIELDITEM_HH_
+#ifndef FieldItem_hh
+#define FieldItem_hh
 
 #include <iterator>
 #include <string>
@@ -69,4 +69,4 @@ protected:
   FieldItemData      _FieldItemData;
 };
 
-#endif /* FIELDITEM_HH_ */
+#endif /* FieldItem_hh */

@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_HH_
-#define MAINWINDOW_HH_
+#ifndef MainWindow_hh
+#define MainWindow_hh
 
 #include <string>
 #include <QActionGroup>
@@ -184,4 +184,4 @@ protected:
 	void updatePermanentWidget(QString aMsgId,QString aStructName);
 };
 
-#endif /* MAINWINDOW_HH_ */
+#endif /* MainWindow_hh */

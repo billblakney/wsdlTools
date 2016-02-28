@@ -1,5 +1,5 @@
-#ifndef SIMPLERECORDWRITER_HH_
-#define SIMPLERECORDWRITER_HH_
+#ifndef SimpleRecordWriter_hh
+#define SimpleRecordWriter_hh
 
 #include "RecordWriter.hh"
 #include <boost/regex.hpp>
@@ -15,4 +15,4 @@ protected:
   boost::regex _MatchRegex;
 };
 
-#endif /* SIMPLERECORDWRITER_HH_ */
+#endif /* SimpleRecordWriter_hh */

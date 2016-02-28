@@ -1,5 +1,5 @@
-#ifndef LINEMATCHER_HH_
-#define LINEMATCHER_HH_
+#ifndef LineMatcher_hh
+#define LineMatcher_hh
 
 #include <string>
 
@@ -15,4 +15,4 @@ public:
   virtual bool match(std::string &aStr) =0;
 };
 
-#endif /* LINEMATCHER_HH_ */
+#endif /* LineMatcher_hh */

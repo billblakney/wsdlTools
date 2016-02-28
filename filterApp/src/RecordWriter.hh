@@ -1,5 +1,5 @@
-#ifndef RECORDWRITER_HH_
-#define RECORDWRITER_HH_
+#ifndef RecordWriter_hh
+#define RecordWriter_hh
 
 #include <string>
 #include <vector>
@@ -13,4 +13,4 @@ public:
   virtual void process(std::vector<std::string> &aRecordStrings) = 0;
 };
 
-#endif /* RECORDWRITER_HH_ */
+#endif /* RecordWriter_hh */

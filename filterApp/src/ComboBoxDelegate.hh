@@ -1,5 +1,5 @@
-#ifndef COMBOBOXDELEGATE_H
-#define COMBOBOXDELEGATE_H
+#ifndef ComboBoxDelegate_hh
+#define ComboBoxDelegate_hh
 
 #include <string>
 #include <vector>
@@ -28,6 +28,6 @@ private:
   QStringList _Items;
 
 };
-#endif
+#endif /* ComboBoxDelegate_hh */
 
 

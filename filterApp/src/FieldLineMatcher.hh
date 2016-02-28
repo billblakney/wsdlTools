@@ -1,5 +1,5 @@
-#ifndef FIELDLINEMATCHER_HH_
-#define FIELDLINEMATCHER_HH_
+#ifndef FieldLineMatcher_hh
+#define FieldLineMatcher_hh
 
 #include <boost/regex.hpp>
 #include "LineMatcher.hh"
@@ -20,4 +20,4 @@ protected:
   boost::regex _FieldRegex;
 };
 
-#endif /* FIELDLINEMATCHER_HH_ */
+#endif /* FieldLineMatcher_hh */
