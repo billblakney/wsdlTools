@@ -199,13 +199,8 @@ void MainWindow::setupDataStructModel(std::string aStructName)
    * Set connection to inform the data struct model of the "propagate
    * checkbox" status.
    */
-  static bool _IsPropogateCheckConnected = false;
-  if (_IsPropogateCheckConnected == false)
-  {
-    connect(this,SIGNAL(togglePropagateChecks(bool)),
-        _DataStructModel,SLOT(onPropogateToggled(bool)));
-    _IsPropogateCheckConnected = true;
-  }
+  connect(this,SIGNAL(togglePropagateChecks(bool)),
+      _DataStructModel,SLOT(onPropogateToggled(bool)));
 }
 
 //-------------------------------------------------------------------------------
