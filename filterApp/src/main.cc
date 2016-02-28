@@ -79,15 +79,22 @@ QString determineAppConfigFilename(CmdLineArgs aArgs)
 }
 
 //-------------------------------------------------------------------------------
-// Determine the header file to be used in browse mode.
-// The name of the header file is set with the following precedence:
-// 1. Use value specified by the command-line.
-// 2. Use the value specified by the app config file.
-// 3. Use the hard-coded value.
+// Sets the default header and default headers dir into the app config.
+// Values are setting with the following precedence:
+// 1. Use the header file specified in the command-line arguements.
+// 2. Use the values in the app config file.
+// 3. Use the hard-coded defaults
+// If the header file specified in the command-line arguments specifies a path
+// to the header, i.e. contains at least one "/", then the part of the command-
+// line argument up to the last "/" is taken to be the default headers dir, and
+// the part after it is taken to be the default header file. If no "/" is found,
+// the the command-line argument is just used to set the default header file
+// (and the default headers dir will be set per items (2) and (3)).
 //-------------------------------------------------------------------------------
-QString determineHeaderFile(CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
+void determineHeaderFileInfo(
+    CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
 {
-  static const char *kHeaderDir ="/opt/idp/cots/iec/rtf/static";//TODO header dir cmd arg
+  static const char *kHeaderDir ="/opt/idp/cots/iec/rtf/static";//TODO where
   static const char *kHeaderFile ="CLIR_CAR_cxsd.H";
 
   QString tHeaderFile(kHeaderFile);
@@ -95,27 +102,36 @@ QString determineHeaderFile(CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
   /*
    * Use the command-line value, if available.
    */
-  if (aArgs.headerFile.length() > 0)
-  {
-    return aArgs.headerFile;
-  }
+  QString &tArgsHeader = aArgs.headerFile;
 
-  /*
-   * Use the value in the app config file, if available.
-   */
-  if (aAppConfigReader)
+  if (tArgsHeader.length() > 0)
   {
-    QString tHeader = aAppConfigReader->appConfig().getDefaultHeader();
-    if (tHeader.length() > 0)
+    int tIdxLast = tArgsHeader.lastIndexOf('/');
+
+    if (tIdxLast == -1) // no path component
     {
-      return tHeader;
+      aAppConfigReader->appConfig().SetDefaultHeader(tArgsHeader);
+    }
+    else
+    {
+      QString tDir = tArgsHeader.left(tIdxLast);
+      QString tFile = tArgsHeader.right(tArgsHeader.length()-tIdxLast-1);
+      aAppConfigReader->appConfig().SetHeadersDir(tDir);
+      aAppConfigReader->appConfig().SetDefaultHeader(tFile);
     }
   }
 
-  /*
-   * Use the hard-coded value.
-   */
-  return tHeaderFile;
+  if (aAppConfigReader->appConfig().getHeadersDir().length() == 0)
+  {
+    aAppConfigReader->appConfig().SetHeadersDir(kHeaderDir);
+  }
+  if (aAppConfigReader->appConfig().getDefaultHeader().length() == 0)
+  {
+    aAppConfigReader->appConfig().SetDefaultHeader(kHeaderFile);
+  }
+//std::cout << "DIR: " << qPrintable(aAppConfigReader->appConfig().getHeadersDir()) << std::endl;
+//std::cout << "FIL: " << qPrintable(aAppConfigReader->appConfig().getDefaultHeader()) << std::endl;
+// exit(0);
 }
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
@@ -191,7 +207,10 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
 {
   std::cout << "Running in browse mode..." << std::endl;
 
-  QString tHeaderFile = determineHeaderFile(aArgs,aAppConfigReader);
+  determineHeaderFileInfo(aArgs,aAppConfigReader);
+  QString tDir = aAppConfigReader->appConfig().getHeadersDir();
+  QString tFile = aAppConfigReader->appConfig().getDefaultHeader();
+  QString tHeaderFile = tDir + "/" + tFile;
 
   // Parse the header file to get _StructBuilder.
   StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(tHeaderFile);
@@ -224,8 +243,7 @@ void runStreamReaderMode(
    * update the value in aAppConfigReader, which other code will use to find
    * the default header file.
    */
-  QString tDefaultHeaderFile = determineHeaderFile(aArgs,aAppConfigReader);
-  aAppConfig.SetDefaultHeader(tDefaultHeaderFile);
+  determineHeaderFileInfo(aArgs,aAppConfigReader);
 
   /*
    * Create the record processor.
