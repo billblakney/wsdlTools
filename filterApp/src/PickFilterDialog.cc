@@ -13,6 +13,19 @@ PickFilterDialog::PickFilterDialog(QWidget *aParent,std::string aStructName,
   : QDialog(aParent),
     _StructName(aStructName)
 {
+  setupView(aAppConfig,aFilterReader);
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+PickFilterDialog::~PickFilterDialog()
+{
+}
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+void PickFilterDialog::
+setupView(AppConfig aAppConfig, FilterReader *aFilterReader)
+{
   setWindowTitle(QString("Select Filter"));
 
   /*
@@ -114,22 +127,6 @@ PickFilterDialog::PickFilterDialog(QWidget *aParent,std::string aStructName,
   QSize tParentSize = parentWidget()->size();
   QSize tSize(0.8*tParentSize.width(),0.6*tParentSize.height());
   resize(tSize);
-}
-
-//------------------------------------------------------------------------------
-// TODO used?
-//------------------------------------------------------------------------------
-QSize PickFilterDialog::sizeHint()
-{
-  QSize tParentSize = parentWidget()->size();
-  QSize tSize(tParentSize.width(),tParentSize.height());
-  return tSize;
-}
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-PickFilterDialog::~PickFilterDialog()
-{
 }
 
 //------------------------------------------------------------------------------

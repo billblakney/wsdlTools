@@ -15,7 +15,6 @@ public:
   PickFilterDialog(QWidget *aParent,std::string aStructName,
       AppConfig aAppConfig,FilterReader *aFilterReader);
   virtual ~PickFilterDialog();
-  virtual QSize sizeHint();
   QString getSelectedFilter();
 
 signals:
@@ -27,6 +26,8 @@ protected:
   QTableWidget   *_Table;
   QString         _SelectedFiter;
   std::string     _StructName;
+
+  void setupView(AppConfig aAppConfig,FilterReader *aFilterReader);
 };
 
 #endif /* PickFilterDialog_hh */
