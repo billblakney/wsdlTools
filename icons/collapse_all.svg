@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="expand_all.svg"
+   sodipodi:docname="collapse_all.svg"
    inkscape:export-filename="/home/bill/workspace/wsdlTools/test/fmt_table..png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
@@ -60,14 +60,6 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
-    <filter
-       inkscape:collect="always"
-       id="filter3964">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="6.4648743"
-         id="feGaussianBlur3966" />
-    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -77,15 +69,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="120.62226"
+     inkscape:cx="46.376048"
      inkscape:cy="120.44518"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1442"
      inkscape:window-height="941"
-     inkscape:window-x="2212"
-     inkscape:window-y="51"
+     inkscape:window-x="182"
+     inkscape:window-y="48"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -95,7 +87,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -114,7 +106,6 @@
        ry="8.4445343" />
     <g
        id="g3928"
-       style="filter:url(#filter3964)"
        transform="matrix(1.0180574,0,0,0.66685584,0.4436595,271.98918)">
       <path
          transform="matrix(1.5609071,0,0,1.5258072,141.97792,831.55489)"

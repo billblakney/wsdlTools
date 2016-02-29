@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="collapse_all.svg"
+   sodipodi:docname="expand_all.svg"
    inkscape:export-filename="/home/bill/workspace/wsdlTools/test/fmt_table..png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
@@ -60,14 +60,6 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
-    <filter
-       inkscape:collect="always"
-       id="filter3964">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="6.4648743"
-         id="feGaussianBlur3966" />
-    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -78,15 +70,15 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
      inkscape:cx="120.62226"
-     inkscape:cy="120.44518"
+     inkscape:cy="120.69772"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1442"
-     inkscape:window-height="941"
-     inkscape:window-x="2212"
-     inkscape:window-y="51"
-     inkscape:window-maximized="0" />
+     inkscape:window-width="1863"
+     inkscape:window-height="1059"
+     inkscape:window-x="57"
+     inkscape:window-y="21"
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -114,7 +106,6 @@
        ry="8.4445343" />
     <g
        id="g3928"
-       style="filter:url(#filter3964)"
        transform="matrix(1.0180574,0,0,0.66685584,0.4436595,271.98918)">
       <path
          transform="matrix(1.5609071,0,0,1.5258072,141.97792,831.55489)"
@@ -204,7 +195,7 @@
     </g>
     <g
        id="g3980"
-       transform="matrix(-0.88025488,0,0,-0.60494599,174.62931,1586.7433)">
+       transform="matrix(0.88025488,0,0,-0.60494599,5.6828835,1586.7433)">
       <path
          sodipodi:nodetypes="ccc"
          inkscape:connector-curvature="0"
