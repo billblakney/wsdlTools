@@ -15,7 +15,6 @@ FilterSpec::~FilterSpec()
 }
 
 //-----------------------------------------------------------------------------
-//TODO _OperateMode _DelimitMode
 //-----------------------------------------------------------------------------
 void FilterSpec::apply(DataStructModel *aDataStructModel,
     OperateActionGroup *aOperateActionGroup,
