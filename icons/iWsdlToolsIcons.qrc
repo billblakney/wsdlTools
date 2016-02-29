@@ -14,6 +14,8 @@
      <file>fmt_table.png</file>
      <file>fmt_custom.png</file>
      <file>propagate_check.png</file>
+     <file>collapse_all.png</file>
+     <file>expand_all.png</file>
      <file>custom_fmt_tool.png</file>
      <file>filter_tool.png</file>
  </qresource>

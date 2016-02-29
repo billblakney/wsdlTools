@@ -645,11 +645,17 @@ void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
   QPixmap tPropagateCheckPixmap(":/propagate_check.png");
+  QPixmap tCollapseAllPixmap(":/collapse_all.png");
+  QPixmap tExpandAllPixmap(":/expand_all.png");
 
   // actions
   _PropagateCheckAction =
       new QAction(QIcon(tPropagateCheckPixmap),
           "Propagate check to descendants", this);
+  QAction *tCollapseAllAction = new QAction(QIcon(tCollapseAllPixmap),
+          "Collapse all", this);
+  QAction *tExpandAllAction = new QAction(QIcon(tExpandAllPixmap),
+          "Expand all", this);
 
   // check boxes
   _PropagateCheckAction->setCheckable(true);
@@ -657,20 +663,21 @@ void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
   // action signal-slot
   connect(_PropagateCheckAction,SIGNAL(triggered()),
       this,SLOT(onPropagateCheckAction()));
-
-  /*
-   * Since data struct model is not available at this point, can't make a
-   * needed connection for the togglePropagateChecks signal. That connection
-   * is made in setupDataStructModel.
-   */
-  // connect ... (see setupDataStructModel)
+  connect(tCollapseAllAction,SIGNAL(triggered()),
+      this,SLOT(onCollapseAllAction()));
+  connect(tExpandAllAction,SIGNAL(triggered()),
+      this,SLOT(onExpandAllAction()));
 
   // menu
   aMenu = menuBar()->addMenu("&Tree");
   aMenu->addAction(_PropagateCheckAction);
+  aMenu->addAction(tCollapseAllAction);
+  aMenu->addAction(tExpandAllAction);
 
   // toolbar
   aToolBar->addAction(_PropagateCheckAction);
+  aToolBar->addAction(tCollapseAllAction);
+  aToolBar->addAction(tExpandAllAction);
 }
 
 //-----------------------------------------------------------------------------
@@ -979,6 +986,21 @@ void MainWindow::onPropagateCheckAction()
   {
     emit togglePropagateChecks(false);
   }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onCollapseAllAction()
+{
+  _StructTree->collapseAll();
+  _StructTree->expandToDepth(0);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onExpandAllAction()
+{
+  _StructTree->expandAll();
 }
 
 //-------------------------------------------------------------------------------

@@ -69,6 +69,8 @@ public slots:
   void onOperateModeAction(QAction *aAction);
   void onCustomFormatToolAction();
   void onPropagateCheckAction();
+  void onCollapseAllAction();
+  void onExpandAllAction();
   void onTestScopeToolAction();
 
   void onViewFileToolbarAction();
