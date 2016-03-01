@@ -70,6 +70,7 @@ public slots:
   void onCustomFormatToolAction();
   void onPropagateCheckAction();
   void onCollapseAllAction();
+  void onExpandToCheckedAction();
   void onExpandAllAction();
   void onTestScopeToolAction();
 

@@ -18,10 +18,13 @@ public:
 
   void setDataStructModel(DataStructModel * aDataStructModel);
 
+  void expandToChecked();
+
 protected:
+  DataStructModel *_DataStructModel;
   ComboBoxDelegate *_TestScopeDelegate;
 
-  void setupView(DataStructModel *aDataStructModel);
+  void setupView();
 };
 
 #endif /* StructTreeView_hh */

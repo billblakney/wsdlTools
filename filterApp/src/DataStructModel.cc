@@ -1005,6 +1005,15 @@ QVariant DataStructModel::headerData(int section,Qt::Orientation orientation,
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
+QModelIndex DataStructModel::index(FieldItem *aFieldItem,int aColumn)
+{
+  QModelIndex tModelIndex =
+            createIndex(aFieldItem->row(),aColumn,aFieldItem);
+  return tModelIndex;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 QModelIndex DataStructModel::index(int row,int col,
       const QModelIndex &parent) const
 {

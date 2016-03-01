@@ -7,10 +7,11 @@
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StructTreeView::StructTreeView(QWidget *aParent,DataStructModel *aDataStructModel)
-  : QTreeView(aParent)
+  : QTreeView(aParent),
+    _DataStructModel(aDataStructModel)
 {
-  setModel(aDataStructModel);
-  setupView(aDataStructModel);
+  setModel(_DataStructModel);
+  setupView();
 }
 
 //-----------------------------------------------------------------------------
@@ -23,17 +24,19 @@ StructTreeView::~StructTreeView()
 //-----------------------------------------------------------------------------
 void StructTreeView::setDataStructModel(DataStructModel * aDataStructModel)
 {
+  _DataStructModel = aDataStructModel;
+
   /*
    * Set the new model to the tree.
    */
-  setModel(aDataStructModel);
+  setModel(_DataStructModel);
 
   /*
    * Update the test scope combo box. Create and install the new one, and
    * cleanup the old one.
    */
   ComboBoxDelegate *tNewComboBox =
-      new ComboBoxDelegate(aDataStructModel->getTestNodes(),this);
+      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
 
   setItemDelegateForColumn(
       DataStructModel::eColTestScope,tNewComboBox);
@@ -50,7 +53,37 @@ void StructTreeView::setDataStructModel(DataStructModel * aDataStructModel)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StructTreeView::setupView(DataStructModel *aDataStructModel)
+void StructTreeView::expandToChecked()
+{
+  std::vector<FieldItem *> tFieldItems = _DataStructModel->getTreeItems();
+  std::vector<FieldItem *>::iterator tIter;
+  for (tIter = tFieldItems.begin(); tIter != tFieldItems.end(); tIter++)
+  {
+    FieldItem *aNode = *tIter;
+
+    if (aNode->getData().isChecked())
+    {
+      FieldItem *tParent;
+      while ((tParent = aNode->parentItem()) != NULL)
+      {
+        QModelIndex tModelIndex = _DataStructModel->index(tParent,0);
+        expand(tModelIndex);
+//        if (tParent->getData().getNodeType() == aNodeType)
+//        {
+//          tReturn = tParent;
+//          break;
+//        }
+        aNode = tParent; // advance to next ancestor
+      }
+
+
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void StructTreeView::setupView()
 {
 //  tTreeView->setSelectionMode(QAbstractItemView::MultiSelection);
   setSelectionMode(QAbstractItemView::ContiguousSelection);
@@ -64,12 +97,12 @@ void StructTreeView::setupView(DataStructModel *aDataStructModel)
   setEditTriggers(QAbstractItemView::AllEditTriggers);
 
   TestRegexDelegate *tTestRegexDelegate =
-      new TestRegexDelegate (aDataStructModel,this);
+      new TestRegexDelegate (_DataStructModel,this);
   setItemDelegateForColumn(
       DataStructModel::eColTestRegex,tTestRegexDelegate);
 
   _TestScopeDelegate =
-      new ComboBoxDelegate(aDataStructModel->getTestNodes(),this);
+      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
   setItemDelegateForColumn(
       DataStructModel::eColTestScope,_TestScopeDelegate);
 
@@ -79,7 +112,7 @@ void StructTreeView::setupView(DataStructModel *aDataStructModel)
       DataStructModel::eColFormat,tFormatDelegate);
 
   ComboBoxDelegate *tPostfixDelegate =
-      new ComboBoxDelegate(aDataStructModel->getPostfixes(),this);
+      new ComboBoxDelegate(_DataStructModel->getPostfixes(),this);
   setItemDelegateForColumn(
       DataStructModel::eColPostfix,tPostfixDelegate);
 

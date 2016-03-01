@@ -380,7 +380,7 @@ void MainWindow::setupView(std::string aStructName)
 //    _StructTree->hideColumn(DataStructModel::eColMatchRegex);
 //    _StructTree->hideColumn(DataStructModel::eColPostfix);
 //    _StructTree->hideColumn(DataStructModel::eColTestRegex);
-//    _StructTree->hideColumn(DataStructModel::eColTestScope);//TODO restore!!!
+//    _StructTree->hideColumn(DataStructModel::eColTestScope);//TODO restore
   }
   else
   {
@@ -645,6 +645,7 @@ void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
   QPixmap tPropagateCheckPixmap(":/propagate_check.png");
+  QPixmap tExpandToChecked(":/expand_checks.png");
   QPixmap tCollapseAllPixmap(":/collapse_all.png");
   QPixmap tExpandAllPixmap(":/expand_all.png");
 
@@ -652,6 +653,8 @@ void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
   _PropagateCheckAction =
       new QAction(QIcon(tPropagateCheckPixmap),
           "Propagate check to descendants", this);
+  QAction *tExpandToCheckedAction = new QAction(QIcon(tExpandToChecked),
+          "Expand to checked fields", this);
   QAction *tCollapseAllAction = new QAction(QIcon(tCollapseAllPixmap),
           "Collapse all", this);
   QAction *tExpandAllAction = new QAction(QIcon(tExpandAllPixmap),
@@ -663,6 +666,8 @@ void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
   // action signal-slot
   connect(_PropagateCheckAction,SIGNAL(triggered()),
       this,SLOT(onPropagateCheckAction()));
+  connect(tExpandToCheckedAction,SIGNAL(triggered()),
+      this,SLOT(onExpandToCheckedAction()));
   connect(tCollapseAllAction,SIGNAL(triggered()),
       this,SLOT(onCollapseAllAction()));
   connect(tExpandAllAction,SIGNAL(triggered()),
@@ -671,11 +676,13 @@ void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
   // menu
   aMenu = menuBar()->addMenu("&Tree");
   aMenu->addAction(_PropagateCheckAction);
+  aMenu->addAction(tExpandToCheckedAction);
   aMenu->addAction(tCollapseAllAction);
   aMenu->addAction(tExpandAllAction);
 
   // toolbar
   aToolBar->addAction(_PropagateCheckAction);
+  aToolBar->addAction(tExpandToCheckedAction);
   aToolBar->addAction(tCollapseAllAction);
   aToolBar->addAction(tExpandAllAction);
 }
@@ -986,6 +993,13 @@ void MainWindow::onPropagateCheckAction()
   {
     emit togglePropagateChecks(false);
   }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onExpandToCheckedAction()
+{
+  _StructTree->expandToChecked();
 }
 
 //-------------------------------------------------------------------------------

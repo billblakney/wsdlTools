@@ -104,6 +104,8 @@ public:
   QVariant headerData(int section,Qt::Orientation orientation,
       int role = Qt::DisplayRole) const;
 
+  QModelIndex index(FieldItem *aFieldItem,int aColumn);
+
   QModelIndex index(int row,int col,
       const QModelIndex &parent = QModelIndex()) const;
 
