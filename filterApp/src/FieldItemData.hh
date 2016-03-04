@@ -40,7 +40,8 @@ public:
   FieldItemData();
 
   FieldItemData(
-      NodeType aNodeType,
+      NodeType    aNodeType,
+      int         aLevel,
       std::string aKey,
       std::string aName,
       std::string aType,
@@ -58,6 +59,7 @@ public:
   bool isTestChecked();
 
   FieldItemData::NodeType getNodeType();
+  int          getLevel();
   std::string& getKey();
   std::string& getName();
   std::string& getType();
@@ -70,6 +72,7 @@ public:
   Qt::CheckState getTestCheckState();
 
   void setNodeType(NodeType nodeType);
+  void setLevel(int level);
   void setKey(const std::string& key);
   void setName(const std::string& name);
   void setType(const std::string& type);
@@ -89,6 +92,7 @@ protected:
   static QStringList formatNames();
 
   NodeType           _NodeType;
+  int                _Level;
   std::string        _Key;
   std::string        _Name;
   std::string        _Type;

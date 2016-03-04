@@ -20,7 +20,7 @@ typedef struct CmdLineArgs {
   QString appConfigFile;
   QString headerFile; // specifies
   QString initialStruct;
-  QString testFile;
+  QString testStruct;
 } CmdLineArgs;
 
 std::ostringstream _TestInStream;
@@ -190,7 +190,7 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
       tCmdLineArgs.isTestMode = true;
       if (++tIdx < argc)
       {
-        tCmdLineArgs.testFile = argv[tIdx];
+        tCmdLineArgs.testStruct = argv[tIdx];
       }
       else
       {
@@ -225,15 +225,53 @@ void printAppConfigFile(AppConfigReader *aAppConfigReader)
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
+QString getHeaderFilePath(AppConfig aAppConfig)
+{
+  QString tDir = aAppConfig.getHeadersDir();
+  QString tFile = aAppConfig.getDefaultHeader();
+  QString tHeaderFile = tDir + "/" + tFile;
+  return tHeaderFile;
+}
+
+/*------------------------------------------------------------------------------
+ *----------------------------------------------------------------------------*/
+std::string getTestRecord(AppConfigReader *aAppConfigReader,CmdLineArgs aArgs)
+{
+  QString tHeaderFile = getHeaderFilePath(aAppConfigReader->appConfig());
+
+  // Parse the header file to get _StructBuilder.
+  StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(tHeaderFile);
+
+  std::string tStructName = aArgs.testStruct.toStdString();
+
+  Structure *tStructure =
+      tStructorBuilder->getStructure(tStructName);
+
+  if (!tStructure)
+  {
+    std::cerr << "ERROR: couldn't find struct " << tStructName << std::endl;
+    exit(0);
+  }
+
+  /*
+   * Create the data structure model for the specified data structure.
+   */
+  DataStructModel *tModel = new DataStructModel(tStructure,tStructorBuilder);
+  std::string tRecord = tModel->getTestRecord(tStructName);
+std::cout << "TEST RECORD:\n" << tRecord << std::endl;
+  return tRecord;
+}
+
+/*------------------------------------------------------------------------------
+ *----------------------------------------------------------------------------*/
 void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
     AppConfigReader *aAppConfigReader)
 {
   std::cout << "Running in browse mode..." << std::endl;
 
   determineHeaderFileInfo(aArgs,aAppConfigReader);
-  QString tDir = aAppConfigReader->appConfig().getHeadersDir();
-  QString tFile = aAppConfigReader->appConfig().getDefaultHeader();
-  QString tHeaderFile = tDir + "/" + tFile;
+
+  QString tHeaderFile = getHeaderFilePath(aAppConfigReader->appConfig());
 
   // Parse the header file to get _StructBuilder.
   StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(tHeaderFile);
@@ -255,15 +293,6 @@ void runStreamReaderMode(
     QApplication &app,CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
 {
   bool tIsTestMode = aArgs.isTestMode;
-
-  if (tIsTestMode)
-  {
-    std::cout << "Running in test mode..." << std::endl;
-  }
-  else
-  {
-    std::cout << "Running in filter mode..." << std::endl;
-  }
 
   AppConfig &aAppConfig = aAppConfigReader->appConfig();
   MessageSpecMap &aMessageSpecMap = aAppConfigReader->messageMap();
@@ -291,12 +320,18 @@ void runStreamReaderMode(
 
   if (!tIsTestMode)
   {
+    std::cout << "Running in filter mode..." << std::endl;
+
     tStreamReader = new StreamReader(cin,
         tRecordProcessor,tOperateMode,tDelimitMode);
   }
   else
   {
-    tTestStreamWriter = new TestStreamWriter();
+    std::cout << "Running in test mode..." << std::endl;
+
+    std::string tTestString = getTestRecord(aAppConfigReader,aArgs);
+
+    tTestStreamWriter = new TestStreamWriter(tTestString);
     std::stringstream &tOutStream = tTestStreamWriter->getTestStream();
 
     tStreamReader = new StreamReader(tOutStream,

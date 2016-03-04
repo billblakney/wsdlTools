@@ -42,10 +42,11 @@ const char *tMsg =
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-TestStreamWriter::TestStreamWriter()
+TestStreamWriter::TestStreamWriter(std::string tRecord)
 {
 //    std::cout << "start writing to _OutStream..." << "tellp,tellg: " << _TestStream.tellp() << "," << _TestStream.tellg() << std::endl;
-    _TestStream << tMsg;
+//    _TestStream << tMsg;
+    _TestStream << tRecord;
 //    std::cout << "done writing to _OutStream..." << "tellp,tellg: " << _TestStream.tellp() << "," << _TestStream.tellg() << std::endl;
 }
 

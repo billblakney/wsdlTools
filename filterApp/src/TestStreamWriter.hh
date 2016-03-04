@@ -8,7 +8,7 @@ class TestStreamWriter
 {
 public:
 
-  TestStreamWriter();
+  TestStreamWriter(std::string tRecord);
 
   ~TestStreamWriter();
 

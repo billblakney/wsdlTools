@@ -24,12 +24,12 @@ DataStructModel::DataStructModel(
   setupPostfixes();
 
   // root item
-  FieldItemData tRootData(FieldItemData::eRoot,"root",aStruct->_Name,
+  FieldItemData tRootData(FieldItemData::eRoot,0,"root",aStruct->_Name,
       aStruct->_Name);
   _RootItem = new FieldItem(tRootData);
 
   // top node item
-  FieldItemData tTopData(FieldItemData::eRoot,"","root",aStruct->_Name);
+  FieldItemData tTopData(FieldItemData::eRoot,0,"","root",aStruct->_Name);
   _TopNodeItem = new FieldItem(tTopData,_RootItem);
 
   _RootItem->appendChild(_TopNodeItem);
@@ -229,6 +229,210 @@ void DataStructModel::printTestNodes()
 }
 
 //-------------------------------------------------------------------------------
+// TODO shouldn't need to pass aStructName
+// TODO format
+// TODO ssifg
+//-------------------------------------------------------------------------------
+std::string DataStructModel::getTestRecord(std::string aStructName)
+{
+  std::string tStr;
+  tStr += "==============RECEIVED MESSAGE=========\n";
+  tStr += ".......................       \n";
+  tStr += "... ssifg_STUDENT_MSG_ID ...";//TODO
+  tStr += aStructName;
+  tStr += "\n.......................       \n";
+
+  tStr += getTestString(_TopNodeItem);
+
+  tStr += "==============END MESSAGE=========\n";
+
+  return tStr;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::string DataStructModel::getTestString(FieldItem *aNode,int aIndex)
+{
+  std::string tReturn;
+
+  FieldItemData &tData = aNode->getData();
+  FieldItemData::NodeType tType = tData.getNodeType();
+
+//  addTabs(tData.getLevel(),tStr);
+//  tStr += tData.getName();
+//  tStr += ":\tvalue\n";
+
+  switch (tType)
+  {
+    case FieldItemData::eRoot:
+    {
+      std::string tStr;
+      for (int i = 0; i < aNode->childCount(); i++)
+      {
+        tStr += getTestString(aNode->child(i));
+      }
+      tReturn += tStr;
+    }
+      break;
+    case FieldItemData::eStruct:
+    {
+      std::string tStr;
+      addTabs(tData.getLevel(),tStr);
+      tStr += tData.getName();
+      tStr += ":\n";
+      for (int i = 0; i < aNode->childCount(); i++)
+      {
+        tStr += getTestString(aNode->child(i));
+      }
+      tReturn += tStr;
+    }
+      break;
+    case FieldItemData::eStructArray:
+    {
+      std::string tStr;
+      addTabs(tData.getLevel(),tStr);
+      tStr += tData.getName();
+      tStr += ":\n";
+      tStr += getTestString(aNode->child(0)); //array length node
+      for (int i = 0; i < 1; i++) // two copies
+      {
+        for (int j = 1; j < aNode->childCount(); j++) // regular child nodes
+        {
+          tStr += getTestString(aNode->child(j));
+        }
+      }
+      tReturn += tStr;
+    }
+      break;
+    case FieldItemData::eStructArrayLength:
+    {
+      std::string tStr;
+      addTabs(tData.getLevel(),tStr);
+      tStr += "array of len: 1\n";
+      tReturn += tStr;
+    }
+      break;
+    case FieldItemData::ePrimitiveArray:
+    {
+      std::string tStr;
+      addTabs(tData.getLevel(),tStr);
+      tStr += tData.getName();
+      tStr += ":\n";
+      tStr += getTestString(aNode->child(0)); //array length node
+
+      std::string tStr2;
+      for (int i = 0; i < 1; i++) // two copies
+      {
+        addTabs(tData.getLevel()+1/*comment*/,tStr2);
+        tStr2 += "[0] =\tvalue\n";
+//        for (int j = 1; j < aNode->childCount(); j++) // regular child nodes
+//        {
+//          tStr += getTestString(aNode->child(j));
+//        }
+      }
+      tStr += tStr2;
+      tReturn += tStr;
+//      std::string tStr;
+//      for (int i = 0; i < 1; i++)
+//      {
+//        addTabs(tData.getLevel(),tStr);
+//        tStr += "[0] =\tvalue\n";
+//      }
+//      tReturn += tStr;
+    }
+      break;
+    case FieldItemData::ePrimitiveArrayLength:
+    {
+      std::string tStr;
+      addTabs(tData.getLevel(),tStr);
+      tStr += "array of len: 1\n";
+      tReturn += tStr;
+    }
+      break;
+    case FieldItemData::ePrimitiveValue:
+    {
+      std::string tStr;
+      addTabs(tData.getLevel(),tStr);
+      tStr += tData.getName();
+      tStr += ":\tvalue\n";
+      tReturn += tStr;
+    }
+      break;
+    case FieldItemData::ePrimitiveArrayValue:
+    {
+      std::string tStr;
+      addTabs(tData.getLevel(),tStr);
+      tStr += "[0] =\tvalue\n";
+      tReturn += tStr;
+    }
+      break;
+    default:
+      break;
+    }
+#if 0 //TODO rm
+  if (tType == FieldItemData::eRoot)
+  {
+    std::string tStr;
+    addTabs(tData.getLevel(),tStr);
+    tStr += tData.getName();
+    tStr += ":\n";
+//    tStr += ":\tvalue\n";
+  }
+  else if (tType == FieldItemData::eStruct)
+  {
+  }
+  else if (tType == FieldItemData::eStructArray)
+  {
+    std::string tMoreStr;
+    addTabs(tData.getLevel(),tMoreStr);
+    tMoreStr += "array of len: 2\n";
+
+    tStr += tMoreStr;
+
+    for (n = 0; n < 2; n++)
+    {
+      tStr += getTestString()
+    }
+  }
+  else if (tType == FieldItemData::eStructArrayLength)
+  {
+  }
+  else if (tType == FieldItemData::ePrimitiveArray)
+  {
+  }
+  else if (tType == FieldItemData::ePrimitiveArrayLength)
+  {
+  }
+  else if (tType == FieldItemData::ePrimitiveValue)
+  {
+  }
+  else if (tType == FieldItemData::ePrimitiveArrayValue)
+  {
+  }
+
+  /*
+   * Recursively get test string for children.
+   */
+  for (int jIdx = 0; jIdx < aNode->childCount(); jIdx++)
+  {
+    tStr += getTestString(aNode->child(jIdx));
+  }
+#endif
+
+  return tReturn;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void DataStructModel::addTabs(int aNum,std::string &aStr)
+{
+  for (int tIdx = 0; tIdx < aNum; tIdx++)
+  {
+    aStr += "\t";
+  }
+}
+
+//-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 DataStructModel::~DataStructModel()
 {
@@ -349,7 +553,7 @@ void DataStructModel::buildStructNode(
 
   std::string tKey = buildKey(aField,aParentItem,false);
   std::string tMatch = buildMatchForStructField(aField,aLevel);
-  FieldItemData tData(FieldItemData::eStruct,tKey,
+  FieldItemData tData(FieldItemData::eStruct,aLevel,tKey,
       aField._Name,aField._Type,tMatch);
   FieldItem *dataItem = new FieldItem(tData,aParentItem);
   aParentItem->appendChild(dataItem);
@@ -383,7 +587,7 @@ void DataStructModel::buildStructArrayNode(
   std::string tKey = buildKey(aField,aParentItem,true);
   std::string tMatch = buildMatchForStructArrayField(aField,aLevel);
 
-  FieldItemData tData(FieldItemData::eStructArray,tKey,
+  FieldItemData tData(FieldItemData::eStructArray,aLevel,tKey,
       aField._Name,aField._Type,tMatch);
 
   FieldItem *dataItem = new FieldItem(tData,aParentItem);
@@ -419,7 +623,7 @@ void DataStructModel::buildStructArrayLengthNode(
   std::string tKey = buildArrayLengthKey(aParentItem);
   std::string tMatch = buildMatchForArrayLengthField(aField,aLevel);
 
-  FieldItemData tData(FieldItemData::eStructArrayLength,tKey,
+  FieldItemData tData(FieldItemData::eStructArrayLength,aLevel,tKey,
       "array_size","-",tMatch);
 
   FieldItem *dataItem = new FieldItem(tData,aParentItem);
@@ -438,7 +642,7 @@ void DataStructModel::buildPrimitiveArrayNode(
   std::string tKey = buildKey(aField,aParentItem,true);
   std::string tMatch = buildMatchForPrimitiveArrayField(aField,aLevel);
 
-  FieldItemData tData(FieldItemData::ePrimitiveArray,tKey,
+  FieldItemData tData(FieldItemData::ePrimitiveArray,aLevel,tKey,
       aField._Name,aField._Type,tMatch);
 
   FieldItem *dataItem = new FieldItem(tData,aParentItem);
@@ -473,7 +677,7 @@ void DataStructModel::buildPrimitiveArrayLengthNode(
   std::string tKey = buildArrayLengthKey(aParentItem);
   std::string tMatch = buildMatchForArrayLengthField(aField,aLevel);
 
-  FieldItemData tData(FieldItemData::ePrimitiveArrayLength,tKey,
+  FieldItemData tData(FieldItemData::ePrimitiveArrayLength,aLevel,tKey,
       "array_size","-",tMatch);
 
   FieldItem *dataItem = new FieldItem(tData,aParentItem);
@@ -492,7 +696,7 @@ void DataStructModel::buildPrimitiveNode(
   std::string tKey = buildKey(aField,aParentItem,false);
   std::string tMatch = buildMatchForPrimitiveField(aField,aLevel);
 
-  FieldItemData tData(FieldItemData::ePrimitiveValue,tKey,
+  FieldItemData tData(FieldItemData::ePrimitiveValue,aLevel,tKey,
       aField._Name,aField._Type,tMatch);
 
   FieldItem *dataItem = new FieldItem(tData,aParentItem);

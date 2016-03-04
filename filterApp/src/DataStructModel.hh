@@ -78,6 +78,10 @@ public:
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
+  std::string getTestRecord(std::string aStructName);
+
+  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   std::string getFirstFieldMatch();
 
   bool processStructLines(std::vector<std::string> &aLinesIn,
@@ -186,6 +190,9 @@ protected:
       const Field &aField,int aIndentLevel);
   std::string buildMatchForPrimitiveArrayLengthField(
       const Field &aField,int aIndentLevel);
+
+  std::string getTestString(FieldItem *aNode,int aIndex = 0);
+  void addTabs(int aNum,std::string &aStr);
 
   void setFilterScopeForDesignator();
   FieldItem *findFirstAncestor(FieldItem *aNode,FieldItemData::NodeType aNodeType);

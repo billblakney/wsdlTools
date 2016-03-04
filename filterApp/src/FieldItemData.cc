@@ -9,6 +9,7 @@ QStringList FieldItemData::_FormatNames = formatNames();
 //-------------------------------------------------------------------------------
 FieldItemData::FieldItemData()
   : _NodeType(eNone),
+    _Level(0),
     _Key(""),
     _Name(""),
     _Type(""),
@@ -25,7 +26,8 @@ FieldItemData::FieldItemData()
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 FieldItemData::FieldItemData(
-      NodeType aNodeType,
+      NodeType    aNodeType,
+      int         aLevel,
       std::string aKey,
       std::string aName,
       std::string aType,
@@ -37,6 +39,7 @@ FieldItemData::FieldItemData(
       Qt::CheckState aCheckState,
       Qt::CheckState aTestCheckState)
   : _NodeType(aNodeType),
+    _Level(aLevel),
     _Key(aKey),
     _Name(aName),
     _Type(aType),
@@ -127,6 +130,11 @@ FieldItemData::NodeType FieldItemData::getNodeType()
   return _NodeType;
 }
 
+int FieldItemData::getLevel()
+{
+  return _Level;
+}
+
 std::string& FieldItemData::getKey()
 {
   return _Key;
@@ -183,6 +191,11 @@ Qt::CheckState FieldItemData::getTestCheckState()
 void FieldItemData::setNodeType(NodeType nodeType)
 {
   _NodeType = nodeType;
+}
+
+void FieldItemData::setLevel(int level)
+{
+  _Level = level;
 }
 
 void FieldItemData::setKey(const std::string& key)
