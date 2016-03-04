@@ -1,6 +1,7 @@
 #ifndef StreamReader_hh
 #define StreamReader_hh
 
+#include <iostream>
 #include <QApplication>
 #include <QMutex>
 #include <QThread>
@@ -33,7 +34,7 @@ public:
   static QString getOperateModeString(OperateMode aOperateMode);
   static QStringList getOperateModeStringList();
 
-  StreamReader(RecordProcessor *aRecordProcessor,
+  StreamReader(std::istream &aStream,RecordProcessor *aRecordProcessor,
       OperateMode aOperateMode = eGo,
       DelimitMode aDelimitMode = eOutputRecords);
   virtual ~StreamReader();
@@ -73,6 +74,7 @@ protected:
   static QStringList _DelimitModeNames;
   static QStringList delimitModeNames();
 
+  std::istream                &_InStream;
   int                          _NumRecordsTotal;
   int                          _NumRecordsOutput;
   RecordProcessor             *_RecordProcessor;

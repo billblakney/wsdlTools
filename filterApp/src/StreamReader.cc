@@ -11,9 +11,11 @@ QStringList StreamReader::_DelimitModeNames = delimitModeNames();
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-StreamReader::StreamReader(RecordProcessor *aRecordProcessor,
-      OperateMode aOperateMode,DelimitMode aDelimitMode)
-  : _NumRecordsTotal(0),
+StreamReader::StreamReader(std::istream &aStream,
+    RecordProcessor *aRecordProcessor,OperateMode aOperateMode,
+    DelimitMode aDelimitMode)
+  : _InStream(aStream),
+    _NumRecordsTotal(0),
     _NumRecordsOutput(0),
     _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
@@ -317,7 +319,7 @@ void StreamReader::readForStructName(
   SimpleLineMatcher tMatcher(tStructNameLineMatch);
 
   std::string tLineBuffer;
-  while (std::getline(std::cin,tLineBuffer))
+  while (std::getline(_InStream,tLineBuffer))
   {
       if (tMatcher.match(tLineBuffer) )
       {
@@ -384,8 +386,9 @@ void StreamReader::readAndProcessStructLines()
 
   std::cout << kStartHeader << std::endl;
 
-  while (std::getline(std::cin,tLineBuffer))
+  while (std::getline(_InStream,tLineBuffer))
   {
+//sleep(2); //TODO rm
     /*
      * If in bypass mode, just echo lines.
      */

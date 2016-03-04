@@ -8,6 +8,7 @@
 #include "AppConfigReader.hh"
 #include "MainWindow.hh"
 #include "RecordProcessor.hh"
+#include "TestStreamWriter.hh"
 #include "StreamReader.hh"
 #include "Logger.hh"
 
@@ -15,10 +16,14 @@ extern StructorBuilder *lex_main(char *aHeaderFile);
 
 typedef struct CmdLineArgs {
   bool isBrowseMode;
+  bool isTestMode;
   QString appConfigFile;
   QString headerFile; // specifies
   QString initialStruct;
+  QString testFile;
 } CmdLineArgs;
+
+std::ostringstream _TestInStream;
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
@@ -26,17 +31,21 @@ void printUsage()
 {
   static const char *tUsage =
   "\nFilter mode:"
-  "app_iec_wsdlFilter [-a <app_config_file>] [-f <header_file>\n"
+  "app_iec_wsdlFilter [-a <app_config_file>] [-f <header_file>]\n"
   "   where <app_config_file> is the application configuration file, which\n"
   "   takes its default value from the environment variable\n"
   "   WSDL_FILTER_CONFIG_FILE\n"
   "   where <header_file> specifies a header file that overrides the\n"
   "   default header file specifed in the application configuration file\n"
   "\nBrowse mode:\n"
-  "app_iec_wsdlFilter -b [-f <header_file>] [-s <struct_name>]\n"
+  "app_iec_wsdlFilter -b [-a <app_config_file>] [-f <header_file>] "
+                                             " [-s <struct_name>]\n"
   "   where <header_file> is header file to be browsed, which takes its\n"
   "   default value from the environment variable CLIRCAR_H\n"
   "   where <struct_name> is initial struct to be browsed\n"
+  "\nTest mode:\n"
+  "app_iec_wsdlFilter -t <test_file> [-a <app_config_file>] [-f <header_file>] "
+                                             " [-s <struct_name>]\n"
   ;
   std::cout << tUsage << std::endl;
 }
@@ -137,8 +146,9 @@ void determineHeaderFileInfo(
 //-------------------------------------------------------------------------------
 CmdLineArgs processCommandLine(int argc,char *argv[])
 {
-  CmdLineArgs tCmdLineArgs;
+  CmdLineArgs tCmdLineArgs; //TODO make CmdLineArgs a class for initalization
   tCmdLineArgs.isBrowseMode = false;
+  tCmdLineArgs.isTestMode = false;
 
   for (int tIdx = 0; tIdx < argc; tIdx++)
   {
@@ -172,6 +182,19 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
       else
       {
         std::cerr << "ERROR: missing header name after -f\n";
+        exit(0);
+      }
+    }
+    if (!strcmp(argv[tIdx],"-t"))
+    {
+      tCmdLineArgs.isTestMode = true;
+      if (++tIdx < argc)
+      {
+        tCmdLineArgs.testFile = argv[tIdx];
+      }
+      else
+      {
+        std::cerr << "ERROR: missing test file name after -t\n";
         exit(0);
       }
     }
@@ -231,7 +254,16 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
 void runStreamReaderMode(
     QApplication &app,CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
 {
-  std::cout << "Running in filter mode..." << std::endl;
+  bool tIsTestMode = aArgs.isTestMode;
+
+  if (tIsTestMode)
+  {
+    std::cout << "Running in test mode..." << std::endl;
+  }
+  else
+  {
+    std::cout << "Running in filter mode..." << std::endl;
+  }
 
   AppConfig &aAppConfig = aAppConfigReader->appConfig();
   MessageSpecMap &aMessageSpecMap = aAppConfigReader->messageMap();
@@ -257,8 +289,26 @@ void runStreamReaderMode(
       StreamReader::getOperateMode(aAppConfig.getDefaultOperateMode());
   StreamReader::DelimitMode tDelimitMode =
       StreamReader::getDelimitMode(aAppConfig.getDefaultDelimitMode());
-  StreamReader *tStreamReader = new StreamReader(
-      tRecordProcessor,tOperateMode,tDelimitMode);
+
+  StreamReader *tStreamReader;
+  TestStreamWriter *tTestStreamWriter;
+
+  if (!tIsTestMode)
+  {
+    tStreamReader = new StreamReader(cin,
+        tRecordProcessor,tOperateMode,tDelimitMode);
+  }
+  else
+  {
+    tTestStreamWriter = new TestStreamWriter();
+    std::stringstream &tOutStream = tTestStreamWriter->getTestStream();
+//    _TestInStream.tie(&tOutStream);
+//    tOutStream.tie(&_TestInStream);
+
+//    tStreamReader = new StreamReader(_TestInStream,
+    tStreamReader = new StreamReader(tOutStream,
+        tRecordProcessor,tOperateMode,tDelimitMode);
+  }
 
   /*
    * Create the main window. It won't be launched until later though, after
@@ -289,6 +339,10 @@ void runStreamReaderMode(
   /*
    * Run the stream reader.
    */
+  if (tIsTestMode)
+  {
+    tTestStreamWriter->start();
+  }
   tStreamReader->start();
 }
 
