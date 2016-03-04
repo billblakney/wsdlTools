@@ -3,19 +3,14 @@
 
 #include <iostream>
 #include <sstream>
-#include <QThread>
 
-class TestStreamWriter: public QThread
+class TestStreamWriter
 {
-  Q_OBJECT;
-
 public:
 
   TestStreamWriter();
 
   ~TestStreamWriter();
-
-  void run();
 
   std::stringstream &getTestStream();
 

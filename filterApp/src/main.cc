@@ -249,11 +249,6 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
   window->show();
 }
 
-void onRecordProcessed()
-{
-  std::cout << "RECORD PROCESSED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-}
-
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
 void runStreamReaderMode(
@@ -274,11 +269,7 @@ void runStreamReaderMode(
   MessageSpecMap &aMessageSpecMap = aAppConfigReader->messageMap();
 
   /*
-   * TODO test
-   * Make a call to determineHeadeFile to see if the user has used the -f
-   * command-line arg to override the default header file. If he has, then
-   * update the value in aAppConfigReader, which other code will use to find
-   * the default header file.
+   * Determine values for header file params.
    */
   determineHeaderFileInfo(aArgs,aAppConfigReader);
 
@@ -301,18 +292,15 @@ void runStreamReaderMode(
   if (!tIsTestMode)
   {
     tStreamReader = new StreamReader(cin,
-        tRecordProcessor,NULL,tOperateMode,tDelimitMode);
+        tRecordProcessor,tOperateMode,tDelimitMode);
   }
   else
   {
     tTestStreamWriter = new TestStreamWriter();
     std::stringstream &tOutStream = tTestStreamWriter->getTestStream();
-//    _TestInStream.tie(&tOutStream);
-//    tOutStream.tie(&_TestInStream);
 
-//    tStreamReader = new StreamReader(_TestInStream,
     tStreamReader = new StreamReader(tOutStream,
-        tRecordProcessor,onRecordProcessed,tOperateMode,tDelimitMode);
+        tRecordProcessor,tOperateMode,tDelimitMode,true);
   }
 
   /*
@@ -344,10 +332,6 @@ void runStreamReaderMode(
   /*
    * Run the stream reader.
    */
-  if (tIsTestMode)
-  {
-    tTestStreamWriter->start();
-  }
   tStreamReader->start();
 }
 

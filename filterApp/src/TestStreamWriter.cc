@@ -44,6 +44,9 @@ const char *tMsg =
 //-----------------------------------------------------------------------------
 TestStreamWriter::TestStreamWriter()
 {
+//    std::cout << "start writing to _OutStream..." << "tellp,tellg: " << _TestStream.tellp() << "," << _TestStream.tellg() << std::endl;
+    _TestStream << tMsg;
+//    std::cout << "done writing to _OutStream..." << "tellp,tellg: " << _TestStream.tellp() << "," << _TestStream.tellg() << std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -57,20 +60,4 @@ TestStreamWriter::~TestStreamWriter()
 std::stringstream &TestStreamWriter::getTestStream()
 {
   return _TestStream;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void TestStreamWriter::run()
-{
-  while (true)
-  {
-    std::cout << "writing to _OutStream..." << "tellp,tellg: " << _TestStream.tellp() << "," << _TestStream.tellg() << std::endl;
-//    _TestStream << tMsg << std::endl;
-    _TestStream << tMsg;// << std::endl;
-    _TestStream << tMsg;// << std::endl;
-    _TestStream << tMsg;// << std::endl;
-    std::cout << "writing to _OutStream..." << "tellp,tellg: " << _TestStream.tellp() << "," << _TestStream.tellg() << std::endl;
-    sleep(2.0);
-  }
 }

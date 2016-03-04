@@ -13,17 +13,17 @@ QStringList StreamReader::_DelimitModeNames = delimitModeNames();
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader(std::istream &aStream,
     RecordProcessor *aRecordProcessor,
-    RecordProcessedCallbackType aRecordProcessedCallback,
     OperateMode aOperateMode,
-    DelimitMode aDelimitMode)
+    DelimitMode aDelimitMode,
+    bool aIsTestMode)
   : _InStream(aStream),
     _RecordProcessor(aRecordProcessor),
-    _RecordProcessedCallback(aRecordProcessedCallback),
     _NumRecordsTotal(0),
     _NumRecordsOutput(0),
     _DataStructModel(0),
     _OperateMode(aOperateMode),
-    _DelimitMode(aDelimitMode)
+    _DelimitMode(aDelimitMode),
+    _IsTestMode(aIsTestMode)
 {
 }
 
@@ -322,10 +322,8 @@ void StreamReader::readForStructName(
   SimpleLineMatcher tMatcher(tStructNameLineMatch);
 
   std::string tLineBuffer;
-std::cout << "before read struct: tellg: " << _InStream.tellg() << std::endl;
   while (std::getline(_InStream,tLineBuffer))
   {
-std::cout << "while read struct: tellg: " << _InStream.tellg() << std::endl;
       if (tMatcher.match(tLineBuffer) )
       {
         aMsgId = tMatcher.getWhat(1);
@@ -391,18 +389,30 @@ void StreamReader::readAndProcessStructLines()
 
   std::cout << kStartHeader << std::endl;
 
-//std::cout << "before while: tellp,tellg: " << _InStream.tellp() << "," << _InStream.tellg() << std::endl;
-std::cout << "before while: tellg: " << _InStream.tellg() << std::endl;
+  /*
+   * TODO comment
+   */
+  if (_IsTestMode)
+  {
+    _InStream.seekg(0);
+  }
+
   while (std::getline(_InStream,tLineBuffer))
   {
-sleep(0.1); //TODO rm
-std::cout << "after while: tellg: " << _InStream.tellg() << std::endl;
     /*
      * If in bypass mode, just echo lines.
      */
     if (getOperateMode() == eBypass)
     {
-      std::cout << tLineBuffer << std::endl;
+      if (_IsTestMode)
+      {
+        _InStream.seekg(0);
+        sleep(2);
+      }
+      else
+      {
+        std::cout << tLineBuffer << std::endl;
+      }
       continue;
     }
     /*
@@ -410,6 +420,12 @@ std::cout << "after while: tellg: " << _InStream.tellg() << std::endl;
      */
     else if (getOperateMode() == eStop)
     {
+      if (_IsTestMode)
+      {
+        _InStream.seekg(0);
+        sleep(2);
+      }
+
       continue;
     }
 
@@ -499,12 +515,13 @@ std::cout << "after while: tellg: " << _InStream.tellg() << std::endl;
         }
 
         /*
-         * Invoke callback for record processed.
+         * In test mode, go back to the beginning of the stream so that next
+         * pass through this loop will pick up another record.
          */
-        if (_RecordProcessedCallback != NULL)
+        if (_IsTestMode)
         {
-          _RecordProcessedCallback();
           _InStream.seekg(0);
+          sleep(1);
         }
 
         /*
@@ -546,7 +563,7 @@ std::cout << "after while: tellg: " << _InStream.tellg() << std::endl;
       }
     }
   }
-std::cout << "END=====================================================" << std::endl;
+std::cout << "ERROR=====================================" << std::endl;
 if (_InStream.eof()) std::cout << "eof" << std::endl;
 if (_InStream.bad()) std::cout << "bad" << std::endl;
 if (_InStream.bad()) std::cout << "bad" << std::endl;

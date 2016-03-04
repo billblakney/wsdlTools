@@ -10,9 +10,6 @@
 #include "RecordProcessor.hh"
 #include "RecordWriter.hh"
 
-typedef void (*RecordProcessedCallbackType)();
-
-
 class StreamReader: public QThread
 {
   Q_OBJECT;
@@ -38,9 +35,9 @@ public:
   static QStringList getOperateModeStringList();
 
   StreamReader(std::istream &aStream,RecordProcessor *aRecordProcessor,
-      RecordProcessedCallbackType aRecordProcessedCallback,
       OperateMode aOperateMode = eGo,
-      DelimitMode aDelimitMode = eOutputRecords);
+      DelimitMode aDelimitMode = eOutputRecords,
+      bool aIsTestMode = false);
   virtual ~StreamReader();
   void setRecordWriter(RecordWriter *aWriter);
 
@@ -80,13 +77,13 @@ protected:
 
   std::istream                &_InStream;
   RecordProcessor             *_RecordProcessor;
-  RecordProcessedCallbackType  _RecordProcessedCallback;
   int                          _NumRecordsTotal;
   int                          _NumRecordsOutput;
   std::vector<RecordWriter *>  _Writers;
   DataStructModel             *_DataStructModel;
   OperateMode                  _OperateMode;
   DelimitMode                  _DelimitMode;
+  bool                         _IsTestMode;
 
   QMutex _Mutex;
 
