@@ -65,11 +65,12 @@ void TestStreamWriter::run()
 {
   while (true)
   {
-    std::cout << "writing to _OutStream..." << std::endl;
+    std::cout << "writing to _OutStream..." << "tellp,tellg: " << _TestStream.tellp() << "," << _TestStream.tellg() << std::endl;
 //    _TestStream << tMsg << std::endl;
-    _TestStream << tMsg << std::endl;
-    _TestStream << tMsg << std::endl;
-    _TestStream << tMsg << std::endl;
-    sleep(2);
+    _TestStream << tMsg;// << std::endl;
+    _TestStream << tMsg;// << std::endl;
+    _TestStream << tMsg;// << std::endl;
+    std::cout << "writing to _OutStream..." << "tellp,tellg: " << _TestStream.tellp() << "," << _TestStream.tellg() << std::endl;
+    sleep(2.0);
   }
 }

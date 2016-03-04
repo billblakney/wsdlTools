@@ -249,6 +249,11 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
   window->show();
 }
 
+void onRecordProcessed()
+{
+  std::cout << "RECORD PROCESSED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+}
+
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
 void runStreamReaderMode(
@@ -296,7 +301,7 @@ void runStreamReaderMode(
   if (!tIsTestMode)
   {
     tStreamReader = new StreamReader(cin,
-        tRecordProcessor,tOperateMode,tDelimitMode);
+        tRecordProcessor,NULL,tOperateMode,tDelimitMode);
   }
   else
   {
@@ -307,7 +312,7 @@ void runStreamReaderMode(
 
 //    tStreamReader = new StreamReader(_TestInStream,
     tStreamReader = new StreamReader(tOutStream,
-        tRecordProcessor,tOperateMode,tDelimitMode);
+        tRecordProcessor,onRecordProcessed,tOperateMode,tDelimitMode);
   }
 
   /*

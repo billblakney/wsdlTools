@@ -12,12 +12,15 @@ QStringList StreamReader::_DelimitModeNames = delimitModeNames();
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 StreamReader::StreamReader(std::istream &aStream,
-    RecordProcessor *aRecordProcessor,OperateMode aOperateMode,
+    RecordProcessor *aRecordProcessor,
+    RecordProcessedCallbackType aRecordProcessedCallback,
+    OperateMode aOperateMode,
     DelimitMode aDelimitMode)
   : _InStream(aStream),
+    _RecordProcessor(aRecordProcessor),
+    _RecordProcessedCallback(aRecordProcessedCallback),
     _NumRecordsTotal(0),
     _NumRecordsOutput(0),
-    _RecordProcessor(aRecordProcessor),
     _DataStructModel(0),
     _OperateMode(aOperateMode),
     _DelimitMode(aDelimitMode)
@@ -319,8 +322,10 @@ void StreamReader::readForStructName(
   SimpleLineMatcher tMatcher(tStructNameLineMatch);
 
   std::string tLineBuffer;
+std::cout << "before read struct: tellg: " << _InStream.tellg() << std::endl;
   while (std::getline(_InStream,tLineBuffer))
   {
+std::cout << "while read struct: tellg: " << _InStream.tellg() << std::endl;
       if (tMatcher.match(tLineBuffer) )
       {
         aMsgId = tMatcher.getWhat(1);
@@ -386,9 +391,12 @@ void StreamReader::readAndProcessStructLines()
 
   std::cout << kStartHeader << std::endl;
 
+//std::cout << "before while: tellp,tellg: " << _InStream.tellp() << "," << _InStream.tellg() << std::endl;
+std::cout << "before while: tellg: " << _InStream.tellg() << std::endl;
   while (std::getline(_InStream,tLineBuffer))
   {
-//sleep(2); //TODO rm
+sleep(0.1); //TODO rm
+std::cout << "after while: tellg: " << _InStream.tellg() << std::endl;
     /*
      * If in bypass mode, just echo lines.
      */
@@ -448,6 +456,10 @@ void StreamReader::readAndProcessStructLines()
         bool tWasOutput = false;
         std::vector<std::string> tOutLines;
 
+        /*
+         * If record was successfully processed and passed the filter tests,
+         * output the record.
+         */
         if (_RecordProcessor->process(&tStructLines))
         {
           if (_RecordProcessor->passedFilterTests())
@@ -473,6 +485,9 @@ void StreamReader::readAndProcessStructLines()
         }
         tStructLines.clear();
 
+        /*
+         * Delimit the record.
+         */
         if (_DelimitMode == eAllRecords ||
             (_DelimitMode == eOutputRecords && tWasOutput))
         {
@@ -482,6 +497,19 @@ void StreamReader::readAndProcessStructLines()
           sprintf(tBuff,kEndDelimiter,_NumRecordsOutput,_NumRecordsTotal);
           std::cout << tBuff << std::endl;
         }
+
+        /*
+         * Invoke callback for record processed.
+         */
+        if (_RecordProcessedCallback != NULL)
+        {
+          _RecordProcessedCallback();
+          _InStream.seekg(0);
+        }
+
+        /*
+         * Reset flags to start search for next record.
+         */
         tFoundStart = false;
         tFoundFirstField = false;
       }
@@ -518,6 +546,12 @@ void StreamReader::readAndProcessStructLines()
       }
     }
   }
+std::cout << "END=====================================================" << std::endl;
+if (_InStream.eof()) std::cout << "eof" << std::endl;
+if (_InStream.bad()) std::cout << "bad" << std::endl;
+if (_InStream.bad()) std::cout << "bad" << std::endl;
+if (_InStream.fail()) std::cout << "fail" << std::endl;
+exit(0);
 }
 
 //-----------------------------------------------------------------------------
