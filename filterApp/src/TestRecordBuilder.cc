@@ -12,18 +12,6 @@ TestRecordBuilder::TestRecordBuilder(QString aMsgId,QString aStructName,
     _StructName(aStructName),
     _HeaderPath(aHeaderPath)
 {
-}
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-TestRecordBuilder::~TestRecordBuilder()
-{
-}
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-std::string TestRecordBuilder::getTestRecord()
-{
   // Parse the header file to get _StructBuilder.
   StructorBuilder *tStructorBuilder =
       HeaderUtil::parseHeaderFile(_HeaderPath);
@@ -42,8 +30,153 @@ std::string TestRecordBuilder::getTestRecord()
    * Create the data structure model for the specified data structure.
    */
   DataStructModel *tModel = new DataStructModel(tStructure,tStructorBuilder);
-  std::string tRecord =
-      tModel->getTestRecord(_MsgId.toStdString(),_StructName.toStdString());
+  _TopNode = tModel->getTopNode();
+}
 
-  return tRecord;
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+TestRecordBuilder::~TestRecordBuilder()
+{
+}
+
+//-------------------------------------------------------------------------------
+// TODO shouldn't need to pass aStructName
+// TODO format
+// TODO ssifg
+// TODO separate class
+//-------------------------------------------------------------------------------
+std::string TestRecordBuilder::getTestRecord()
+{
+  std::string tStr;
+  tStr += "==============RECEIVED MESSAGE=========\n";
+  tStr += ".......................................\n";
+  tStr += "... " + _MsgId.toStdString() + " ... " + _StructName.toStdString();
+  tStr += "\n";
+  tStr += ".......................................\n";
+
+  tStr += getTestString(_TopNode);
+
+  tStr += "==============END MESSAGE=========\n";
+
+  return tStr;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::string TestRecordBuilder::getTestString(FieldItem *aNode)
+{
+  std::string tReturn;
+
+  FieldItemData &tData = aNode->getData();
+  FieldItemData::NodeType tType = tData.getNodeType();
+
+  switch (tType)
+  {
+  case FieldItemData::eRoot:
+    addChildren(aNode,0,tReturn);
+    break;
+  case FieldItemData::eStruct:
+    addHeader(tData,tReturn);
+    addChildren(aNode,0,tReturn);
+    break;
+  case FieldItemData::eStructArray:
+  {
+    const int kStructArrayLength = 1;
+    addHeader(tData,tReturn);
+    addArrayLenNode(
+        aNode->child(0)->getData(),kStructArrayLength,tReturn);
+    for (int i = 0; i < kStructArrayLength; i++)
+    {
+      addChildren(aNode,1,tReturn);
+    }
+  }
+  break;
+  case FieldItemData::ePrimitiveArray:
+  {
+    const int kPrimitiveArrayLength = 1;
+    addHeader(tData,tReturn);
+    addArrayLenNode(
+        aNode->child(0)->getData(),kPrimitiveArrayLength,tReturn);
+    for (int i = 0; i < kPrimitiveArrayLength; i++)
+    {
+      addPrimitiveArrayValue(tData,i,tReturn);
+    }
+  }
+  break;
+  case FieldItemData::ePrimitiveValue:
+  {
+    addPrimitiveValue(tData,tReturn);
+  }
+  break;
+  default:
+    std::cout << "ERROR: unexpected node type while creating test string"
+              << std::endl;
+    break;
+  }
+
+  return tReturn;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void TestRecordBuilder::addTabs(int aNum,std::string &aStr)
+{
+  for (int tIdx = 0; tIdx < aNum; tIdx++)
+  {
+    aStr += "\t";
+  }
+}
+
+//-------------------------------------------------------------------------------
+// TODO comment
+//-------------------------------------------------------------------------------
+void TestRecordBuilder::addChildren(FieldItem *aParentNode,int aFirstChild,
+    std::string &aStr)
+{
+    for (int i = aFirstChild; i < aParentNode->childCount(); i++)
+    {
+      aStr += getTestString(aParentNode->child(i));
+    }
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void TestRecordBuilder::addHeader(FieldItemData &aData,std::string &aStr)
+{
+    addTabs(aData.getLevel(),aStr);
+    aStr += aData.getName();
+    aStr += ":\n";
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void TestRecordBuilder::addArrayLenNode(FieldItemData &aData,int aLength,
+    std::string &aStr)
+{
+  addTabs(aData.getLevel(),aStr);
+  std::stringstream tStream;
+  tStream << "array of len: " << aLength << std::endl;
+  aStr += tStream.str();
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void TestRecordBuilder::addPrimitiveArrayValue(FieldItemData &aData,int aIdx,
+    std::string &aStr)
+{
+  addTabs(aData.getLevel()+1/*TODO add comment*/,aStr);
+  std::stringstream tStream;
+  tStream << "[" << aIdx << "] =\t{" << aData.getName() << aIdx << "}\n";
+  aStr += tStream.str();
+//  aStr += "[0] =\tvalue\n";//TODO rm
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void TestRecordBuilder::addPrimitiveValue(FieldItemData &aData,std::string &aStr)
+{
+  std::string tStr;
+  addTabs(aData.getLevel(),aStr);
+  aStr += aData.getName();
+  aStr += ":\t{" + aData.getName() + "}\n";
 }
