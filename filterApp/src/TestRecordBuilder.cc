@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 
 #include "DataStructModel.hh"
 #include "HeaderUtil.hh"
@@ -81,7 +82,7 @@ std::string TestRecordBuilder::getTestString(FieldItem *aNode)
     break;
   case FieldItemData::eStructArray:
   {
-    const int kStructArrayLength = 1;
+    const int kStructArrayLength = 2;
     addHeader(tData,tReturn);
     addArrayLenNode(
         aNode->child(0)->getData(),kStructArrayLength,tReturn);
@@ -93,7 +94,7 @@ std::string TestRecordBuilder::getTestString(FieldItem *aNode)
   break;
   case FieldItemData::ePrimitiveArray:
   {
-    const int kPrimitiveArrayLength = 1;
+    const int kPrimitiveArrayLength = 3;
     addHeader(tData,tReturn);
     addArrayLenNode(
         aNode->child(0)->getData(),kPrimitiveArrayLength,tReturn);
@@ -175,8 +176,37 @@ void TestRecordBuilder::addPrimitiveArrayValue(FieldItemData &aData,int aIdx,
 //-------------------------------------------------------------------------------
 void TestRecordBuilder::addPrimitiveValue(FieldItemData &aData,std::string &aStr)
 {
-  std::string tStr;
+  /*
+   * Map of keys to counts. Will add the count to the value string to give some
+   * unique values to the field values
+   */
+  static std::map<std::string,int> kCountMap;
+
+  /*
+   * Add tabs.
+   */
   addTabs(aData.getLevel(),aStr);
+
+  /*
+   * Get the count.
+   */
+  std::string tKey = aData.getKey();
+  std::map<std::string,int>::iterator tIter = kCountMap.find(tKey);
+  int tCount = 0;
+  if (tIter != kCountMap.end())
+  {
+    tCount = ++tIter->second;
+  }
+  else
+  {
+    kCountMap[tKey] = 0;
+  }
+  std::stringstream tStream;
+  tStream << tCount;
+
+  /*
+   * Build the value string.
+   */
   aStr += aData.getName();
-  aStr += ":\t{" + aData.getName() + "}\n";
+  aStr += ":\t{" + aData.getName() + tStream.str() + "}\n";
 }

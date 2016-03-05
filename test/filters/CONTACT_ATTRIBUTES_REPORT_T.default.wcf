@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilter>
+    <config>
+        <description>basic info: is-dropped, fused-number, designator, num fused-children</description>
+        <operate_mode>eGo</operate_mode>
+        <delimit_mode>eAllRecords</delimit_mode>
+        <format_mode>eLongname</format_mode>
+    </config>
+    <fields>
+        <field key="isDroppedInTC" checked="1"/>
+        <field key="fusedNumber" checked="1"/>
+        <field key="contactDesignator.contactNumber" checked="1"/>
+        <field key="contactDesignator.contactPrefix" checked="1"/>
+        <field key="contactDesignator.uniqueContactID" checked="1"/>
+        <field key="fusedContactComponents_size" checked="1"/>
+    </fields>
+</wsdlfilter>

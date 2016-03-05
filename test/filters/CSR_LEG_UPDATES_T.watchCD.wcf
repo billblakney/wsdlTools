@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilter>
+    <config>
+        <description>watch contact designators</description>
+        <operate_mode>eGo</operate_mode>
+        <delimit_mode>eAllRecords</delimit_mode>
+        <format_mode>eLongname</format_mode>
+    </config>
+    <fields>
+        <field key="CSR_LEGS.legID" checked="1"/>
+        <field key="CSR_LEGS.legCSR.contactDesignator.contactNumber" checked="1"/>
+        <field key="CSR_LEGS.legCSR.contactDesignator.contactPrefix" checked="1"/>
+    </fields>
+</wsdlfilter>
