@@ -8,7 +8,6 @@
 #include "AppConfigReader.hh"
 #include "MainWindow.hh"
 #include "RecordProcessor.hh"
-#include "TestStreamWriter.hh"
 #include "StreamReader.hh"
 #include "Logger.hh"
 
@@ -345,7 +344,6 @@ void runFilterMode(
       StreamReader::getDelimitMode(aAppConfig.getDefaultDelimitMode());
 
   StreamReader *tStreamReader;
-  TestStreamWriter *tTestStreamWriter;
 
   if (!tIsTestMode)
   {
@@ -360,10 +358,10 @@ void runFilterMode(
 
     std::string tTestString = getTestRecord(aAppConfigReader,aArgs);
 
-    tTestStreamWriter = new TestStreamWriter(tTestString);
-    std::stringstream &tOutStream = tTestStreamWriter->getTestStream();
+    std::stringstream *tTestStream = new std::stringstream();
+    *tTestStream << tTestString;
 
-    tStreamReader = new StreamReader(tOutStream,
+    tStreamReader = new StreamReader(*tTestStream,
         tRecordProcessor,tOperateMode,tDelimitMode,true);
   }
 

@@ -191,7 +191,7 @@ protected:
   std::string buildMatchForPrimitiveArrayLengthField(
       const Field &aField,int aIndentLevel);
 
-  std::string getTestString(FieldItem *aNode,int aIndex = 0);
+  std::string getTestString(FieldItem *aNode);
   void addTabs(int aNum,std::string &aStr);
   void addTestStringChildren(FieldItem *aParentNode,int aFirstChild,std::string &aStr);
   void addTestStringHeader(FieldItemData &aData,std::string &aStr);

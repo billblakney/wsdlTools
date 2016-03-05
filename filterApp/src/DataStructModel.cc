@@ -308,7 +308,7 @@ void DataStructModel::addTestStringPrimitiveValue(FieldItemData &aData,
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
-std::string DataStructModel::getTestString(FieldItem *aNode,int aIndex)
+std::string DataStructModel::getTestString(FieldItem *aNode)
 {
   std::string tReturn;
 
