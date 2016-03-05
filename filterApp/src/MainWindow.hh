@@ -14,6 +14,7 @@
 #include "DataStructModel.hh"
 #include "DelimitActionGroup.hh"
 #include "FilterReader.hh"
+#include "FormatActionGroup.hh"
 #include "OperateActionGroup.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
@@ -111,6 +112,7 @@ protected:
 
   OperateActionGroup *_OperateActionGroup;
   DelimitActionGroup *_DelimitActionGroup;
+  FormatActionGroup  *_FormatActionGroup;
 
   QAction             *_ViewFileToolbarAction;
   QAction             *_ViewOperateToolbarAction;

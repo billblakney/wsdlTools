@@ -104,6 +104,7 @@ void MainWindow::init()
   _ToolToolBar = 0;
   _OperateActionGroup = 0;
   _DelimitActionGroup = 0;
+  _FormatActionGroup = 0;
   _ViewFileToolbarAction = 0;
   _ViewOperateToolbarAction = 0;
   _ViewDelimitToolbarAction = 0;
@@ -245,7 +246,8 @@ void MainWindow::onOpenFilterAction()
     FilterSpec tFiter = _FilterReader->openFilter(
         _AppConfig.getDefaultFiltersDir(),tFilter);
 
-    tFiter.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
+    tFiter.apply(_DataStructModel,
+        _OperateActionGroup,_DelimitActionGroup,_FormatActionGroup);
   }
 }
 
@@ -256,15 +258,16 @@ void MainWindow::onOpenCustomFilterAction()
   FilterSpec tFiter = _FilterReader->openFilter(
       _AppConfig.getCustomFiltersDir());
 
-  tFiter.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
+  tFiter.apply(_DataStructModel,
+      _OperateActionGroup,_DelimitActionGroup,_FormatActionGroup);
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void MainWindow::onSaveCustomFilterAction()
 {
-  _FilterReader->saveFilter(
-      _AppConfig.getCustomFiltersDir(),_DataStructModel,_StreamReader);
+  _FilterReader->saveFilter(_AppConfig.getCustomFiltersDir(),_DataStructModel,
+      _StreamReader,_RecordProcessor);
 }
 
 //-----------------------------------------------------------------------------
@@ -609,14 +612,14 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
   tCustomFormatAction->setData(QVariant(RecordProcessor::eCustom));
 
   // action group
-  QActionGroup *tFormatGroup = new QActionGroup(this);
-  tFormatGroup->addAction(tAsIsFormatAction);
-  tFormatGroup->addAction(tLongnameFormatAction);
-  tFormatGroup->addAction(tTableFormatAction);
-  tFormatGroup->addAction(tCustomFormatAction);
+  _FormatActionGroup = new FormatActionGroup(this);
+  _FormatActionGroup->addAction(tAsIsFormatAction);
+  _FormatActionGroup->addAction(tLongnameFormatAction);
+  _FormatActionGroup->addAction(tTableFormatAction);
+  _FormatActionGroup->addAction(tCustomFormatAction);
 
   // action signal-slot
-  connect(tFormatGroup, SIGNAL(triggered(QAction*)), _RecordProcessor,
+  connect(_FormatActionGroup, SIGNAL(triggered(QAction*)), _RecordProcessor,
       SLOT(onFormatModeAction(QAction*)));
   connect(tCustomFormatToolAction,SIGNAL(triggered()),
       this,SLOT(onCustomFormatToolAction()));
@@ -1206,7 +1209,8 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
     {
       QString tDir = _AppConfig.getDefaultFiltersDir();
       FilterSpec tFiter = _FilterReader->openFilter(tDir,tFilter);
-      tFiter.apply(_DataStructModel,_OperateActionGroup,_DelimitActionGroup);
+      tFiter.apply(_DataStructModel,
+          _OperateActionGroup,_DelimitActionGroup,_FormatActionGroup);
     }
   }
 

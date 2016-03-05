@@ -9,6 +9,7 @@ const char *FilterReader::kWsdlfilterconfigTag = "wsdlfilter";
 const char *FilterReader::kDefaultsTag = "config";
 const char *FilterReader::kOperateModeTag = "operate_mode";
 const char *FilterReader::kDelimitModeTag = "delimit_mode";
+const char *FilterReader::kFormatModeTag = "format_mode";
 const char *FilterReader::kFilterDescriptionTag = "description";
 const char *FilterReader::kFieldsTag = "fields";
 const char *FilterReader::kFieldTag = "field";
@@ -147,6 +148,11 @@ void FilterReader::readConfigElements(FilterSpec &aFilterSpec)
         QString tStr = reader.readElementText();
         aFilterSpec._DelimitMode = tStr;
       }
+      else if (reader.name() == kFormatModeTag)
+      {
+        QString tStr = reader.readElementText();
+        aFilterSpec._FormatMode = tStr;
+      }
       else if (reader.name() == kFilterDescriptionTag)
       {
         QString tStr = reader.readElementText();
@@ -232,7 +238,7 @@ void FilterReader::skipUnknownElement()
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void FilterReader::saveFilter(QString aDir,DataStructModel *aModel,
-    StreamReader *aStreamReader)
+    StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
 {
 
   QString tFileName = QFileDialog::getSaveFileName(0,
@@ -255,7 +261,7 @@ void FilterReader::saveFilter(QString aDir,DataStructModel *aModel,
 
   xmlWriter.setDevice(&file);
 
-  writeWsdlfilterDocument(xmlWriter,aModel,aStreamReader);
+  writeWsdlfilterDocument(xmlWriter,aModel,aStreamReader,aRecordProcessor);
 
   file.close();
 }
@@ -263,14 +269,15 @@ void FilterReader::saveFilter(QString aDir,DataStructModel *aModel,
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void FilterReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter,
-    DataStructModel *aModel,StreamReader *aStreamReader)
+    DataStructModel *aModel,StreamReader *aStreamReader,
+    RecordProcessor *aRecordProcessor)
 {
   // Writes a document start with the XML version number.
   aWriter.writeStartDocument();
 
   aWriter.writeStartElement(kWsdlfilterconfigTag);
 
-  writeConfigElements(aWriter,aStreamReader);
+  writeConfigElements(aWriter,aStreamReader,aRecordProcessor);
   writeFieldElements(aWriter,aModel);
 
   // end tag wsdlfilter
@@ -283,7 +290,7 @@ void FilterReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter,
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void FilterReader::writeConfigElements(QXmlStreamWriter &aWriter,
-    StreamReader *aStreamReader)
+    StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
 {
   aWriter.writeStartElement(kDefaultsTag);
 
@@ -295,6 +302,11 @@ void FilterReader::writeConfigElements(QXmlStreamWriter &aWriter,
   aWriter.writeStartElement(kDelimitModeTag);
   aWriter.writeCharacters(
       StreamReader::getDelimitModeString(aStreamReader->getDelimitMode()));
+  aWriter.writeEndElement();
+
+  aWriter.writeStartElement(kFormatModeTag);
+  aWriter.writeCharacters(
+      RecordProcessor::getFormatModeString(aRecordProcessor->getFormatMode()));
   aWriter.writeEndElement();
 
   aWriter.writeEndElement(); // config

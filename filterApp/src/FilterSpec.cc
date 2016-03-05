@@ -18,7 +18,8 @@ FilterSpec::~FilterSpec()
 //-----------------------------------------------------------------------------
 void FilterSpec::apply(DataStructModel *aDataStructModel,
     OperateActionGroup *aOperateActionGroup,
-    DelimitActionGroup *aDelimitActionGroup)
+    DelimitActionGroup *aDelimitActionGroup,
+    FormatActionGroup *aFormatActionGroup)
 {
   StreamReader::OperateMode tOperateMode = StreamReader::getOperateMode(_OperateMode);
   QAction *tOperateAction = aOperateActionGroup->getAction(tOperateMode);
@@ -27,6 +28,10 @@ void FilterSpec::apply(DataStructModel *aDataStructModel,
   StreamReader::DelimitMode tDelimitMode = StreamReader::getDelimitMode(_DelimitMode);
   QAction *tDelimitAction = aDelimitActionGroup->getAction(tDelimitMode);
   tDelimitAction->activate(QAction::Trigger);
+
+  RecordProcessor::FormatMode tFormatMode = RecordProcessor::getFormatMode(_FormatMode);
+  QAction *tFormatAction = aFormatActionGroup->getAction(tFormatMode);
+  tFormatAction->activate(QAction::Trigger);
 
   std::vector<FieldSpec>::iterator tIter;
 
@@ -54,6 +59,11 @@ void FilterSpec::apply(DataStructModel *aDataStructModel,
 void FilterSpec::updateMessageIsChecked(FieldItem *aItem,
     QString aIsChecked)
 {
+  if (aIsChecked.length() == 0)
+  {
+    return;
+  }
+
   bool tNewIsCheckedValue =
       (aIsChecked.toStdString().compare(FilterReader::kValueChecked)?false:true);
   bool tOldIsCheckedValue = aItem->getData().isChecked();
@@ -76,6 +86,11 @@ void FilterSpec::updateMessageIsChecked(FieldItem *aItem,
 void FilterSpec::updateMessageTestScope(FieldItem *aItem,
       QString aNewTestScope)
 {
+  if (aNewTestScope.length() == 0)
+  {
+    return;
+  }
+
   QString tOldTestScope(aItem->getData().getTestScope().c_str());
 
   if (tOldTestScope != aNewTestScope)
@@ -89,6 +104,11 @@ void FilterSpec::updateMessageTestScope(FieldItem *aItem,
 void FilterSpec::updateMessageFormat(FieldItem *aItem,
     QString aNewFormat)
 {
+  if (aNewFormat.length() == 0)
+  {
+    return;
+  }
+
   FieldItemData::Format tOldFormatValue = aItem->getData().getFormat();
   QString tOldFormat = aItem->getData().getFormatString(tOldFormatValue);
   if (tOldFormat != aNewFormat)
@@ -103,6 +123,11 @@ void FilterSpec::updateMessageFormat(FieldItem *aItem,
 void FilterSpec::updateMessagePostfix(FieldItem *aItem,
     QString aNewPostfix)
 {
+  if (aNewPostfix.length() == 0)
+  {
+    return;
+  }
+
   QString tOldPostfix(aItem->getData().getPostfix().c_str());
 
   if (tOldPostfix != aNewPostfix)

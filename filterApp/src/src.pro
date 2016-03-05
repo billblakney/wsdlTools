@@ -47,6 +47,7 @@ HEADERS += \
            FieldSpec.hh \
            FilterReader.hh \
            FilterSpec.hh \
+           FormatActionGroup.hh \
            LineMatcher.hh \
            MainWindow.hh \
            MessageSpec.hh \
@@ -73,6 +74,7 @@ SOURCES += \
            FieldSpec.cc \
            FilterReader.cc \
            FilterSpec.cc \
+           FormatActionGroup.cc \
            LineMatcher.cc \
            MainWindow.cc \
            MessageSpec.cc \

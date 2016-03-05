@@ -71,14 +71,14 @@ void DataStructModel::setFilterScopeForDesignator()
       FieldItem *tParent = findFirstAncestor(tNode,FieldItemData::eStructArray);
       if (tParent != NULL)
       {
-        std::cout << "CLIR_CAR_DESIGNATOR: " << tNode->getData().getKey().c_str()
-            << ", " << tParent->getData().getKey() << std::endl;
+//        std::cout << "CLIR_CAR_DESIGNATOR: " << tNode->getData().getKey().c_str()
+//            << ", " << tParent->getData().getKey() << std::endl;
         applyTestScope(tParent,tParent->getData().getKey() + ".Element");
       }
       else
       {
-        std::cout << "CLIR_CAR_DESIGNATOR: " << tNode->getData().getKey().c_str()
-            << ", no struct array ancestor node" << std::endl;
+//        std::cout << "CLIR_CAR_DESIGNATOR: " << tNode->getData().getKey().c_str()
+//            << ", no struct array ancestor node" << std::endl;
       }
     }
   }

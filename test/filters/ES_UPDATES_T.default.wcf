@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilter>
+    <config>
+        <description>Table with timestamp, reportType, emitterID</description>
+        <operate_mode>eGo</operate_mode>
+        <delimit_mode>eNoRecords</delimit_mode>
+        <format_mode>eTable</format_mode>
+    </config>
+    <fields>
+        <field key="esReports.esCLIR.timeStamp" checked="1"/>
+        <field key="esReports.esCLIR.reportType" checked="1"/>
+        <field key="esReports.esCLIR.contactDesignator.emitterID" checked="1"/>
+    </fields>
+</wsdlfilter>

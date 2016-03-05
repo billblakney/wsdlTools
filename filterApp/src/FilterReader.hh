@@ -14,6 +14,7 @@ public:
   static const char *kDefaultsTag;
   static const char *kOperateModeTag;
   static const char *kDelimitModeTag;
+  static const char *kFormatModeTag;
   static const char *kFilterDescriptionTag;
   static const char *kFieldsTag;
   static const char *kFieldTag;
@@ -31,7 +32,7 @@ public:
   FilterSpec openFilter(QString aDir);
   FilterSpec openFilter(QString aDir,QString aFilterSpec);
   void saveFilter(QString aDir,DataStructModel *aDataStructModel,
-      StreamReader *aStreamReader);
+      StreamReader *aStreamReader,RecordProcessor *aRecordProcessor);
 
 protected:
   QXmlStreamReader reader;
@@ -43,9 +44,9 @@ protected:
 
   void writeWsdlfilterDocument(
       QXmlStreamWriter &aWriter,DataStructModel *aDataStructModel,
-      StreamReader *aStreamReader);
+      StreamReader *aStreamReader,RecordProcessor *aRecordProcessor);
   void writeConfigElements(QXmlStreamWriter &aWriter,
-      StreamReader *aStreamReader);
+      StreamReader *aStreamReader,RecordProcessor *aRecordProcessor);
   void writeFieldElements(
       QXmlStreamWriter &aWriter,DataStructModel *aDataStructModel);
 };

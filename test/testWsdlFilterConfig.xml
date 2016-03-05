@@ -24,5 +24,10 @@
             <struct>FACULTY_T</struct>
             <header>faculty.H</header>
         </message>
+        <message>
+            <id>ssifg_CAR_MSG_ID</id>
+            <struct>CONTACT_ATTRIBUTES_REPORT_T</struct>
+            <header>CLIR_CAR_cxsd.H</header>
+        </message>
     </messages>
 </wsdlfilterconfig>
