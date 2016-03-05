@@ -6,9 +6,11 @@
 #include <QSettings>
 
 #include "AppConfigReader.hh"
+#include "HeaderUtil.hh"
 #include "MainWindow.hh"
 #include "RecordProcessor.hh"
 #include "StreamReader.hh"
+#include "TestRecordBuilder.hh"
 #include "Logger.hh"
 
 extern StructorBuilder *lex_main(char *aHeaderFile);
@@ -262,47 +264,16 @@ QString getHeaderFilePath(AppConfig aAppConfig)
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-std::string getTestRecord(AppConfigReader *aAppConfigReader,CmdLineArgs aArgs)
-{
-  std::string tMsgId = aArgs.testMsgId.toStdString();
-  std::string tStructName = aArgs.testStruct.toStdString();
-
-  QString tHeaderFile = getHeaderFilePath(aAppConfigReader->appConfig());
-
-  // Parse the header file to get _StructBuilder.
-  StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(tHeaderFile);
-
-  Structure *tStructure =
-      tStructorBuilder->getStructure(tStructName);
-
-  if (!tStructure)
-  {
-    std::cerr << "ERROR: couldn't find struct " << tStructName << std::endl;
-    exit(0);
-  }
-
-  /*
-   * Create the data structure model for the specified data structure.
-   */
-  DataStructModel *tModel = new DataStructModel(tStructure,tStructorBuilder);
-  std::string tRecord = tModel->getTestRecord(tMsgId,tStructName);
-std::cout << "TEST RECORD:\n" << tRecord << std::endl;
-  return tRecord;
-}
-
-/*------------------------------------------------------------------------------
- *----------------------------------------------------------------------------*/
 void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
     AppConfigReader *aAppConfigReader)
 {
   std::cout << "Running in browse mode..." << std::endl;
 
   determineHeaderFileInfo(aArgs,aAppConfigReader);
-
   QString tHeaderFile = getHeaderFilePath(aAppConfigReader->appConfig());
 
   // Parse the header file to get _StructBuilder.
-  StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(tHeaderFile);
+  StructorBuilder *tStructorBuilder = HeaderUtil::parseHeaderFile(tHeaderFile);
 
   // create and launch main window
   std::cout << "Launching main window..." << std::endl;
@@ -329,6 +300,7 @@ void runFilterMode(
    * Determine values for header file params.
    */
   determineHeaderFileInfo(aArgs,aAppConfigReader);
+  QString tHeaderFile = getHeaderFilePath(aAppConfigReader->appConfig());
 
   /*
    * Create the record processor.
@@ -356,8 +328,13 @@ void runFilterMode(
   {
     std::cout << "Running in test mode..." << std::endl;
 
-    std::string tTestString = getTestRecord(aAppConfigReader,aArgs);
+    // Get the test string.
+    TestRecordBuilder *tBuilder = new TestRecordBuilder(aArgs.testMsgId,
+        aArgs.testStruct,tHeaderFile);
+    std::string tTestString = tBuilder->getTestRecord();
+    std::cout << "TEST RECORD:\n" << tTestString << std::endl;
 
+    // Write the test string into the test stringstream.
     std::stringstream *tTestStream = new std::stringstream();
     *tTestStream << tTestString;
 

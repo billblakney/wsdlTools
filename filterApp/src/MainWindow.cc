@@ -5,7 +5,6 @@
 #include <QActionGroup>
 #include <QButtonGroup>
 #include <QDockWidget>
-#include <QFile>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -14,12 +13,12 @@
 #include <QStatusBar>
 #include <QToolBar>
 #include <QVBoxLayout>
+
+#include "HeaderUtil.hh"
 #include "PickFilterDialog.hh"
 #include "MainWindow.hh"
 
 using namespace std;
-
-extern StructorBuilder *lex_main(char *aHeaderFile);
 
 const QString MainWindow::kAppName("app_iec_wsdlFilter");
 const QString MainWindow::kTitle(kAppName);
@@ -122,42 +121,6 @@ void MainWindow::init()
   _TableCheckBox = 0;
 
   _FilterReader = new FilterReader();
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-StructorBuilder *MainWindow::parseHeaderFile(QString aHeaderFile)
-{
-  QFile tHeaderFile(aHeaderFile);
-
-  // need the header file to be defined
-  if (!aHeaderFile.length())
-  {
-    std::cout << "ERROR: No header file specified." << std::endl;
-    std::cout << "       Use -f option or set CLIRCAR_H env var\n"
-              << std::endl;
-    exit(1);
-  }
-  else if (!tHeaderFile.exists())
-  {
-    std::cout << "ERROR: Header file \"" << qPrintable(aHeaderFile) << "\""
-              << " does not exist" << std::endl;
-    exit(1);
-  }
-
-  std::cout << "Using header file " << qPrintable(aHeaderFile)
-            << "..." << std::endl;
-
-  std::cout << "Parsing header file " << qPrintable(aHeaderFile)
-            << "..." << std::endl;
-  StructorBuilder *tStructorBuilder = NULL;
-
-  std::string tString = aHeaderFile.toStdString();
-  tStructorBuilder = lex_main((char *)tString.c_str());
-  //   _StructorBuilder->printSummary();
-  //   _StructorBuilder->postProcess();
-
-  return tStructorBuilder;
 }
 
 //-------------------------------------------------------------------------------
@@ -1184,7 +1147,7 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
   std::cout << "Parsing header file " << tHeaderPath
             << "..." << std::endl;
 
-  _StructorBuilder = lex_main((char *)tHeaderPath.c_str());
+  _StructorBuilder = HeaderUtil::parseHeaderFile(tHeaderPath.c_str());
   if (_StructorBuilder == NULL)
   {
     std::cout << "ERROR: Failed to build structor builder for msgId "

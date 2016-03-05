@@ -47,6 +47,7 @@ HEADERS += \
            FieldSpec.hh \
            FilterReader.hh \
            FilterSpec.hh \
+           HeaderUtil.hh \
            FormatActionGroup.hh \
            LineMatcher.hh \
            MainWindow.hh \
@@ -60,6 +61,7 @@ HEADERS += \
            SimpleLineMatcher.hh \
            StreamReader.hh \
            StructTreeView.hh \
+           TestRecordBuilder.hh \
            TestRegexDelegate.hh \
 
 SOURCES += \
@@ -74,6 +76,7 @@ SOURCES += \
            FieldSpec.cc \
            FilterReader.cc \
            FilterSpec.cc \
+           HeaderUtil.cc \
            FormatActionGroup.cc \
            LineMatcher.cc \
            MainWindow.cc \
@@ -87,5 +90,6 @@ SOURCES += \
            SimpleLineMatcher.cc \
            StreamReader.cc \
            StructTreeView.cc \
+           TestRecordBuilder.cc \
            TestRegexDelegate.cc \
 
