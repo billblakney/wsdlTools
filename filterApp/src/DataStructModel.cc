@@ -232,11 +232,11 @@ void DataStructModel::printTestNodes()
 // TODO shouldn't need to pass aStructName
 // TODO format
 // TODO ssifg
+// TODO separate class
 //-------------------------------------------------------------------------------
-std::string DataStructModel::getTestRecord(std::string aStructName)
+std::string DataStructModel::getTestRecord(std::string aMsgId,
+    std::string aStructName)
 {
-  std::string aMsgId("ssifg_STUDENT_MSG_ID");//TODO
-
   std::string tStr;
   tStr += "==============RECEIVED MESSAGE=========\n";
   tStr += ".......................................\n";

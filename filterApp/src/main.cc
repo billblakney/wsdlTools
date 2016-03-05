@@ -20,6 +20,7 @@ typedef struct CmdLineArgs {
   QString appConfigFile;
   QString headerFile; // specifies
   QString initialStruct;
+  QString testMsgId;
   QString testStruct;
 } CmdLineArgs;
 
@@ -29,7 +30,7 @@ std::ostringstream _TestInStream;
 //-------------------------------------------------------------------------------
 void printUsage()
 {
-  static const char *tUsage =
+  static const char *tUsage = //TODO add test mode
   "\nFilter mode:"
   "app_iec_wsdlFilter [-a <app_config_file>] [-f <header_file>]\n"
   "   where <app_config_file> is the application configuration file, which\n"
@@ -152,15 +153,24 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
 
   for (int tIdx = 0; tIdx < argc; tIdx++)
   {
+    /*
+     * "-h" for help.
+     */
     if (!strcmp(argv[tIdx],"-h"))
     {
       printUsage();
       exit(0);
     }
+    /*
+     * "-b" for browse mode
+     */
     if (!strcmp(argv[tIdx],"-b"))
     {
       tCmdLineArgs.isBrowseMode = true;
     }
+    /*
+     * "-s <struct_name>" for initial struct name in browse mode
+     */
     if (!strcmp(argv[tIdx],"-s"))
     {
       if (++tIdx < argc)
@@ -173,6 +183,12 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
         exit(0);
       }
     }
+    /*
+     * "-f <header_file>" to override default header file.
+     * If <header_file> is a full path, it also overrides the default headers
+     * dir.
+     */
+    //
     if (!strcmp(argv[tIdx],"-f"))
     {
       if (++tIdx < argc)
@@ -185,16 +201,28 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
         exit(0);
       }
     }
+    /*
+     * "-t <msg_id> <struct_name>" for test mode.
+     */
     if (!strcmp(argv[tIdx],"-t"))
     {
       tCmdLineArgs.isTestMode = true;
+      if (++tIdx < argc)
+      {
+        tCmdLineArgs.testMsgId = argv[tIdx];
+      }
+      else
+      {
+        std::cerr << "ERROR: missing test message id name after -t\n";
+        exit(0);
+      }
       if (++tIdx < argc)
       {
         tCmdLineArgs.testStruct = argv[tIdx];
       }
       else
       {
-        std::cerr << "ERROR: missing test file name after -t\n";
+        std::cerr << "ERROR: missing test struct name after message id\n";
         exit(0);
       }
     }
@@ -237,12 +265,13 @@ QString getHeaderFilePath(AppConfig aAppConfig)
  *----------------------------------------------------------------------------*/
 std::string getTestRecord(AppConfigReader *aAppConfigReader,CmdLineArgs aArgs)
 {
+  std::string tMsgId = aArgs.testMsgId.toStdString();
+  std::string tStructName = aArgs.testStruct.toStdString();
+
   QString tHeaderFile = getHeaderFilePath(aAppConfigReader->appConfig());
 
   // Parse the header file to get _StructBuilder.
   StructorBuilder *tStructorBuilder = MainWindow::parseHeaderFile(tHeaderFile);
-
-  std::string tStructName = aArgs.testStruct.toStdString();
 
   Structure *tStructure =
       tStructorBuilder->getStructure(tStructName);
@@ -257,7 +286,7 @@ std::string getTestRecord(AppConfigReader *aAppConfigReader,CmdLineArgs aArgs)
    * Create the data structure model for the specified data structure.
    */
   DataStructModel *tModel = new DataStructModel(tStructure,tStructorBuilder);
-  std::string tRecord = tModel->getTestRecord(tStructName);
+  std::string tRecord = tModel->getTestRecord(tMsgId,tStructName);
 std::cout << "TEST RECORD:\n" << tRecord << std::endl;
   return tRecord;
 }
@@ -289,7 +318,7 @@ void runBrowseMode(QApplication &app,CmdLineArgs aArgs,
 
 /*------------------------------------------------------------------------------
  *----------------------------------------------------------------------------*/
-void runStreamReaderMode(
+void runFilterMode(
     QApplication &app,CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
 {
   bool tIsTestMode = aArgs.isTestMode;
@@ -402,7 +431,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-    runStreamReaderMode(app,tArgs,tAppConfigReader);
+    runFilterMode(app,tArgs,tAppConfigReader);
   }
 
   return app.exec();
