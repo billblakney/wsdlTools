@@ -235,12 +235,13 @@ void DataStructModel::printTestNodes()
 //-------------------------------------------------------------------------------
 std::string DataStructModel::getTestRecord(std::string aStructName)
 {
+  std::string aMsgId("ssifg_STUDENT_MSG_ID");//TODO
+
   std::string tStr;
   tStr += "==============RECEIVED MESSAGE=========\n";
-  tStr += ".......................       \n";
-  tStr += "... ssifg_STUDENT_MSG_ID ...";//TODO
-  tStr += aStructName;
-  tStr += "\n.......................       \n";
+  tStr += ".......................................\n";
+  tStr += "... " + aMsgId + " ... " + aStructName + "\n";
+  tStr += ".......................................\n";
 
   tStr += getTestString(_TopNodeItem);
 
