@@ -53,8 +53,13 @@ void StructTreeView::setDataStructModel(DataStructModel * aDataStructModel)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void StructTreeView::expandToChecked()
+void StructTreeView::expandToChecked(bool aCollapseFirst)
 {
+  if (aCollapseFirst)
+  {
+    collapseAll();
+  }
+
   std::vector<FieldItem *> tFieldItems = _DataStructModel->getTreeItems();
   std::vector<FieldItem *>::iterator tIter;
   for (tIter = tFieldItems.begin(); tIter != tFieldItems.end(); tIter++)

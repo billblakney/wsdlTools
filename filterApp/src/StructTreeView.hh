@@ -18,7 +18,7 @@ public:
 
   void setDataStructModel(DataStructModel * aDataStructModel);
 
-  void expandToChecked();
+  void expandToChecked(bool aCollapseFirst);
 
 protected:
   DataStructModel *_DataStructModel;

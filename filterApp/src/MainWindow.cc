@@ -211,6 +211,8 @@ void MainWindow::onOpenFilterAction()
 
     tFiter.apply(_DataStructModel,
         _OperateActionGroup,_DelimitActionGroup,_FormatActionGroup);
+
+    _StructTree->expandToChecked(true);
   }
 }
 
@@ -223,6 +225,8 @@ void MainWindow::onOpenCustomFilterAction()
 
   tFiter.apply(_DataStructModel,
       _OperateActionGroup,_DelimitActionGroup,_FormatActionGroup);
+
+    _StructTree->expandToChecked(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -965,7 +969,7 @@ void MainWindow::onPropagateCheckAction()
 //-------------------------------------------------------------------------------
 void MainWindow::onExpandToCheckedAction()
 {
-  _StructTree->expandToChecked();
+  _StructTree->expandToChecked(false);
 }
 
 //-------------------------------------------------------------------------------
