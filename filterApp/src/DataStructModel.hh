@@ -193,6 +193,11 @@ protected:
 
   std::string getTestString(FieldItem *aNode,int aIndex = 0);
   void addTabs(int aNum,std::string &aStr);
+  void addTestStringChildren(FieldItem *aParentNode,int aFirstChild,std::string &aStr);
+  void addTestStringHeader(FieldItemData &aData,std::string &aStr);
+  void addTestStringArrayLenNode(FieldItemData &aData,int aLength,std::string &aStr);
+  void addTestStringPrimitiveArrayValue(FieldItemData &aData,int aIdx,std::string &aStr);
+  void addTestStringPrimitiveValue(FieldItemData &aData,std::string &aStr);
 
   void setFilterScopeForDesignator();
   FieldItem *findFirstAncestor(FieldItem *aNode,FieldItemData::NodeType aNodeType);
