@@ -410,7 +410,7 @@ void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
   // pixmaps
   QPixmap tGreenLight(":/green_light.png");
   QPixmap tRedLight(":/red_light.png");
-  QPixmap tBypass(":/bypass_arrow.png");
+  QPixmap tBypass(":/bypass.png");
   QPixmap tEnter(":/enter.png");
 
   // actions
