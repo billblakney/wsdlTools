@@ -408,8 +408,8 @@ void MainWindow::setupFileActions(QMenu *aMenu,QToolBar *aToolBar)
 void MainWindow::setupOperateActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixmaps
-  QPixmap tGreenLight(":/green.png");
-  QPixmap tRedLight(":/red.png");
+  QPixmap tGreenLight(":/green_light.png");
+  QPixmap tRedLight(":/red_light.png");
   QPixmap tBypass(":/bypass_arrow.png");
   QPixmap tEnter(":/enter.png");
 

@@ -2,8 +2,8 @@
  <qresource>
      <file>document_open.png</file>
      <file>document_save.png</file>
-     <file>green.png</file>
-     <file>red.png</file>
+     <file>green_light.png</file>
+     <file>red_light.png</file>
      <file>bypass_arrow.png</file>
      <file>enter.png</file>
      <file>delim_out.png</file>
