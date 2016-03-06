@@ -3,11 +3,16 @@
     <config>
         <default_operate_mode>eGo</default_operate_mode>
         <default_delimit_mode>eAllRecords</default_delimit_mode>
+<!--
+        <headers_dir>/opt/idp/cots/iec/rtf/static/wsdlConfig/headers</headers_dir>
+        <default_header>CLIR_CAR_cxsd.H</default_header>
+        <default_filters_dir>/opt/idp/cots/iec/rtf/static/wsdlConfig/filters</default_filters_dir>
+        <custom_filters_dir>/tmp</custom_filters_dir>
+-->
         <headers_dir>${WSDL_HEADERS_DIR}</headers_dir>
         <default_header>${WSDL_DEFAULT_HEADER}</default_header>
         <default_filters_dir>${WSDL_FILTERS_DIR}</default_filters_dir>
-        <custom_filters_dir>/${WSDL_FILTERS_DIR}</custom_filters_dir>
-        <custom_filters_dir>/tmp</custom_filters_dir>
+        <custom_filters_dir>/${WSDL_CUSTOM_FILTERS_DIR}</custom_filters_dir>
     </config>
     <messages>
 <!--
@@ -15,10 +20,9 @@
         <message>
             <id>ssifg_STUDENT_MSG_ID</id>
             <struct>STUDENT_T</struct>
+            <header>student.H</header>
             <default_filter>STUDENT_T.student_grades.wcf</default_filter>
         </message>
-<!--
--->
         <message>
             <id>ssifg_FACULTY_MSG_ID</id>
             <struct>FACULTY_T</struct>
@@ -26,8 +30,21 @@
         </message>
         <message>
             <id>ssifg_CAR_MSG_ID</id>
+            <struct>CAR_UPDATES_T</struct>
+            <header>CLIR_CAR_cxsd.H</header>
+            <default_filter>CAR_UPDATES_T.basic_info.wcf</default_filter>
+        </message>
+        <message>
+            <id>ssifg_SONAR_CAR_TO_DSS_MSG_ID</id>
             <struct>CONTACT_ATTRIBUTES_REPORT_T</struct>
             <header>CLIR_CAR_cxsd.H</header>
+            <default_filter>CONTACT_ATTRIBUTES_REPORT_T.basic_info.wcf</default_filter>
+        </message>
+        <message>
+            <id>ssifg_CAR_REQUEST_MSG_ID</id>
+            <struct>CONTACT_ATTRIBUTES_REQUEST_T</struct>
+            <header>CLIR_CAR_cxsd.H</header>
+            <default_filter>CONTACT_ATTRIBUTES_REQUEST_T.basic_info.wcf</default_filter>
         </message>
     </messages>
 </wsdlfilterconfig>

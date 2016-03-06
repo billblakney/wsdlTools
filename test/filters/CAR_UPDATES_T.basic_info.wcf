@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilter>
+    <config>
+        <operate_mode>eGo</operate_mode>
+        <delimit_mode>eOutputRecords</delimit_mode>
+        <format_mode>eAsIs</format_mode>
+    </config>
+    <fields>
+        <field key="CARS.isDroppedInTC" checked="1"/>
+        <field key="CARS.fusedNumber" checked="1"/>
+        <field key="CARS.contactDesignator.contactNumber" checked="1"/>
+        <field key="CARS.contactDesignator.contactPrefix" checked="1"/>
+        <field key="CARS.fusedContactComponents" checked="1"/>
+        <field key="CARS.fusedContactComponents_size" checked="1"/>
+        <field key="CARS.fusedContactComponents.contactNumber" checked="1"/>
+        <field key="CARS.fusedContactComponents.contactPrefix" checked="1"/>
+    </fields>
+</wsdlfilter>

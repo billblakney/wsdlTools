@@ -1192,6 +1192,7 @@ void MainWindow::onStructNameAvailable(QString aMsgId,QString aStructName)
       FilterSpec tFiter = _FilterReader->openFilter(tDir,tFilter);
       tFiter.apply(_DataStructModel,
           _OperateActionGroup,_DelimitActionGroup,_FormatActionGroup);
+    _StructTree->expandToChecked(true);
     }
   }
 

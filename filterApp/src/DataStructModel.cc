@@ -172,15 +172,25 @@ void DataStructModel::resetTreeItems()
 {
   std::vector<FieldItem *>::iterator tIter;
 
+  /*
+   * Get the default values for the columns.
+   */
   std::string tDefaultTestScope = FieldItemData::getDefaultTestScope();
   FieldItemData::Format tDefaultFormat = FieldItemData::getDefaultFormat();
   std::string tDefaultPostfix = FieldItemData::getDefaultPostfix();
 
+  /*
+   * Apply the default values to the root node.
+   * TODO needed?
+   */
   _RootItem->setCheckState(Qt::Unchecked);
   _RootItem->setTestScope(QVariant(tDefaultTestScope.c_str()));
   _RootItem->setFieldFormat(QVariant(tDefaultFormat));
   _RootItem->setFieldPostfix(QVariant(tDefaultPostfix.c_str()));
 
+  /*
+   * Apply the default values to the other nodes.
+   */
   for (tIter = _TreeItems.begin(); tIter != _TreeItems.end(); tIter++)
   {
     FieldItem *aNode = *tIter;
@@ -190,6 +200,14 @@ void DataStructModel::resetTreeItems()
     aNode->setFieldPostfix(QVariant(tDefaultPostfix.c_str()));
   }
 
+  /*
+   * Apply the rule for setting test scope per contact designator.
+   */
+  setFilterScopeForDesignator();
+
+  /*
+   * Emit the modelUpdate signal to repaint the tree.
+   */
   emit modelUpdated();
 }
 
