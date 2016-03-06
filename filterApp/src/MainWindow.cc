@@ -151,7 +151,7 @@ void MainWindow::setupDataStructModel(std::string aStructName)
    * Set connection to apply test scope settings to data struct model.
    */
   connect(this,SIGNAL(applyTestScope(QString,bool)),
-      _DataStructModel,SLOT(applyTestScope(QString,bool)));
+      _DataStructModel,SLOT(onApplyTestScope(QString,bool)));
 
   /*
    * Set connection to apply format mode setting to data struct model.

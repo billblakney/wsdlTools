@@ -9,9 +9,9 @@ ccl::Logger DataStructModel::sLogger("DataStructModel");
 
 QFont DataStructModel::kArrayFont;
 
-//-------------------------------------------------------------------------------
-// Constructs all of the FieldItems that comprise the tree of fields.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Construct all of the FieldItems that comprise the tree.
+//------------------------------------------------------------------------------
 DataStructModel::DataStructModel(
     Structure *aStruct,StructorBuilder *aStructBuilder)
   : _StructBuilder(aStructBuilder),
@@ -47,8 +47,9 @@ DataStructModel::DataStructModel(
   setFilterScopeForDesignator();
 }
 
-//-------------------------------------------------------------------------------
-// Apply special processing to filter scopes for contact designators.
+//------------------------------------------------------------------------------
+// Applies special processing to filter scopes for contact designators.
+//
 // For many data structures that contain a contact designator field, i.e. field
 // of type CLIR_CAR_DESIGNATOR, if the contact designator is the child of a
 // struct array node, it is usually more common to want to use the filter scope
@@ -59,7 +60,7 @@ DataStructModel::DataStructModel(
 // ancestor that is a struct array node. If one is found, then apply the test
 // scope that applies to the struct array node element to the entire tree of
 // that ancestor node.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::setFilterScopeForDesignator()
 {
   std::vector<FieldItem *>::iterator tIter;
@@ -71,35 +72,49 @@ void DataStructModel::setFilterScopeForDesignator()
       FieldItem *tParent = findFirstAncestor(tNode,FieldItemData::eStructArray);
       if (tParent != NULL)
       {
-//        std::cout << "CLIR_CAR_DESIGNATOR: " << tNode->getData().getKey().c_str()
-//            << ", " << tParent->getData().getKey() << std::endl;
-        applyTestScope(tParent,tParent->getData().getKey() + ".Element");
+        std::string tTestScope = tParent->getData().getKey() + ".Element";
+        applyTestScope(tTestScope.c_str(),false,tParent);
       }
       else
       {
-//        std::cout << "CLIR_CAR_DESIGNATOR: " << tNode->getData().getKey().c_str()
-//            << ", no struct array ancestor node" << std::endl;
       }
     }
   }
 }
 
-//-------------------------------------------------------------------------------
-// For a tree node, apply a filter scope to its entire branch.
-//-------------------------------------------------------------------------------
-void DataStructModel::applyTestScope(FieldItem *aNode,std::string aTestScope)
+//------------------------------------------------------------------------------
+// Slot to apply a test scope to the items of the tree. The test scope can be
+// applied to all items, or only to checked items.
+//------------------------------------------------------------------------------
+void DataStructModel::onApplyTestScope(QString aTestScope,bool aCheckedOnly)
 {
-  aNode->setTestScope(aTestScope.c_str());
-  for( int i = 0; i < aNode->childCount(); i++)
-  {
-    applyTestScope(aNode->child(i),aTestScope);
-  }
+  QVariant tScope(aTestScope);
+  applyTestScope(tScope,aCheckedOnly,_TopNodeItem);
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Apply a test scope to a branch of the tree. The test scope can be applied to
+// all items, or only to checked items.
+//------------------------------------------------------------------------------
+void DataStructModel::applyTestScope(QVariant aTestScope,
+    bool aCheckedOnly,FieldItem *aFieldItem)
+{
+  if ((aCheckedOnly==false) || aFieldItem->getData().isChecked())
+  {
+    aFieldItem->setTestScope(aTestScope);
+  }
+
+  for (int tIdx = 0; tIdx < aFieldItem->childCount(); tIdx++)
+  {
+    applyTestScope(aTestScope,aCheckedOnly,aFieldItem->child(tIdx));
+  }
+  emit modelUpdated();
+}
+
+//------------------------------------------------------------------------------
 // For a tree node, find the first ancestor that matches a specified node type.
 // Returns a pointer to that ancestor node, or NULL if none is found.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 FieldItem *DataStructModel::findFirstAncestor(
     FieldItem *aNode,FieldItemData::NodeType aNodeType)
 {
@@ -119,10 +134,10 @@ FieldItem *DataStructModel::findFirstAncestor(
   return tReturn;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // For a tree node, get the count of its children that match a specified node
 // type.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int DataStructModel::childCount(FieldItem *aNode,FieldItemData::NodeType aType)
 {
   int tCount = 0;
@@ -145,8 +160,8 @@ int DataStructModel::childCount(FieldItem *aNode,FieldItemData::NodeType aType)
   return tCount;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::appendToTreeItemVector(FieldItem *aNode)
 {
   for (int i = 0; i < aNode->childCount(); i++)
@@ -157,17 +172,17 @@ void DataStructModel::appendToTreeItemVector(FieldItem *aNode)
   }
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::vector<FieldItem *> &DataStructModel::getTreeItems()
 {
   return _TreeItems;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Reset the tree items to their default values, e.g. unchecked, default format,
 // etc.)
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::resetTreeItems()
 {
   std::vector<FieldItem *>::iterator tIter;
@@ -211,15 +226,15 @@ void DataStructModel::resetTreeItems()
   emit modelUpdated();
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 FieldItem *DataStructModel::getTopNode()
 {
   return _TopNodeItem;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 FieldItem *DataStructModel::getNode(std::string aKey)
 {
   std::vector<FieldItem *>::iterator tIter;
@@ -233,22 +248,22 @@ FieldItem *DataStructModel::getNode(std::string aKey)
   return NULL;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::vector<std::string> DataStructModel::getTestNodes()
 {
   return _TestScopes;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::vector<std::string> DataStructModel::getPostfixes()
 {
   return _Postfixes;
 }
 
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 Enum *DataStructModel::getEnum(const QModelIndex &aIndex) const
 {
   Enum *tEnum = NULL;
@@ -263,8 +278,8 @@ Enum *DataStructModel::getEnum(const QModelIndex &aIndex) const
   return tEnum;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::printTestNodes()
 {
   std::cout << "Test Nodes:" << std::endl;
@@ -275,8 +290,8 @@ void DataStructModel::printTestNodes()
   }
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 DataStructModel::~DataStructModel()
 {
 }
@@ -295,11 +310,11 @@ static std::string blanks[] = {
     "                  ",
 };
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Gets the match for the first field in the data structure. This will be used
 // by the reader to identify the start of the structure (since in wsdl there is
 // no other identifier,like the name of the structure, e.g.).
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::getFirstFieldMatch()
 {
   return _TopNodeItem->child(0)->getData().getMatch();
@@ -307,11 +322,11 @@ std::string DataStructModel::getFirstFieldMatch()
 
 static Field _lastLengthField; //TODO
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Completes building a tree if field items after the root and top items have
 // been created. Is initially called with the top item, and then is called
 // recursively.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::buildTree(
     FieldItem *aParentItem,Structure *aStruct,int aLevel)
 {
@@ -377,9 +392,9 @@ void DataStructModel::buildTree(
   }
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Build a tree node for a struct field.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::buildStructNode(
     Field &aField,FieldItem *aParentItem,int &aLevel)
 {
@@ -410,9 +425,9 @@ void DataStructModel::buildStructNode(
   --aLevel;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Build a struct array node for a struct field.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::buildStructArrayNode(
     Field &aField,FieldItem *aParentItem,int &aLevel)
 {
@@ -454,9 +469,9 @@ void DataStructModel::buildStructArrayNode(
   --aLevel;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Build a struct array length node for a struct field.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::buildStructArrayLengthNode(
     Field &aField,FieldItem *aParentItem,int &aLevel)
 {
@@ -473,9 +488,9 @@ void DataStructModel::buildStructArrayLengthNode(
   aParentItem->appendChild(dataItem);
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Build a primitive array node for a struct field.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::buildPrimitiveArrayNode(
     Field &aField,FieldItem *aParentItem,int &aLevel)
 {
@@ -505,12 +520,12 @@ void DataStructModel::buildPrimitiveArrayNode(
   buildPrimitiveArrayLengthNode(_lastLengthField,dataItem,tNextLevel);
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Build a primitive array length node for a struct field.
 // Design note: This is basically the same as the buildStructArrayLengthNode()
 // method. A single method with an additional FieldItemData::NodeType parameter
 // could be abstracted and used in both cases.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::buildPrimitiveArrayLengthNode(
     Field &aField,FieldItem *aParentItem,int &aLevel)
 {
@@ -527,9 +542,9 @@ void DataStructModel::buildPrimitiveArrayLengthNode(
   aParentItem->appendChild(dataItem);
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Build a tree node for a primitive field.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::buildPrimitiveNode(
     Field &aField,FieldItem *aParentItem,int &aLevel)
 {
@@ -547,9 +562,9 @@ void DataStructModel::buildPrimitiveNode(
   aParentItem->appendChild(dataItem);
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Build a primitive array node for a struct field.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildKey(
     Field &aField,FieldItem *aParentItem,bool /*aIsArrayType*/)
 {
@@ -575,9 +590,9 @@ std::string DataStructModel::buildKey(
   return tKey;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Build a primitive array node for a struct field.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildArrayLengthKey(FieldItem *aParentItem)
 {
   std::string tKey;
@@ -596,8 +611,8 @@ std::string DataStructModel::buildArrayLengthKey(FieldItem *aParentItem)
   return tKey;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildMatchForField(
     const Field &aField,int aIndentLevel)
 {
@@ -606,9 +621,9 @@ std::string DataStructModel::buildMatchForField(
   return tBuffer;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // TODO check spaces vs. tabs
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildMatchForArrayLengthField(
     const Field &/*aField*/,int aIndentLevel)
 {
@@ -617,32 +632,32 @@ std::string DataStructModel::buildMatchForArrayLengthField(
   return tBuffer;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildMatchForStructField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForField(aField,aIndentLevel);
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildMatchForStructArrayField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForField(aField,aIndentLevel);
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildMatchForStructArrayLengthField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForArrayLengthField(aField,aIndentLevel);
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildMatchForPrimitiveField(
     const Field &aField,int aIndentLevel)
 {
@@ -651,26 +666,26 @@ std::string DataStructModel::buildMatchForPrimitiveField(
   return tBuffer;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildMatchForPrimitiveArrayField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForField(aField,aIndentLevel);
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //TODO
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::buildMatchForPrimitiveArrayLengthField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForField(aField,aIndentLevel);
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Not sure this will be used or what it was originally for.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::getMatchString(FieldItem *aFieldItem)
 {
   std::string tString;
@@ -686,9 +701,9 @@ std::string DataStructModel::getMatchString(FieldItem *aFieldItem)
   return tString;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Gets the match string for the simple reader.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string DataStructModel::getMatchString()
 {
   std::string tMatchString(".*");
@@ -722,8 +737,9 @@ std::string DataStructModel::getMatchString()
   return tMatchString;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Get the list of tree nodes that are checked for the entire tree.
+//------------------------------------------------------------------------------
 std::vector<FieldItem *> DataStructModel::getCheckedFields()
 {
   std::vector<FieldItem *> tFieldItems;
@@ -731,8 +747,11 @@ std::vector<FieldItem *> DataStructModel::getCheckedFields()
   return tFieldItems;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Get the list of tree nodes that are checked for a branch of the tree and add
+// it to a list of tree nodes. This is a recursive method, and is used by the
+// getCheckedFields method to get the list of checked fields for the entire tree.
+//------------------------------------------------------------------------------
 void DataStructModel::addCheckedFields(
     FieldItem *aNode,std::vector<FieldItem *> &aFieldItems)
 {
@@ -746,8 +765,8 @@ void DataStructModel::addCheckedFields(
   }
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 QVariant DataStructModel::data(const QModelIndex &index,int role) const
 {
   if (!index.isValid())
@@ -819,8 +838,8 @@ QVariant DataStructModel::data(const QModelIndex &index,int role) const
   return QVariant();
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool DataStructModel::setData(
     const QModelIndex &index,const QVariant &value,int role)
 {
@@ -901,13 +920,13 @@ bool DataStructModel::setData(
   return true;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Replace any '*' not preceeded by '.', with a ".*".
 // This prevents a crash on some invalid regex expressions, and also
 // provides the convenience of setting a search string like "*something*".
 // Since we never expect a literal * to be part of a field value, this should
 // be ok.
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::transformTestRegex(std::string &aValue)
 {
   /*
@@ -928,8 +947,8 @@ void DataStructModel::transformTestRegex(std::string &aValue)
       boost::format_all);
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 Qt::ItemFlags DataStructModel::flags(const QModelIndex &index) const
 {
   if (!index.isValid())
@@ -957,8 +976,8 @@ Qt::ItemFlags DataStructModel::flags(const QModelIndex &index) const
   return tFlags;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 QVariant DataStructModel::headerData(int section,Qt::Orientation orientation,
       int role) const
 {
@@ -1050,8 +1069,8 @@ QVariant DataStructModel::headerData(int section,Qt::Orientation orientation,
   return QVariant();
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 QModelIndex DataStructModel::index(FieldItem *aFieldItem,int aColumn)
 {
   QModelIndex tModelIndex =
@@ -1059,8 +1078,8 @@ QModelIndex DataStructModel::index(FieldItem *aFieldItem,int aColumn)
   return tModelIndex;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 QModelIndex DataStructModel::index(int row,int col,
       const QModelIndex &parent) const
 {
@@ -1091,8 +1110,8 @@ QModelIndex DataStructModel::index(int row,int col,
   }
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 QModelIndex DataStructModel::parent(const QModelIndex &index) const
 {
   if (!index.isValid())
@@ -1111,8 +1130,8 @@ QModelIndex DataStructModel::parent(const QModelIndex &index) const
   return createIndex(parentItem->row(),0,parentItem);
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int DataStructModel::rowCount(const QModelIndex &parent) const
 {
   FieldItem *parentItem;
@@ -1133,8 +1152,8 @@ int DataStructModel::rowCount(const QModelIndex &parent) const
   return parentItem->childCount();
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int DataStructModel::columnCount(const QModelIndex &parent) const
 {
   if (parent.isValid())
@@ -1147,8 +1166,8 @@ int DataStructModel::columnCount(const QModelIndex &parent) const
   }
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 uint DataStructModel::getEnumIndex(Enum *aEnum,std::string aValue) const
 {
   uint tEnumIdx = 0;
@@ -1163,8 +1182,8 @@ uint DataStructModel::getEnumIndex(Enum *aEnum,std::string aValue) const
   return tEnumIdx;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 uint DataStructModel::getStringVectorIndex(
     const std::vector<std::string> &aStringVector,
     const std::string &aString) const
@@ -1182,15 +1201,15 @@ uint DataStructModel::getStringVectorIndex(
  return 0; //TODO should never reach, add warning or err
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 uint DataStructModel::getTestScopeIndex(std::string &aTestScope) const
 {
   return getStringVectorIndex(_TestScopes,aTestScope);
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::setupPostfixes()
 {
   _Postfixes.push_back("\\n");
@@ -1198,40 +1217,15 @@ void DataStructModel::setupPostfixes()
   _Postfixes.push_back(" ");
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 uint DataStructModel::getPostfixIndex(std::string &aPostfix) const
 {
   return getStringVectorIndex(_Postfixes,aPostfix);
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-void DataStructModel::applyTestScope(QString aTestScope,bool aCheckedOnly)
-{
-  QVariant tScope(aTestScope);
-  applyTestScope(tScope,aCheckedOnly,_TopNodeItem);
-}
-
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-void DataStructModel::applyTestScope(QVariant aTestScope,
-    bool aCheckedOnly,FieldItem *aFieldItem)
-{
-  if ((aCheckedOnly==false) || aFieldItem->getData().isChecked())
-  {
-    aFieldItem->setTestScope(aTestScope);
-  }
-
-  for (int tIdx = 0; tIdx < aFieldItem->childCount(); tIdx++)
-  {
-    applyTestScope(aTestScope,aCheckedOnly,aFieldItem->child(tIdx));
-  }
-  emit modelUpdated();
-}
-
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::applyFormatMode(
     int aFormatMode,bool aSelectedOnly,QModelIndexList aSelectList)
 {
@@ -1284,15 +1278,15 @@ void DataStructModel::applyFormatMode(
   emit modelUpdated();
 }
 
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::onPropogateToggled(bool aPropogateToChildren)
 {
   _PropogateFieldChecks = aPropogateToChildren;
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::applyFormatMode(QVariant aFormat,QVariant aPostfix,
     QModelIndexList aSelectedList)
 {
@@ -1306,8 +1300,8 @@ void DataStructModel::applyFormatMode(QVariant aFormat,QVariant aPostfix,
   }
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::applyFormatMode(QVariant aFormat,QVariant aPostfix,
     FieldItem *aFieldItem)
 {
@@ -1320,8 +1314,8 @@ void DataStructModel::applyFormatMode(QVariant aFormat,QVariant aPostfix,
   }
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::setChildrenCheckStates(
     const QModelIndex &aParentIndex,Qt::CheckState aNewState)
 {
@@ -1347,8 +1341,8 @@ void DataStructModel::setChildrenCheckStates(
   emit dataChanged(tFirstIndex,tLastIndex);
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DataStructModel::updateParentCheckState(
     const QModelIndex &aChildIndex,Qt::CheckState aNewState)
 {

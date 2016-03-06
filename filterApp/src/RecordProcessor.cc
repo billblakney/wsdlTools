@@ -10,7 +10,6 @@
 ccl::Logger RecordProcessor::sLogger("RecordProcessor");
 
 QStringList RecordProcessor::_FormatModeNames = formatModeNames();
-QStringList RecordProcessor::_PostfixNames = postfixNames();
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -73,54 +72,6 @@ QStringList RecordProcessor::formatModeNames()
   tList.push_back("eLongname");
   tList.push_back("eTable");
   tList.push_back("eCustom");
-  return tList;
-}
-
-//-------------------------------------------------------------------------------
-// Return format enum value represented by a string.
-// Returns eNewline if no match is found.
-//-------------------------------------------------------------------------------
-RecordProcessor::Postfix RecordProcessor::getPostfix(QString aPostfix)
-{
-  for (int i = 0; i < _PostfixNames.size(); i++)
-  {
-    if (aPostfix == _PostfixNames[i])
-    {
-      return static_cast<RecordProcessor::Postfix>(i);
-    }
-  }
-  return eNewline;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-QString RecordProcessor::getPostfixString(Postfix aPostfix)
-{
-  if (aPostfix < _PostfixNames.size())
-  {
-    return _PostfixNames[aPostfix];
-  }
-  else
-  {
-    return QString();
-  }
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-QStringList RecordProcessor::getPostfixStringList()
-{
-  return _PostfixNames;
-}
-
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-QStringList RecordProcessor::postfixNames()
-{
-  QStringList tList;
-  tList.push_back("eNewline");
-  tList.push_back("eTab");
-  tList.push_back("eSpace");
   return tList;
 }
 

@@ -128,7 +128,7 @@ public slots:
   void applyFormatMode(
       int aFormatMode,bool aSelectedOnly,QModelIndexList aSelectList);
 
-  void applyTestScope(QString aTestScope,bool aCheckedOnly);
+  void onApplyTestScope(QString aTestScope,bool aCheckedOnly);
 
   void onPropogateToggled(bool aPropogateToChildren);
 
@@ -205,7 +205,6 @@ protected:
 
   void setFilterScopeForDesignator();
   FieldItem *findFirstAncestor(FieldItem *aNode,FieldItemData::NodeType aNodeType);
-  void applyTestScope(FieldItem *aNode,std::string aTestScope);
 
   void appendToTreeItemVector(FieldItem *aNode);
 

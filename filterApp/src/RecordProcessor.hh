@@ -42,18 +42,6 @@ public:
   static QString getFormatModeString(FormatMode aFormatMode);
   static QStringList getFormatModeStringList();
 
-  //-------------------------
-  // Postfixes to append to fields.
-  //-------------------------
-  enum Postfix {
-    eNewline,
-    eTab,
-    eSpace
-  };
-  static Postfix getPostfix(QString aPostfix);
-  static QString getPostfixString(Postfix aPostfix);
-  static QStringList getPostfixStringList();
-
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
   RecordProcessor(FormatMode aFormatMode = eCustom);
@@ -92,9 +80,6 @@ protected:
 
   static QStringList _FormatModeNames;
   static QStringList formatModeNames();
-
-  static QStringList _PostfixNames;
-  static QStringList postfixNames();
 
   QMutex _Mutex;
 
