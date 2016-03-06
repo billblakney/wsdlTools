@@ -29,6 +29,9 @@ class RecordProcessor : public QObject
 
 public:
 
+  //-------------------------
+  // Format mode to apply to records.
+  //-------------------------
   enum FormatMode {
     eAsIs,
     eLongname,
@@ -38,6 +41,18 @@ public:
   static FormatMode getFormatMode(QString aFormatMode);
   static QString getFormatModeString(FormatMode aFormatMode);
   static QStringList getFormatModeStringList();
+
+  //-------------------------
+  // Postfixes to append to fields.
+  //-------------------------
+  enum Postfix {
+    eNewline,
+    eTab,
+    eSpace
+  };
+  static Postfix getPostfix(QString aPostfix);
+  static QString getPostfixString(Postfix aPostfix);
+  static QStringList getPostfixStringList();
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
@@ -77,6 +92,9 @@ protected:
 
   static QStringList _FormatModeNames;
   static QStringList formatModeNames();
+
+  static QStringList _PostfixNames;
+  static QStringList postfixNames();
 
   QMutex _Mutex;
 

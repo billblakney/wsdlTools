@@ -9,6 +9,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
+// Construct combo-box delegate with a vector of std::string.
 //-----------------------------------------------------------------------------
 ComboBoxDelegate::ComboBoxDelegate(
     std::vector<std::string> aValues,QObject *parent)
@@ -21,6 +22,7 @@ ComboBoxDelegate::ComboBoxDelegate(
 }
 
 //-----------------------------------------------------------------------------
+// Construct combo-box delegate with a QStringList.
 //-----------------------------------------------------------------------------
 ComboBoxDelegate::ComboBoxDelegate(QStringList aStringList,QObject *parent)
   :QStyledItemDelegate(parent)
@@ -32,6 +34,7 @@ ComboBoxDelegate::ComboBoxDelegate(QStringList aStringList,QObject *parent)
 }
 
 //-----------------------------------------------------------------------------
+// Get the combo-box editor.
 // TODO memory leak. create first time and reuse
 //-----------------------------------------------------------------------------
 QWidget *ComboBoxDelegate::createEditor(
@@ -41,13 +44,14 @@ QWidget *ComboBoxDelegate::createEditor(
 {
   QComboBox* editor = new QComboBox(parent);
   for(int i = 0; i < _Items.size(); ++i)
-    {
+  {
     editor->addItem(_Items[i]);
-    }
+  }
   return editor;
 }
 
 //-----------------------------------------------------------------------------
+// Set the editor data per the specified QModelIndex.
 //-----------------------------------------------------------------------------
 void ComboBoxDelegate::setEditorData(
     QWidget *editor, const QModelIndex &index) const
@@ -58,6 +62,7 @@ void ComboBoxDelegate::setEditorData(
 }
 
 //-----------------------------------------------------------------------------
+// Set the model data with the current selection.
 //-----------------------------------------------------------------------------
 void ComboBoxDelegate::setModelData(
     QWidget *editor,QAbstractItemModel *model,const QModelIndex &index) const
@@ -76,7 +81,7 @@ void ComboBoxDelegate::updateEditorGeometry(
   editor->setGeometry(option.rect);
 }
 
-#if 0 // TODO
+#if 0 // TODO any use for this?
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void ComboBoxDelegate::paint(

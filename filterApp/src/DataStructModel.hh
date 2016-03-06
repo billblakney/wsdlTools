@@ -155,8 +155,14 @@ protected:
   std::vector<std::string> _TestScopes;
   std::vector<std::string> _Postfixes;
 
+  //---------------------------------------------------------------------------
+  // build the tree
+  //---------------------------------------------------------------------------
   void buildTree(FieldItem *rootItem,Structure *aStructure,int aLevel = 0);
 
+  //---------------------------------------------------------------------------
+  // build nodes of various types
+  //---------------------------------------------------------------------------
   void buildStructNode(
       Field &aField,FieldItem *aParentItem,int &aLevel);
   void buildStructArrayNode(
@@ -170,10 +176,16 @@ protected:
   void buildPrimitiveNode(
       Field &aField,FieldItem *aParentItem,int &aLevel);
 
+  //---------------------------------------------------------------------------
+  // build keys for the nodes of the tree
+  //---------------------------------------------------------------------------
   std::string buildKey(Field &aField,FieldItem *aParentItem,
       bool aIsArrayType = false);
   std::string buildArrayLengthKey(FieldItem *aParentItem);
 
+  //---------------------------------------------------------------------------
+  // build match strings for the various node types
+  //---------------------------------------------------------------------------
   std::string buildMatchForField(
       const Field &aField,int aIndentLevel);
   std::string buildMatchForArrayLengthField(
@@ -204,7 +216,7 @@ protected:
   uint getStringVectorIndex(const std::vector<std::string> &aStringVector,
       const std::string &aString) const;
 
-  void setupFormats();
+  void setupFormats(); //TODO rm (method already gone)
   void setupPostfixes();
 
   uint getPostfixIndex(std::string &aPostfix) const;
