@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilter>
+    <config>
+        <operate_mode>eGo</operate_mode>
+        <delimit_mode>eNoRecords</delimit_mode>
+        <format_mode>eCustom</format_mode>
+    </config>
+    <fields>
+        <field key="esReports.esCLIR.timeStamp" checked="1" format="eValue" postfix="\t"/>
+        <field key="esReports.esCLIR.reportType" checked="1" format="eValue" postfix="\t"/>
+        <field key="esReports.esCLIR.contactDesignator.emitterID" checked="1" format="eValue" postfix="\n"/>
+    </fields>
+</wsdlfilter>

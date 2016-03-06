@@ -46,5 +46,17 @@
             <header>CLIR_CAR_cxsd.H</header>
             <default_filter>CONTACT_ATTRIBUTES_REQUEST_T.basic_info.wcf</default_filter>
         </message>
+        <message>
+            <id>ssifg_CONTACT_INVENTORY_REPLY_MSG_ID</id>
+            <struct>CONTACT_INVENTORY_T</struct>
+            <header>CLIR_CAR_cxsd.H</header>
+            <default_filter>CONTACT_INVENTORY_T.reply_basic_info.wcf</default_filter>
+        </message>
+        <message>
+            <id>ssifg_ES_UPDATES_MSG_ID</id>
+            <struct>ES_UPDATES_T</struct>
+            <header>CLIR_CAR_cxsd.H</header>
+            <default_filter>ES_UPDATES_T.basic_info.wcf</default_filter>
+        </message>
     </messages>
 </wsdlfilterconfig>

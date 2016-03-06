@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilter>
+    <config>
+        <operate_mode>eGo</operate_mode>
+        <delimit_mode>eAllRecords</delimit_mode>
+        <format_mode>eCustom</format_mode>
+    </config>
+    <fields>
+        <field key="inventory.contactNumber" checked="1" format="eValue" postfix="\t"/>
+        <field key="inventory.contactPrefix" checked="1" format="eValue" postfix="\n"/>
+    </fields>
+</wsdlfilter>
