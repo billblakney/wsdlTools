@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilter>
+    <config>
+        <description>watch fields used to compute solution type</description>
+        <operate_mode>eGo</operate_mode>
+        <delimit_mode>eOutputRecords</delimit_mode>
+        <format_mode>eLongname</format_mode>
+    </config>
+    <fields>
+        <field key="CSR_LEGS.legID" checked="1"/>
+        <field key="CSR_LEGS.legCSR.contactDesignator.contactNumber" checked="1"/>
+        <field key="CSR_LEGS.legCSR.contactDesignator.contactPrefix" checked="1"/>
+        <field key="CSR_LEGS.legCSR.latLongInfo.courseOverGround.infoState" checked="1"/>
+        <field key="CSR_LEGS.legCSR.latLongInfo.speedOverGround.infoState" checked="1"/>
+        <field key="CSR_LEGS.legCSR.rangeBearingInfo.range.infoState" checked="1"/>
+        <field key="CSR_LEGS.legCSR.rangeBearingInfo.bearing.infoState" checked="1"/>
+        <field key="CSR_LEGS.legCSR.rangeBearingInfo.courseThroughWater.infoState" checked="1"/>
+        <field key="CSR_LEGS.legCSR.rangeBearingInfo.speedThroughWater.infoState" checked="1"/>
+        <field key="CSR_LEGS.legCSR.rangeBearingInfo.bearingRateState" checked="1"/>
+    </fields>
+</wsdlfilter>

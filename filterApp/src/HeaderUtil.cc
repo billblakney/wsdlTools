@@ -34,11 +34,12 @@ StructorBuilder *HeaderUtil::parseHeaderFile(QString aHeaderFile)
     exit(1);
   }
 
-  std::cout << "Using header file " << qPrintable(aHeaderFile)
-            << "..." << std::endl;
+//  std::cout << "Using header file " << qPrintable(aHeaderFile)
+//            << "..." << std::endl;
+//
+//  std::cout << "Parsing header file " << qPrintable(aHeaderFile)
+//            << "..." << std::endl;
 
-  std::cout << "Parsing header file " << qPrintable(aHeaderFile)
-            << "..." << std::endl;
   StructorBuilder *tStructorBuilder = NULL;
 
   std::string tString = aHeaderFile.toStdString();

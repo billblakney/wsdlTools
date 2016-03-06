@@ -21,15 +21,20 @@ void FilterSpec::apply(DataStructModel *aDataStructModel,
     DelimitActionGroup *aDelimitActionGroup,
     FormatActionGroup *aFormatActionGroup)
 {
-  StreamReader::OperateMode tOperateMode = StreamReader::getOperateMode(_OperateMode);
+  aDataStructModel->resetTreeItems();
+
+  StreamReader::OperateMode tOperateMode =
+      StreamReader::getOperateMode(_OperateMode);
   QAction *tOperateAction = aOperateActionGroup->getAction(tOperateMode);
   tOperateAction->activate(QAction::Trigger);
 
-  StreamReader::DelimitMode tDelimitMode = StreamReader::getDelimitMode(_DelimitMode);
+  StreamReader::DelimitMode tDelimitMode =
+      StreamReader::getDelimitMode(_DelimitMode);
   QAction *tDelimitAction = aDelimitActionGroup->getAction(tDelimitMode);
   tDelimitAction->activate(QAction::Trigger);
 
-  RecordProcessor::FormatMode tFormatMode = RecordProcessor::getFormatMode(_FormatMode);
+  RecordProcessor::FormatMode tFormatMode =
+      RecordProcessor::getFormatMode(_FormatMode);
   QAction *tFormatAction = aFormatActionGroup->getAction(tFormatMode);
   tFormatAction->activate(QAction::Trigger);
 

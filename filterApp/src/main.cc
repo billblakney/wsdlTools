@@ -16,8 +16,10 @@
 extern StructorBuilder *lex_main(char *aHeaderFile);
 
 typedef struct CmdLineArgs {
+  bool isDebug;
   bool isBrowseMode;
   bool isTestMode;
+  bool isPrintTestRecMode;
   QString appConfigFile;
   QString headerFile; // specifies
   QString initialStruct;
@@ -25,29 +27,58 @@ typedef struct CmdLineArgs {
   QString testStruct;
 } CmdLineArgs;
 
-std::ostringstream _TestInStream;
+static bool debug = false;
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 void printUsage()
 {
-  static const char *tUsage = //TODO add test mode
-  "\nFilter mode:"
-  "app_iec_wsdlFilter [-a <app_config_file>] [-f <header_file>]\n"
-  "   where <app_config_file> is the application configuration file, which\n"
-  "   takes its default value from the environment variable\n"
-  "   WSDL_FILTER_CONFIG_FILE\n"
-  "   where <header_file> specifies a header file that overrides the\n"
-  "   default header file specifed in the application configuration file\n"
-  "\nBrowse mode:\n"
-  "app_iec_wsdlFilter -b [-a <app_config_file>] [-f <header_file>] "
-                                             " [-s <struct_name>]\n"
-  "   where <header_file> is header file to be browsed, which takes its\n"
-  "   default value from the environment variable CLIRCAR_H\n"
+  static const char *tUsage =
+  "Overview\n"
+  "app_iec_wsdlFilter runs in a filter mode, a browse mode, or in a couple\n"
+  "of other modes useful for testing. The filter mode is used to filter the\n"
+  "output of a WSDLConsumer output stream. The browse mode is used to browse\n"
+  "data structures from a header file. A test mode is available which\n"
+  "simulates the filter mode. It can be used to build and test filters.\n"
+  "A \"print test record\" mode is available to also help with testing.\n"
+  "When that mode is run, the app prints out a record similar in format to\n"
+  "the WSDLConsumer output. This file can then be fed into the app (using\n"
+  "a script, for example) while running in filter mode, to test the actual\n"
+  "filter mode.\n"
+  "\n"
+  "Optional command-line options common to all run modes:\n"
+  "-a <app_config_file>\n"
+  "   where <app_config_file> is the app config file, which is read when the\n"
+  "   app starts up. When set, this command-line argument overrides the value\n"
+  "   that may have been set by the WSDL_FILTER_CONFIG_FILE environment\n"
+  "   variable, which in turn, if present, overrides the default hard-coded\n"
+  "   value.\n"
+  "\n"
+  "-f <header_file>\n"
+  "   where the <header_file> specification overrides the default header file\n"
+  "   defined in the app config file. If <header_file> is a full pathname,\n"
+  "   then the path up to the header file is used to replace the default\n"
+  "   headers dir defined in the app config file.\n"
+  "\n"
+  "-d\n"
+  "   prints out some debug information\n"
+  "\n"
+  "Filter mode: filter WSDLConsumer output stream\n"
+  "app_iec_wsdlFilter\n"
+  "\n"
+  "Browse mode: browse data structures\n"
+  "app_iec_wsdlFilter -b [-s <struct_name>]\n"
   "   where <struct_name> is initial struct to be browsed\n"
-  "\nTest mode:\n"
-  "app_iec_wsdlFilter -t <test_file> [-a <app_config_file>] [-f <header_file>] "
-                                             " [-s <struct_name>]\n"
+  "\n"
+  "Test mode: run in simulated mode without WSDLConsumer\n"
+  "app_iec_wsdlFilter -t <msg_id> <struct_name>\n"
+  "   where <msg_id> and <struct_name> are the values from the WSDLConsumer\n"
+  "   stream to be simulated\n"
+  "\n"
+  "Print test rec mode: print a record similar WSDLConsumer output format\n"
+  "app_iec_wsdlFilter -p <msg_id> <struct_name>\n"
+  "   where <msg_id> and <struct_name> are the values from the WSDLConsumer\n"
+  "   stream to be simulated\n"
   ;
   std::cout << tUsage << std::endl;
 }
@@ -140,9 +171,6 @@ void determineHeaderFileInfo(
   {
     aAppConfigReader->appConfig().SetDefaultHeader(kHeaderFile);
   }
-//std::cout << "DIR: " << qPrintable(aAppConfigReader->appConfig().getHeadersDir()) << std::endl;
-//std::cout << "FIL: " << qPrintable(aAppConfigReader->appConfig().getDefaultHeader()) << std::endl;
-// exit(0);
 }
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
@@ -161,6 +189,14 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
     {
       printUsage();
       exit(0);
+    }
+    /*
+     * "-d" to enable some extra debug output.
+     */
+    if (!strcmp(argv[tIdx],"-d"))
+    {
+      tCmdLineArgs.isDebug = true;
+      debug = true;
     }
     /*
      * "-b" for browse mode
@@ -204,10 +240,18 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
     }
     /*
      * "-t <msg_id> <struct_name>" for test mode.
+     * "-p <msg_id> <struct_name>" for print test record mode.
      */
-    if (!strcmp(argv[tIdx],"-t"))
+    if (!strcmp(argv[tIdx],"-t") || !strcmp(argv[tIdx],"-p"))
     {
-      tCmdLineArgs.isTestMode = true;
+      if (!strcmp(argv[tIdx],"-t"))
+      {
+        tCmdLineArgs.isTestMode = true;
+      }
+      else
+      {
+        tCmdLineArgs.isPrintTestRecMode = true;
+      }
       if (++tIdx < argc)
       {
         tCmdLineArgs.testMsgId = argv[tIdx];
@@ -260,6 +304,21 @@ QString getHeaderFilePath(AppConfig aAppConfig)
   QString tFile = aAppConfig.getDefaultHeader();
   QString tHeaderFile = tDir + "/" + tFile;
   return tHeaderFile;
+}
+
+/*------------------------------------------------------------------------------
+ *----------------------------------------------------------------------------*/
+void printTestRecord(CmdLineArgs aArgs,AppConfigReader *aAppConfigReader)
+{
+  determineHeaderFileInfo(aArgs,aAppConfigReader);
+  QString tHeaderFile = getHeaderFilePath(aAppConfigReader->appConfig());
+
+  // Get the test string.
+  TestRecordBuilder *tBuilder = new TestRecordBuilder(aArgs.testMsgId,
+      aArgs.testStruct,tHeaderFile);
+  std::string tTestString = tBuilder->getTestRecord();
+
+  std::cout << tTestString << std::endl;
 }
 
 /*------------------------------------------------------------------------------
@@ -379,7 +438,6 @@ void runFilterMode(
 int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
-//  app.setApplicationDisplayName(QString("WSDL FIlter"));
 
   // set the palette
 //  QPalette tPalette(Qt::lightGray);
@@ -393,16 +451,27 @@ int main(int argc, char *argv[])
 
   // read the app config file
   QString tFilename = determineAppConfigFilename(tArgs);
-  std::cout << "Reading app config file " << qPrintable(tFilename)
-            << "..." << std::endl;
+  if (debug)
+  {
+    std::cout << "Reading app config file " << qPrintable(tFilename)
+              << "..." << std::endl;
+  }
   AppConfigReader *tAppConfigReader = new AppConfigReader(tFilename);
   tAppConfigReader->openConfiguration();
-  printAppConfigFile(tAppConfigReader);
+  if (debug)
+  {
+    printAppConfigFile(tAppConfigReader);
+  }
 
   // run app in specified mode
   if (tArgs.isBrowseMode)
   {
     runBrowseMode(app,tArgs,tAppConfigReader);
+  }
+  else if (tArgs.isPrintTestRecMode)
+  {
+    printTestRecord(tArgs,tAppConfigReader);
+    return 0;
   }
   else
   {

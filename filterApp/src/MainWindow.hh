@@ -69,6 +69,7 @@ public slots:
   void onSaveCustomFilterAction();
   void onOperateModeAction(QAction *aAction);
   void onCustomFormatToolAction();
+  void onClearAllAction();
   void onPropagateCheckAction();
   void onCollapseAllAction();
   void onExpandToCheckedAction();

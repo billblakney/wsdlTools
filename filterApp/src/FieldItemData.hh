@@ -37,6 +37,10 @@ public:
   static QString getFormatString(Format aFormat);
   static QStringList getFormatStringList();
 
+  static std::string getDefaultTestScope();
+  static Format getDefaultFormat();
+  static std::string getDefaultPostfix();
+
   FieldItemData();
 
   FieldItemData(

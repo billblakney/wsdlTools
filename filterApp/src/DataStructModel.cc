@@ -165,6 +165,35 @@ std::vector<FieldItem *> &DataStructModel::getTreeItems()
 }
 
 //-------------------------------------------------------------------------------
+// Reset the tree items to their default values, e.g. unchecked, default format,
+// etc.)
+//-------------------------------------------------------------------------------
+void DataStructModel::resetTreeItems()
+{
+  std::vector<FieldItem *>::iterator tIter;
+
+  std::string tDefaultTestScope = FieldItemData::getDefaultTestScope();
+  FieldItemData::Format tDefaultFormat = FieldItemData::getDefaultFormat();
+  std::string tDefaultPostfix = FieldItemData::getDefaultPostfix();
+
+  _RootItem->setCheckState(Qt::Unchecked);
+  _RootItem->setTestScope(QVariant(tDefaultTestScope.c_str()));
+  _RootItem->setFieldFormat(QVariant(tDefaultFormat));
+  _RootItem->setFieldPostfix(QVariant(tDefaultPostfix.c_str()));
+
+  for (tIter = _TreeItems.begin(); tIter != _TreeItems.end(); tIter++)
+  {
+    FieldItem *aNode = *tIter;
+    aNode->setCheckState(Qt::Unchecked);
+    aNode->setTestScope(QVariant(tDefaultTestScope.c_str()));
+    aNode->setFieldFormat(QVariant(tDefaultFormat));
+    aNode->setFieldPostfix(QVariant(tDefaultPostfix.c_str()));
+  }
+
+  emit modelUpdated();
+}
+
+//-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 FieldItem *DataStructModel::getTopNode()
 {

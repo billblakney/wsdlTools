@@ -3,6 +3,7 @@
 
 #include "DataStructModel.hh"
 #include "HeaderUtil.hh"
+#include "StructorBuilder.hh"
 #include "TestRecordBuilder.hh"
 
 //------------------------------------------------------------------------------
@@ -41,10 +42,6 @@ TestRecordBuilder::~TestRecordBuilder()
 }
 
 //-------------------------------------------------------------------------------
-// TODO shouldn't need to pass aStructName
-// TODO format
-// TODO ssifg
-// TODO separate class
 //-------------------------------------------------------------------------------
 std::string TestRecordBuilder::getTestRecord()
 {

@@ -16,7 +16,7 @@ FieldItemData::FieldItemData()
     _FieldMatch(""),
     _FieldTest(""),
     _TestScope(""),
-    _Format(eAsIs),
+    _Format(),
     _Postfix(""),
     _CheckState(Qt::Unchecked),
     _TestCheckState(Qt::Unchecked)
@@ -106,6 +106,27 @@ QStringList FieldItemData::formatNames()
   tList.push_back("eLongnameValue");
   tList.push_back("eValue");
   return tList;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::string FieldItemData::getDefaultTestScope()
+{
+  return "root";
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+FieldItemData::Format FieldItemData::getDefaultFormat()
+{
+  return eAsIs;
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+std::string FieldItemData::getDefaultPostfix()
+{
+  return "\\n";
 }
 
 //-------------------------------------------------------------------------------

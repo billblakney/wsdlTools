@@ -614,12 +614,15 @@ void MainWindow::setupFormatActions(QMenu *aMenu,QToolBar *aToolBar)
 void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
 {
   // pixamps
+  QPixmap tClearAllPixmap(":/clear_all.png");
   QPixmap tPropagateCheckPixmap(":/propagate_check.png");
   QPixmap tExpandToChecked(":/expand_checks.png");
   QPixmap tCollapseAllPixmap(":/collapse_all.png");
   QPixmap tExpandAllPixmap(":/expand_all.png");
 
   // actions
+  QAction *tClearAllAction = new QAction(QIcon(tClearAllPixmap),
+          "Clear all tree settings", this);
   _PropagateCheckAction =
       new QAction(QIcon(tPropagateCheckPixmap),
           "Propagate check to descendants", this);
@@ -634,6 +637,8 @@ void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
   _PropagateCheckAction->setCheckable(true);
 
   // action signal-slot
+  connect(tClearAllAction,SIGNAL(triggered()),
+      this,SLOT(onClearAllAction()));
   connect(_PropagateCheckAction,SIGNAL(triggered()),
       this,SLOT(onPropagateCheckAction()));
   connect(tExpandToCheckedAction,SIGNAL(triggered()),
@@ -645,12 +650,14 @@ void MainWindow::setupTreeActions(QMenu *aMenu,QToolBar *aToolBar)
 
   // menu
   aMenu = menuBar()->addMenu("&Tree");
+  aMenu->addAction(tClearAllAction);
   aMenu->addAction(_PropagateCheckAction);
   aMenu->addAction(tExpandToCheckedAction);
   aMenu->addAction(tCollapseAllAction);
   aMenu->addAction(tExpandAllAction);
 
   // toolbar
+  aToolBar->addAction(tClearAllAction);
   aToolBar->addAction(_PropagateCheckAction);
   aToolBar->addAction(tExpandToCheckedAction);
   aToolBar->addAction(tCollapseAllAction);
@@ -949,6 +956,13 @@ void MainWindow::onCustomFormatToolAction()
        Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
 
   addDockWidget(Qt::TopDockWidgetArea, _CustomFormatToolDock);
+}
+
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+void MainWindow::onClearAllAction()
+{
+  _DataStructModel->resetTreeItems();
 }
 
 //-------------------------------------------------------------------------------
