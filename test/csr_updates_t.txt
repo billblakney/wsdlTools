@@ -1,0 +1,433 @@
+==============RECEIVED MESSAGE=========
+.......................................
+... ssifg_CSR_UPDATE_MSG_ID ... CSR_UPDATES_T
+.......................................
+CSRS:
+	array of len: 2
+	sequenceNumber:	{sequenceNumber0}
+	solutionType:	{solutionType0}
+	solutionSource:	{solutionSource0}
+	solutionSourceText:	{solutionSourceText0}
+	solutionTime:	{solutionTime0}
+	solutionCreationTime:	{solutionCreationTime0}
+	contactDesignator:
+		contactNumber:	{contactNumber0}
+		contactPrefix:	{contactPrefix0}
+		contactLabel:	{contactLabel0}
+		contactLabelChanged:	{contactLabelChanged0}
+		contactColor:
+			rValue:	{rValue0}
+			gValue:	{gValue0}
+			bValue:	{bValue0}
+		contactMasterNumber:	{contactMasterNumber0}
+		contactIsCOI:	{contactIsCOI0}
+		uniqueContactID:	{uniqueContactID0}
+		quickObservationID:	{quickObservationID0}
+		contactIsCOC:	{contactIsCOC0}
+		originatingSubsystem:	{originatingSubsystem0}
+		emitterID:	{emitterID0}
+	fusedNumber:	{fusedNumber0}
+	latLongInfo:
+		latLongSolutionApplicable:	{latLongSolutionApplicable0}
+		latitude:	{latitude0}
+		longitude:	{longitude0}
+		courseOverGround:
+			projectionInfoApplicable:	{projectionInfoApplicable0}
+			timeStamp:	{timeStamp0}
+			projectionInfoType:	{projectionInfoType0}
+			minimum:	{minimum0}
+			best:	{best0}
+			maximum:	{maximum0}
+			infoState:	{infoState0}
+			associatedTraces:
+				winningTraceID:	{winningTraceID0}
+				winnerByOverride:	{winnerByOverride0}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual0}
+			sensorSourceIndex:	{sensorSourceIndex0}
+			confidence:	{confidence0}
+			isSuppressed:	{isSuppressed0}
+		speedOverGround:
+			projectionInfoApplicable:	{projectionInfoApplicable0}
+			timeStamp:	{timeStamp0}
+			projectionInfoType:	{projectionInfoType0}
+			minimum:	{minimum0}
+			best:	{best0}
+			maximum:	{maximum0}
+			infoState:	{infoState0}
+			associatedTraces:
+				winningTraceID:	{winningTraceID0}
+				winnerByOverride:	{winnerByOverride0}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual0}
+			sensorSourceIndex:	{sensorSourceIndex0}
+			confidence:	{confidence0}
+			isSuppressed:	{isSuppressed0}
+	rangeBearingInfo:
+		rangeBearingSolutionApplicable:	{rangeBearingSolutionApplicable0}
+		range:
+			positionInfoApplicable:	{positionInfoApplicable0}
+			timeStamp:	{timeStamp0}
+			positionInfoType:	{positionInfoType0}
+			minimum:	{minimum0}
+			best:	{best0}
+			maximum:	{maximum0}
+			infoState:	{infoState0}
+			sensorSourceIndex:	{sensorSourceIndex0}
+			acousticPath:	{acousticPath0}
+			deAngle:	{deAngle0}
+			deAngleValid:	{deAngleValid0}
+			stdDev:	{stdDev0}
+			stdDevValid:	{stdDevValid0}
+			associatedTraces:
+				winningTraceID:	{winningTraceID0}
+				winnerByOverride:	{winnerByOverride0}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual0}
+			confidence:	{confidence0}
+			isSuppressed:	{isSuppressed0}
+		rangeRate:	{rangeRate0}
+		bearing:
+			positionInfoApplicable:	{positionInfoApplicable0}
+			timeStamp:	{timeStamp0}
+			positionInfoType:	{positionInfoType0}
+			minimum:	{minimum0}
+			best:	{best0}
+			maximum:	{maximum0}
+			infoState:	{infoState0}
+			sensorSourceIndex:	{sensorSourceIndex0}
+			acousticPath:	{acousticPath0}
+			deAngle:	{deAngle0}
+			deAngleValid:	{deAngleValid0}
+			stdDev:	{stdDev0}
+			stdDevValid:	{stdDevValid0}
+			associatedTraces:
+				winningTraceID:	{winningTraceID0}
+				winnerByOverride:	{winnerByOverride0}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual0}
+			confidence:	{confidence0}
+			isSuppressed:	{isSuppressed0}
+		bearingRate:	{bearingRate0}
+		courseThroughWater:
+			projectionInfoApplicable:	{projectionInfoApplicable0}
+			timeStamp:	{timeStamp0}
+			projectionInfoType:	{projectionInfoType0}
+			minimum:	{minimum0}
+			best:	{best0}
+			maximum:	{maximum0}
+			infoState:	{infoState0}
+			associatedTraces:
+				winningTraceID:	{winningTraceID0}
+				winnerByOverride:	{winnerByOverride0}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual0}
+			sensorSourceIndex:	{sensorSourceIndex0}
+			confidence:	{confidence0}
+			isSuppressed:	{isSuppressed0}
+		speedThroughWater:
+			projectionInfoApplicable:	{projectionInfoApplicable0}
+			timeStamp:	{timeStamp0}
+			projectionInfoType:	{projectionInfoType0}
+			minimum:	{minimum0}
+			best:	{best0}
+			maximum:	{maximum0}
+			infoState:	{infoState0}
+			associatedTraces:
+				winningTraceID:	{winningTraceID0}
+				winnerByOverride:	{winnerByOverride0}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual0}
+			sensorSourceIndex:	{sensorSourceIndex0}
+			confidence:	{confidence0}
+			isSuppressed:	{isSuppressed0}
+		bearingRateState:	{bearingRateState0}
+		bearingIndicator:	{bearingIndicator0}
+	cartesianCovarianceMatrix:
+		array of len: 3
+		[0] =	{cartesianCovarianceMatrix0}
+		[1] =	{cartesianCovarianceMatrix1}
+		[2] =	{cartesianCovarianceMatrix2}
+	isTraining:	{isTraining0}
+	solutionConfidence:	{solutionConfidence0}
+	cpaInfo:
+		cpaTime:	{cpaTime0}
+		cpaRange:	{cpaRange0}
+		cpaBearing:	{cpaBearing0}
+	aobInfo:
+		aobInfoApplicable:	{aobInfoApplicable0}
+		angleOnTheBow:	{angleOnTheBow0}
+		angleOnTheBowAspect:	{angleOnTheBowAspect0}
+	altitudeDepth:	{altitudeDepth0}
+	isTransverse:	{isTransverse0}
+	aouInformation:
+		semiMajorAxis:	{semiMajorAxis0}
+		semiMinorAxis:	{semiMinorAxis0}
+		orientation:	{orientation0}
+		containmentProbability:	{containmentProbability0}
+	contactZig:	{contactZig0}
+	aouPolygon:
+		array of len: 2
+		aouPolygonInfoApplicable:	{aouPolygonInfoApplicable0}
+		aouPolygon:
+			array of len: 2
+			latitude:	{latitude0}
+			latitudeType:	{latitudeType0}
+			longitude:	{longitude0}
+			longitudeType:	{longitudeType0}
+			latitude:	{latitude1}
+			latitudeType:	{latitudeType1}
+			longitude:	{longitude1}
+			longitudeType:	{longitudeType1}
+		containmentProbability:	{containmentProbability0}
+		aouPolygonInfoApplicable:	{aouPolygonInfoApplicable1}
+		aouPolygon:
+			array of len: 2
+			latitude:	{latitude2}
+			latitudeType:	{latitudeType2}
+			longitude:	{longitude2}
+			longitudeType:	{longitudeType2}
+			latitude:	{latitude3}
+			latitudeType:	{latitudeType3}
+			longitude:	{longitude3}
+			longitudeType:	{longitudeType3}
+		containmentProbability:	{containmentProbability1}
+	sequenceNumber:	{sequenceNumber1}
+	solutionType:	{solutionType1}
+	solutionSource:	{solutionSource1}
+	solutionSourceText:	{solutionSourceText1}
+	solutionTime:	{solutionTime1}
+	solutionCreationTime:	{solutionCreationTime1}
+	contactDesignator:
+		contactNumber:	{contactNumber1}
+		contactPrefix:	{contactPrefix1}
+		contactLabel:	{contactLabel1}
+		contactLabelChanged:	{contactLabelChanged1}
+		contactColor:
+			rValue:	{rValue1}
+			gValue:	{gValue1}
+			bValue:	{bValue1}
+		contactMasterNumber:	{contactMasterNumber1}
+		contactIsCOI:	{contactIsCOI1}
+		uniqueContactID:	{uniqueContactID1}
+		quickObservationID:	{quickObservationID1}
+		contactIsCOC:	{contactIsCOC1}
+		originatingSubsystem:	{originatingSubsystem1}
+		emitterID:	{emitterID1}
+	fusedNumber:	{fusedNumber1}
+	latLongInfo:
+		latLongSolutionApplicable:	{latLongSolutionApplicable1}
+		latitude:	{latitude1}
+		longitude:	{longitude1}
+		courseOverGround:
+			projectionInfoApplicable:	{projectionInfoApplicable1}
+			timeStamp:	{timeStamp1}
+			projectionInfoType:	{projectionInfoType1}
+			minimum:	{minimum1}
+			best:	{best1}
+			maximum:	{maximum1}
+			infoState:	{infoState1}
+			associatedTraces:
+				winningTraceID:	{winningTraceID1}
+				winnerByOverride:	{winnerByOverride1}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual1}
+			sensorSourceIndex:	{sensorSourceIndex1}
+			confidence:	{confidence1}
+			isSuppressed:	{isSuppressed1}
+		speedOverGround:
+			projectionInfoApplicable:	{projectionInfoApplicable1}
+			timeStamp:	{timeStamp1}
+			projectionInfoType:	{projectionInfoType1}
+			minimum:	{minimum1}
+			best:	{best1}
+			maximum:	{maximum1}
+			infoState:	{infoState1}
+			associatedTraces:
+				winningTraceID:	{winningTraceID1}
+				winnerByOverride:	{winnerByOverride1}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual1}
+			sensorSourceIndex:	{sensorSourceIndex1}
+			confidence:	{confidence1}
+			isSuppressed:	{isSuppressed1}
+	rangeBearingInfo:
+		rangeBearingSolutionApplicable:	{rangeBearingSolutionApplicable1}
+		range:
+			positionInfoApplicable:	{positionInfoApplicable1}
+			timeStamp:	{timeStamp1}
+			positionInfoType:	{positionInfoType1}
+			minimum:	{minimum1}
+			best:	{best1}
+			maximum:	{maximum1}
+			infoState:	{infoState1}
+			sensorSourceIndex:	{sensorSourceIndex1}
+			acousticPath:	{acousticPath1}
+			deAngle:	{deAngle1}
+			deAngleValid:	{deAngleValid1}
+			stdDev:	{stdDev1}
+			stdDevValid:	{stdDevValid1}
+			associatedTraces:
+				winningTraceID:	{winningTraceID1}
+				winnerByOverride:	{winnerByOverride1}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual1}
+			confidence:	{confidence1}
+			isSuppressed:	{isSuppressed1}
+		rangeRate:	{rangeRate1}
+		bearing:
+			positionInfoApplicable:	{positionInfoApplicable1}
+			timeStamp:	{timeStamp1}
+			positionInfoType:	{positionInfoType1}
+			minimum:	{minimum1}
+			best:	{best1}
+			maximum:	{maximum1}
+			infoState:	{infoState1}
+			sensorSourceIndex:	{sensorSourceIndex1}
+			acousticPath:	{acousticPath1}
+			deAngle:	{deAngle1}
+			deAngleValid:	{deAngleValid1}
+			stdDev:	{stdDev1}
+			stdDevValid:	{stdDevValid1}
+			associatedTraces:
+				winningTraceID:	{winningTraceID1}
+				winnerByOverride:	{winnerByOverride1}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual1}
+			confidence:	{confidence1}
+			isSuppressed:	{isSuppressed1}
+		bearingRate:	{bearingRate1}
+		courseThroughWater:
+			projectionInfoApplicable:	{projectionInfoApplicable1}
+			timeStamp:	{timeStamp1}
+			projectionInfoType:	{projectionInfoType1}
+			minimum:	{minimum1}
+			best:	{best1}
+			maximum:	{maximum1}
+			infoState:	{infoState1}
+			associatedTraces:
+				winningTraceID:	{winningTraceID1}
+				winnerByOverride:	{winnerByOverride1}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual1}
+			sensorSourceIndex:	{sensorSourceIndex1}
+			confidence:	{confidence1}
+			isSuppressed:	{isSuppressed1}
+		speedThroughWater:
+			projectionInfoApplicable:	{projectionInfoApplicable1}
+			timeStamp:	{timeStamp1}
+			projectionInfoType:	{projectionInfoType1}
+			minimum:	{minimum1}
+			best:	{best1}
+			maximum:	{maximum1}
+			infoState:	{infoState1}
+			associatedTraces:
+				winningTraceID:	{winningTraceID1}
+				winnerByOverride:	{winnerByOverride1}
+				losingTraceIDs:
+					array of len: 3
+					[0] =	{losingTraceIDs0}
+					[1] =	{losingTraceIDs1}
+					[2] =	{losingTraceIDs2}
+			dataIsManual:	{dataIsManual1}
+			sensorSourceIndex:	{sensorSourceIndex1}
+			confidence:	{confidence1}
+			isSuppressed:	{isSuppressed1}
+		bearingRateState:	{bearingRateState1}
+		bearingIndicator:	{bearingIndicator1}
+	cartesianCovarianceMatrix:
+		array of len: 3
+		[0] =	{cartesianCovarianceMatrix0}
+		[1] =	{cartesianCovarianceMatrix1}
+		[2] =	{cartesianCovarianceMatrix2}
+	isTraining:	{isTraining1}
+	solutionConfidence:	{solutionConfidence1}
+	cpaInfo:
+		cpaTime:	{cpaTime1}
+		cpaRange:	{cpaRange1}
+		cpaBearing:	{cpaBearing1}
+	aobInfo:
+		aobInfoApplicable:	{aobInfoApplicable1}
+		angleOnTheBow:	{angleOnTheBow1}
+		angleOnTheBowAspect:	{angleOnTheBowAspect1}
+	altitudeDepth:	{altitudeDepth1}
+	isTransverse:	{isTransverse1}
+	aouInformation:
+		semiMajorAxis:	{semiMajorAxis1}
+		semiMinorAxis:	{semiMinorAxis1}
+		orientation:	{orientation1}
+		containmentProbability:	{containmentProbability1}
+	contactZig:	{contactZig1}
+	aouPolygon:
+		array of len: 2
+		aouPolygonInfoApplicable:	{aouPolygonInfoApplicable2}
+		aouPolygon:
+			array of len: 2
+			latitude:	{latitude4}
+			latitudeType:	{latitudeType4}
+			longitude:	{longitude4}
+			longitudeType:	{longitudeType4}
+			latitude:	{latitude5}
+			latitudeType:	{latitudeType5}
+			longitude:	{longitude5}
+			longitudeType:	{longitudeType5}
+		containmentProbability:	{containmentProbability2}
+		aouPolygonInfoApplicable:	{aouPolygonInfoApplicable3}
+		aouPolygon:
+			array of len: 2
+			latitude:	{latitude6}
+			latitudeType:	{latitudeType6}
+			longitude:	{longitude6}
+			longitudeType:	{longitudeType6}
+			latitude:	{latitude7}
+			latitudeType:	{latitudeType7}
+			longitude:	{longitude7}
+			longitudeType:	{longitudeType7}
+		containmentProbability:	{containmentProbability3}
+replyType:	{replyType0}
+==============END MESSAGE=========
+

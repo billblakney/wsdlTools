@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlfilter>
+    <config>
+        <operate_mode>eGo</operate_mode>
+        <delimit_mode>eAllRecords</delimit_mode>
+        <format_mode>eLongname</format_mode>
+    </config>
+    <fields>
+        <field key="CSRS.contactDesignator.contactNumber" checked="1" format="eValue" postfix="\t"/>
+        <field key="CSRS.contactDesignator.contactPrefix" checked="1" format="eValue" postfix="\n"/>
+        <field key="CSRS.latLongInfo.latLongSolutionApplicable" checked="1" format="eAsIs" postfix="\n"/>
+        <field key="CSRS.latLongInfo.courseOverGround.infoState" checked="1" format="eAsIs" postfix="\n"/>
+        <field key="CSRS.latLongInfo.speedOverGround.infoState" checked="1" format="eAsIs" postfix="\n"/>
+        <field key="CSRS.rangeBearingInfo.rangeBearingSolutionApplicable" checked="1" format="eAsIs" postfix="\n"/>
+        <field key="CSRS.rangeBearingInfo.range.infoState" checked="1" format="eAsIs" postfix="\n"/>
+        <field key="CSRS.rangeBearingInfo.bearing.infoState" checked="1" format="eAsIs" postfix="\n"/>
+        <field key="CSRS.rangeBearingInfo.courseThroughWater.infoState" checked="1" format="eAsIs" postfix="\n"/>
+        <field key="CSRS.rangeBearingInfo.speedThroughWater.infoState" checked="1" format="eAsIs" postfix="\n"/>
+        <field key="CSRS.rangeBearingInfo.bearingRateState" checked="1" format="eAsIs" postfix="\n"/>
+    </fields>
+</wsdlfilter>

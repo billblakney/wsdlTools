@@ -16,7 +16,6 @@
     </config>
     <messages>
 <!--
--->
         <message>
             <id>ssifg_STUDENT_MSG_ID</id>
             <struct>STUDENT_T</struct>
@@ -28,30 +27,50 @@
             <struct>FACULTY_T</struct>
             <header>faculty.H</header>
         </message>
+-->
+<!-- non-sonar CARs -->
         <message>
             <id>ssifg_CAR_MSG_ID</id>
             <struct>CAR_UPDATES_T</struct>
             <header>CLIR_CAR_cxsd.H</header>
             <default_filter>CAR_UPDATES_T.basic_info.wcf</default_filter>
         </message>
+<!-- sonar CARs -->
         <message>
             <id>ssifg_SONAR_CAR_TO_DSS_MSG_ID</id>
             <struct>CONTACT_ATTRIBUTES_REPORT_T</struct>
             <header>CLIR_CAR_cxsd.H</header>
             <default_filter>CONTACT_ATTRIBUTES_REPORT_T.basic_info.wcf</default_filter>
         </message>
+<!-- CAR request -->
         <message>
             <id>ssifg_CAR_REQUEST_MSG_ID</id>
             <struct>CONTACT_ATTRIBUTES_REQUEST_T</struct>
             <header>CLIR_CAR_cxsd.H</header>
             <default_filter>CONTACT_ATTRIBUTES_REQUEST_T.basic_info.wcf</default_filter>
         </message>
+<!-- contact inventory reply -->
         <message>
             <id>ssifg_CONTACT_INVENTORY_REPLY_MSG_ID</id>
             <struct>CONTACT_INVENTORY_T</struct>
             <header>CLIR_CAR_cxsd.H</header>
             <default_filter>CONTACT_INVENTORY_T.reply_basic_info.wcf</default_filter>
         </message>
+<!-- PKed solutions -->
+        <message>
+            <id>ssifg_CSR_UPDATE_MSG_ID</id>
+            <struct>CSR_UPDATES_T</struct>
+            <header>CLIR_CAR_cxsd.H</header>
+            <default_filter>CSR_UPDATES_T.basic_info.wcf</default_filter>
+        </message>
+<!-- Extif solutions -->
+        <message>
+            <id>ssifg_CSR_LEG_UPDATE_MSG_ID</id>
+            <struct>CSR_LEG_UPDATES_T</struct>
+            <header>CLIR_CAR_cxsd.H</header>
+            <default_filter>CSR_LEG_UPDATES_T.watchCD.wcf</default_filter>
+        </message>
+<!-- ES updates -->
         <message>
             <id>ssifg_ES_UPDATES_MSG_ID</id>
             <struct>ES_UPDATES_T</struct>
