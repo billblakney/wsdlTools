@@ -179,6 +179,7 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
   CmdLineArgs tCmdLineArgs; //TODO make CmdLineArgs a class for initalization
   tCmdLineArgs.isBrowseMode = false;
   tCmdLineArgs.isTestMode = false;
+  tCmdLineArgs.isPrintTestRecMode = false;
 
   for (int tIdx = 0; tIdx < argc; tIdx++)
   {
