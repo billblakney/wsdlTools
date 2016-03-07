@@ -236,6 +236,7 @@ void FilterReader::skipUnknownElement()
 }
 
 //-----------------------------------------------------------------------------
+// Manage the writing of a filter file.
 //-----------------------------------------------------------------------------
 void FilterReader::saveFilter(QString aDir,DataStructModel *aModel,
     StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
@@ -267,6 +268,7 @@ void FilterReader::saveFilter(QString aDir,DataStructModel *aModel,
 }
 
 //-----------------------------------------------------------------------------
+// Write the contents of a filter file.
 //-----------------------------------------------------------------------------
 void FilterReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter,
     DataStructModel *aModel,StreamReader *aStreamReader,
@@ -288,6 +290,7 @@ void FilterReader::writeWsdlfilterDocument(QXmlStreamWriter &aWriter,
 }
 
 //-----------------------------------------------------------------------------
+// Write the config elements to the filter file.
 //-----------------------------------------------------------------------------
 void FilterReader::writeConfigElements(QXmlStreamWriter &aWriter,
     StreamReader *aStreamReader,RecordProcessor *aRecordProcessor)
@@ -313,6 +316,9 @@ void FilterReader::writeConfigElements(QXmlStreamWriter &aWriter,
 }
 
 //-----------------------------------------------------------------------------
+// Write the field elements that are checked to the filter file.
+// TODO give option (at user interface) to write all field elements or just
+// the checked ones, and use that parameter here.
 //-----------------------------------------------------------------------------
 void FilterReader::writeFieldElements(
     QXmlStreamWriter &aWriter,DataStructModel *aModel)
@@ -325,6 +331,12 @@ void FilterReader::writeFieldElements(
   for (tIter = tTreeItems.begin(); tIter != tTreeItems.end(); tIter++)
   {
     FieldItemData &tData = (*tIter)->getData();
+
+    // Don't print the unchecked fields.
+    if (tData.getCheckState() == Qt::Unchecked)
+    {
+      continue;
+    }
 
     // open field tag
     aWriter.writeStartElement(kFieldTag);
