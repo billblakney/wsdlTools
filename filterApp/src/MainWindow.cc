@@ -824,7 +824,7 @@ QGroupBox *MainWindow::createTestScopeToolGroup(QWidget *aParent)
 
   // widgets
   _TestScopeComboBox = new QComboBox(aParent);
-  std::vector<std::string> tTestScopes = _DataStructModel->getTestNodes();
+  std::vector<std::string> tTestScopes = _DataStructModel->getTestScopes();
   _TestScopeComboBox->addItems(convertToQStringList(tTestScopes));
 
   QPushButton *tPushButton = new QPushButton("Apply test scope",aParent);

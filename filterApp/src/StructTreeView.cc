@@ -36,7 +36,7 @@ void StructTreeView::setDataStructModel(DataStructModel * aDataStructModel)
    * cleanup the old one.
    */
   ComboBoxDelegate *tNewComboBox =
-      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
+      new ComboBoxDelegate(_DataStructModel->getTestScopes(),this);
 
   setItemDelegateForColumn(
       DataStructModel::eColTestScope,tNewComboBox);
@@ -107,7 +107,7 @@ void StructTreeView::setupView()
       DataStructModel::eColTestRegex,tTestRegexDelegate);
 
   _TestScopeDelegate =
-      new ComboBoxDelegate(_DataStructModel->getTestNodes(),this);
+      new ComboBoxDelegate(_DataStructModel->getTestScopes(),this);
   setItemDelegateForColumn(
       DataStructModel::eColTestScope,_TestScopeDelegate);
 

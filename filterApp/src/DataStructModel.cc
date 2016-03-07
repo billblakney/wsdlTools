@@ -48,6 +48,12 @@ DataStructModel::DataStructModel(
 }
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+DataStructModel::~DataStructModel()
+{
+}
+
+//------------------------------------------------------------------------------
 // Applies special processing to filter scopes for contact designators.
 //
 // For many data structures that contain a contact designator field, i.e. field
@@ -161,6 +167,9 @@ int DataStructModel::childCount(FieldItem *aNode,FieldItemData::NodeType aType)
 }
 
 //------------------------------------------------------------------------------
+// Populates _TreeItems.
+// This method is meant to be called with the top node so that it can
+// recursively populate _TreeItems with all nodes of the tree.
 //------------------------------------------------------------------------------
 void DataStructModel::appendToTreeItemVector(FieldItem *aNode)
 {
@@ -173,6 +182,7 @@ void DataStructModel::appendToTreeItemVector(FieldItem *aNode)
 }
 
 //------------------------------------------------------------------------------
+// Get the list of all tree nodes.
 //------------------------------------------------------------------------------
 std::vector<FieldItem *> &DataStructModel::getTreeItems()
 {
@@ -227,6 +237,7 @@ void DataStructModel::resetTreeItems()
 }
 
 //------------------------------------------------------------------------------
+// Get the top node of the tree.
 //------------------------------------------------------------------------------
 FieldItem *DataStructModel::getTopNode()
 {
@@ -234,6 +245,7 @@ FieldItem *DataStructModel::getTopNode()
 }
 
 //------------------------------------------------------------------------------
+// Get the tree node for a specific key.
 //------------------------------------------------------------------------------
 FieldItem *DataStructModel::getNode(std::string aKey)
 {
@@ -249,13 +261,15 @@ FieldItem *DataStructModel::getNode(std::string aKey)
 }
 
 //------------------------------------------------------------------------------
+// Get the list of test scopes for the tree.
 //------------------------------------------------------------------------------
-std::vector<std::string> DataStructModel::getTestNodes()
+std::vector<std::string> DataStructModel::getTestScopes()
 {
   return _TestScopes;
 }
 
 //------------------------------------------------------------------------------
+// Get the list of postfixes.
 //------------------------------------------------------------------------------
 std::vector<std::string> DataStructModel::getPostfixes()
 {
@@ -263,6 +277,8 @@ std::vector<std::string> DataStructModel::getPostfixes()
 }
 
 //------------------------------------------------------------------------------
+// Gets the enumeration type (from the struct builder) for a a primitive value
+// node in the tree.
 //------------------------------------------------------------------------------
 Enum *DataStructModel::getEnum(const QModelIndex &aIndex) const
 {
@@ -288,12 +304,6 @@ void DataStructModel::printTestNodes()
   {
     std::cout << "   " << *tIter << std::endl;
   }
-}
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-DataStructModel::~DataStructModel()
-{
 }
 
 //TODO deep enough? replace generically?
