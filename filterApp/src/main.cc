@@ -93,8 +93,7 @@ void printUsage()
 QString determineAppConfigFilename(CmdLineArgs aArgs)
 {
   static const char *kAppConfigFilename =
-      //"/opt/idp/cots/iec/rtf/static/wsdlToolsConfig/wsdlFilter.conf";
-      "/opt/idp/cots/iec/rtf/static/wsdlFilter.conf";
+      "/opt/idp/cots/iec/rtf/static/wsdlToolsConfig/wsdlFilter.conf";
 
   /*
    * Default will be the hard-coded value.
