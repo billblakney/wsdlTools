@@ -93,7 +93,7 @@ void printUsage()
 QString determineAppConfigFilename(CmdLineArgs aArgs)
 {
   static const char *kAppConfigFilename =
-      "/opt/idp/cots/iec/rtf/static/wsdlToolsConfig/wsdlFilter.conf";
+      "/opt/idp/cots/iec/rtf/static/wsdlToolsConfig/wsdlFilterConfig.xml";
 
   /*
    * Default will be the hard-coded value.
@@ -204,6 +204,21 @@ CmdLineArgs processCommandLine(int argc,char *argv[])
     if (!strcmp(argv[tIdx],"-b"))
     {
       tCmdLineArgs.isBrowseMode = true;
+    }
+    /*
+     * "-a <app_config_file>" for app config file
+     */
+    if (!strcmp(argv[tIdx],"-a"))
+    {
+      if (++tIdx < argc)
+      {
+        tCmdLineArgs.appConfigFile = argv[tIdx];
+      }
+      else
+      {
+        std::cerr << "ERROR: missing app config file name after -a\n";
+        exit(0);
+      }
     }
     /*
      * "-s <struct_name>" for initial struct name in browse mode

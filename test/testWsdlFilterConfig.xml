@@ -4,7 +4,7 @@
         <default_operate_mode>eGo</default_operate_mode>
         <default_delimit_mode>eAllRecords</default_delimit_mode>
 <!--
-        <headers_dir>/opt/idp/cots/iec/rtf/static/wsdlConfig/headers</headers_dir>
+        <headers_dir>/opt/idp/cots/iec/rtf/static/wsdlConfig/headers</headers_dir> <!--x -->
         <default_header>CLIR_CAR_cxsd.H</default_header>
         <default_filters_dir>/opt/idp/cots/iec/rtf/static/wsdlConfig/filters</default_filters_dir>
         <custom_filters_dir>/tmp</custom_filters_dir>
