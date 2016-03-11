@@ -3,31 +3,14 @@
     <config>
         <default_operate_mode>eGo</default_operate_mode>
         <default_delimit_mode>eAllRecords</default_delimit_mode>
-<!--
-        <headers_dir>/opt/idp/cots/iec/rtf/static/wsdlConfig/headers</headers_dir> <!--x -->
+        <headers_dir>${WSDL_APB_HEADERS_DIR}</headers_dir>
+<!--        <default_header>${WSDL_APB_DEFAULT_HEADER}</default_header>-->
         <default_header>CLIR_CAR_cxsd.H</default_header>
-        <default_filters_dir>/opt/idp/cots/iec/rtf/static/wsdlConfig/filters</default_filters_dir>
-        <custom_filters_dir>/tmp</custom_filters_dir>
--->
-        <headers_dir>${WSDL_HEADERS_DIR}</headers_dir>
-        <default_header>${WSDL_DEFAULT_HEADER}</default_header>
-        <default_filters_dir>${WSDL_FILTERS_DIR}</default_filters_dir>
-        <custom_filters_dir>/${WSDL_CUSTOM_FILTERS_DIR}</custom_filters_dir>
+<!--        <default_header>MCSOS_cxsd.H</default_header>-->
+        <default_filters_dir>${WSDL_APB_FILTERS_DIR}</default_filters_dir>
+        <custom_filters_dir>${WSDL_APB_CUSTOM_FILTERS_DIR}</custom_filters_dir>
     </config>
     <messages>
-<!--
-        <message>
-            <id>ssifg_STUDENT_MSG_ID</id>
-            <struct>STUDENT_T</struct>
-            <header>student.H</header>
-            <default_filter>STUDENT_T.student_grades.wcf</default_filter>
-        </message>
-        <message>
-            <id>ssifg_FACULTY_MSG_ID</id>
-            <struct>FACULTY_T</struct>
-            <header>faculty.H</header>
-        </message>
--->
 <!-- non-sonar CARs -->
         <message>
             <id>ssifg_CAR_MSG_ID</id>
@@ -76,6 +59,20 @@
             <struct>ES_UPDATES_T</struct>
             <header>CLIR_CAR_cxsd.H</header>
             <default_filter>ES_UPDATES_T.basic_info.wcf</default_filter>
+        </message>
+<!-- MCSOS updates -->
+        <message>
+            <id>ssifg_MCSOS_UPDATE_MSG_ID</id>
+            <struct>MCSOS_UPDATE_T</struct>
+            <header>MCSOS_cxsd.H</header>
+            <default_filter>MCSOS_UPDATES_T.basic_info.wcf</default_filter>
+        </message>
+<!-- MCSOS requests -->
+        <message>
+            <id>ssifg_MCSOS_REQUEST_MSG_ID</id>
+            <struct>MCSOS_REQUEST_T</struct>
+            <header>MCSOS_cxsd.H</header>
+            <default_filter>MCSOS_REQUEST_T.basic_info.wcf</default_filter>
         </message>
     </messages>
 </wsdlfilterconfig>
