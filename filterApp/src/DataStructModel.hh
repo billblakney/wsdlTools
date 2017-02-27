@@ -84,11 +84,6 @@ public:
   //---------------------------------------------------------------------------
   std::string getFirstFieldMatch();
 
-  bool processStructLines(std::vector<std::string> &aLinesIn,
-                          std::vector<std::string> &aLinesOut);
-
-  void printInLines();
-
   std::string getMatchString(FieldItem *aFieldItem);
 
   std::string getMatchString();
