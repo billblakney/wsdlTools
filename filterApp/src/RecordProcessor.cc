@@ -367,8 +367,8 @@ void RecordProcessor::excludeAllLinesMatchingScope(std::string aBaseScope)
   {
     if (tIter->nodeIsChecked)
     {
-      SimpleLineMatcher *tMatcher = new SimpleLineMatcher(aBaseScope);
-      if (tMatcher->match(tIter->lineDotString))
+      SimpleLineMatcher tMatcher(aBaseScope);
+      if (tMatcher.match(tIter->lineDotString))
       {
 //        std::cout << "excluding: " << tIter->lineDotString << std::endl;
         tIter->resultLineExcluded = true;
