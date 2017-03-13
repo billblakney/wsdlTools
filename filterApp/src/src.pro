@@ -34,6 +34,7 @@ LIBS += \
         -L$(BOOST_LIB) -lboost_program_options -lboost_regex \
         -L$(LOG4CXX_LIB) \
         -lIecHeaderParser \
+        -llog4cxx \
 
 # Input
 HEADERS += \

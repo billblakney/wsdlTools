@@ -1325,6 +1325,8 @@ void DataStructModel::applyFormatMode(QVariant aFormat,QVariant aPostfix,
 }
 
 //------------------------------------------------------------------------------
+// Recursively sets the check state of all descendants of a specified node to a
+// specified value.
 //------------------------------------------------------------------------------
 void DataStructModel::setChildrenCheckStates(
     const QModelIndex &aParentIndex,Qt::CheckState aNewState)
@@ -1352,6 +1354,11 @@ void DataStructModel::setChildrenCheckStates(
 }
 
 //------------------------------------------------------------------------------
+// Updates a parent node's check state, and recursively updates its ancestors
+// as well, in response to a new check state that was just applied to one of
+// its children.
+// @param aChildIndex Model index of the child whose check state has changed.
+// @param aNewState The new check state of the child.
 //------------------------------------------------------------------------------
 void DataStructModel::updateParentCheckState(
     const QModelIndex &aChildIndex,Qt::CheckState aNewState)
