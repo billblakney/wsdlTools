@@ -15,9 +15,10 @@
  * a typical use-case sequence would be:
  *    RecordProcessor *p = new RecordProcessor(theTopNode,theLinesToBeProcessed);
  *    while (1){
+ *      p->configure(theTopNode);
  *      theLinesToBeProcessed.clear();
  *      theLinesToBeProcessed = readNextLines();
- *      p->process();
+ *      p->process(&theLinesToBeProcessed);
  *      lineOuts = p->getLines();
  *      print(linesOut);
  *      linesOut.clear();
@@ -53,6 +54,10 @@ public:
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
   void configure(FieldItem *aTopNode);
+
+  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  std::string getFirstFieldMatch();
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------

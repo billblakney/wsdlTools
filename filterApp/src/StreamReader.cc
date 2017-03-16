@@ -374,12 +374,12 @@ void StreamReader::readAndProcessStructLines()
       "==================================================";
   static const char *kEndDelimiter   = "---------%d/%d----------";
 
-  std::string tFirstFieldMatch = _DataStructModel->getFirstFieldMatch();
+  _RecordProcessor->configure(_DataStructModel->getTopNode());
+
+  std::string tFirstFieldMatch = _RecordProcessor->getFirstFieldMatch();
   DEBUG(sLogger,"match to start record: " << tFirstFieldMatch);
 
   SimpleLineMatcher tFirstFieldMatcher(tFirstFieldMatch);
-
-  _RecordProcessor->configure(_DataStructModel->getTopNode());
 
   bool tFoundStart = false;
   bool tFoundFirstField = false;

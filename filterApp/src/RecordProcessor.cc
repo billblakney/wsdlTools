@@ -103,6 +103,16 @@ RecordProcessor::FormatMode RecordProcessor::getFormatMode()
   return tFormatMode;
 }
 
+//------------------------------------------------------------------------------
+// Gets the match for the first field in the data structure. This will be used
+// by the reader to identify the start of the structure (since in wsdl there is
+// no other identifier,like the name of the structure, e.g.).
+//------------------------------------------------------------------------------
+std::string RecordProcessor::getFirstFieldMatch()
+{
+  return _TopNode->child(0)->getData().getMatch();
+}
+
 //-----------------------------------------------------------------------------
 // TODO should check that was configured
 //-----------------------------------------------------------------------------

@@ -80,14 +80,6 @@ public:
   //---------------------------------------------------------------------------
   void printTestNodes();
 
-  //---------------------------------------------------------------------------
-  //---------------------------------------------------------------------------
-  std::string getFirstFieldMatch();
-
-  std::string getMatchString(FieldItem *aFieldItem);
-
-  std::string getMatchString();
-
   std::vector<FieldItem *> getCheckedFields();
 
   void addCheckedFields(

@@ -320,16 +320,6 @@ static std::string blanks[] = {
     "                  ",
 };
 
-//------------------------------------------------------------------------------
-// Gets the match for the first field in the data structure. This will be used
-// by the reader to identify the start of the structure (since in wsdl there is
-// no other identifier,like the name of the structure, e.g.).
-//------------------------------------------------------------------------------
-std::string DataStructModel::getFirstFieldMatch()
-{
-  return _TopNodeItem->child(0)->getData().getMatch();
-}
-
 static Field _lastLengthField; //TODO
 
 //------------------------------------------------------------------------------
@@ -691,60 +681,6 @@ std::string DataStructModel::buildMatchForPrimitiveArrayLengthField(
     const Field &aField,int aIndentLevel)
 {
   return buildMatchForField(aField,aIndentLevel);
-}
-
-//------------------------------------------------------------------------------
-// Not sure this will be used or what it was originally for.
-//------------------------------------------------------------------------------
-std::string DataStructModel::getMatchString(FieldItem *aFieldItem)
-{
-  std::string tString;
-
-  tString += aFieldItem->getData().getType() + ","
-           + aFieldItem->getData().getMatch() + "\n";
-
-  for (int i = 0; i < aFieldItem->childCount(); i++)
-  {
-    tString += getMatchString(aFieldItem->child(i));
-  }
-
-  return tString;
-}
-
-//------------------------------------------------------------------------------
-// Gets the match string for the simple reader.
-//------------------------------------------------------------------------------
-std::string DataStructModel::getMatchString()
-{
-  std::string tMatchString(".*");
-
-  std::vector<FieldItem *> tCheckedFieldItems = getCheckedFields();
-  int tNumCheckFields = tCheckedFieldItems.size();
-  if (tNumCheckFields > 0)
-  {
-    tMatchString.clear();
-    bool tFirstMatchField = true;
-    for (int tIdx = 0; tIdx < tNumCheckFields; tIdx++)
-    {
-      std::string tFieldMatch = tCheckedFieldItems[tIdx]->getData().getMatch();
-      if (tFieldMatch.length() == 0)
-      {
-        continue;
-      }
-
-      if (tFirstMatchField == true)
-      {
-        tFirstMatchField = false;
-      }
-      else
-      {
-        tMatchString += "|";
-      }
-      tMatchString += tFieldMatch;
-    }
-  }
-  DEBUG(sLogger,"Match string: " << tMatchString);
-  return tMatchString;
 }
 
 //------------------------------------------------------------------------------
